@@ -21,7 +21,7 @@
       "ecmaVersion": 12,
       "sourceType": "module"
     },
-    "plugins": ["react", "@typescript-eslint", "react-hooks"],
+    "plugins": ["react", "@typescript-eslint", "react-hooks","prettier"],
     "rules": {
       "no-console": 0,
       "prettier/prettier": 0,
@@ -64,4 +64,5 @@
       }
     },
     "ignorePatterns": ["dist/", "node_modules/"]
+    
   }
