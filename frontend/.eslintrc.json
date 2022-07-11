@@ -1,0 +1,67 @@
+{
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended",
+      "plugin:prettier/recommended",
+      "airbnb",
+      "prettier",
+      "prettier/prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "plugins": ["react", "@typescript-eslint", "react-hooks"],
+    "rules": {
+      "no-console": 0,
+      "prettier/prettier": 0,
+      "react/jsx-filename-extension": ["warn", { "extensions": [".tsx", ".ts"] }],
+      "import/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          "js": "never",
+          "jsx": "never",
+          "ts": "never",
+          "tsx": "never"
+        }
+      ],
+      "max-len": ["warn", { "code": 120 }],
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "react/prop-types": 0,
+      "react/react-in-jsx-scope": "off",
+      "jsx-a11y/label-has-associated-control": [
+        "error",
+        {
+          "required": {
+            "some": ["nesting", "id"]
+          }
+        }
+      ],
+      "jsx-a11y/label-has-for": [
+        "error",
+        {
+          "required": {
+            "some": ["nesting", "id"]
+          }
+        }
+      ]
+    },
+    "settings": {
+      "import/resolver": {
+        "typescript": {}
+      }
+    },
+    "ignorePatterns": ["dist/", "node_modules/"]
+  }
