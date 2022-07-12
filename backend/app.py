@@ -17,7 +17,7 @@ MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_USER=os.environ.get("MYSQL_USER")
 MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@localhost:3306/DoodleDoodle'
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3300/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER

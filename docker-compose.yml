@@ -16,7 +16,7 @@ services:
 
   backend:
     depends_on:
-      - "mongodb"
+      - "db"
     build:
       context: ./backend
     ports:
@@ -28,7 +28,7 @@ services:
     expose:
       - 5000
     # image: run
-    # restart: always
+    restart: always
     command: flask run --host=0.0.0.0 --port=5000
     volumes:
       - ./backend:/usr/local/app/
@@ -40,18 +40,20 @@ services:
   db:
     image: mysql
     container_name: mysql-con
+    restart: always
     ports:
-      - "3306:3306"
+      - "3300:3306"
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+    env_file:
+      - ./backend/.env
     environment:
-      MYSQL_ROOT_PASSWORD: 
-    env_file :
-      - ./envs/mysql
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}" 
     volumes:
       - data_mysql:/var/lib/mysql
     tty: true
+
 
 volumes:
   data_mysql:

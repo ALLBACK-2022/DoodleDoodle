@@ -10,7 +10,8 @@ app = Flask(__name__)
 load_dotenv()
 db = SQLAlchemy()
 MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@localhost:3306/DoodleDoodle'
+MYSQL_HOST=os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
