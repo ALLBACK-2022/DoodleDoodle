@@ -13,7 +13,6 @@
       "prettier",
       "prettier/prettier"
     ],
-    "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true
@@ -41,23 +40,7 @@
       "react-hooks/exhaustive-deps": "warn",
       "react/prop-types": 0,
       "react/button-has-type": "off",
-      "react/react-in-jsx-scope": "off",
-      "jsx-a11y/label-has-associated-control": [
-        "error",
-        {
-          "required": {
-            "some": ["nesting", "id"]
-          }
-        }
-      ],
-      "jsx-a11y/label-has-for": [
-        "error",
-        {
-          "required": {
-            "some": ["nesting", "id"]
-          }
-        }
-      ]
+      "react/react-in-jsx-scope": "off"
     },
     "settings": {
       "import/resolver": {
