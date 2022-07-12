@@ -25,7 +25,7 @@
     "rules": {
       "no-console": 0,
       "prettier/prettier": 0,
-      "react/jsx-filename-extension": ["warn", { "extensions": [".tsx", ".ts"] }],
+      "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
       "import/extensions": [
         "error",
         "ignorePackages",
@@ -40,6 +40,7 @@
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react/prop-types": 0,
+      "react/button-has-type": "off",
       "react/react-in-jsx-scope": "off",
       "jsx-a11y/label-has-associated-control": [
         "error",
@@ -60,7 +61,9 @@
     },
     "settings": {
       "import/resolver": {
-        "typescript": {}
+        "node": {
+          "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        }
       }
     },
     "ignorePatterns": ["dist/", "node_modules/"]
