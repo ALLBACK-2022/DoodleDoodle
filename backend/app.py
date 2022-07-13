@@ -33,18 +33,16 @@ result_parser = ns.parser()
 db = SQLAlchemy()
 db.init_app(app)
 
-def insert_word():
-    f = open("classes.txt", "r", encoding="utf-8")
-    lines = f.readlines()
-    for line in lines:
-        row = models.Word(name=line)
-        db.session.add(row)
-    db.session.commit()
-    f.close()
-
-
-#with app.app_context():
-#    insert_word()
+# def insert_word():
+#     f = open("classes.txt", "r", encoding="utf-8")
+#     lines = f.readlines()
+#     for line in lines:
+#         row = models.Word(name=line)
+#         db.session.add(row)
+#     db.session.commit()
+#     f.close()
+# with app.app_context():
+#     insert_word()
 
 
 @ns.route("/", methods=['GET'])
@@ -59,9 +57,9 @@ class user_num(Resource):
         value = request.get_json()
         print(value)
         if value['user-num'] > 6:
-            return ('too many users', 200)
+            return ('too many users', 400)
         elif value['user-num'] < 1:
-            return ('no user', 200)        
+            return ('no user', 400)        
         row = models.Game(random_word="", user_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
@@ -72,6 +70,8 @@ class user_num(Resource):
 class randwords(Resource):
     def get(self):
         randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
+        if randword is None:
+            return ('Can not access data', 400)
         return (randword[0].name.rstrip(), 200)
 
 
