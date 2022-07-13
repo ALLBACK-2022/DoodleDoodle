@@ -1,0 +1,6 @@
+.textshadow {
+    text-shadow: 6px 6px 0px #000000;
+}
+.textborder {
+    -webkit-text-stroke: 1.5px #000;
+}
