@@ -4,7 +4,7 @@ import trashImg from '../assets/icons/trashImg.png';
 import nextImg from '../assets/icons/nextImg.png';
 import checkImg from '../assets/icons/checkImg.png';
 
-const maxPlayer = 6;
+const maxPlayer = 2;
 const wordArray = ['사과', '바나나', '비행기', '새', '텔레비전'];
 const randWord = wordArray[Math.floor(Math.random() * wordArray.length)];
 // const nextButtonImg = maxPlayer === 1 ? checkImg : nextImg;
