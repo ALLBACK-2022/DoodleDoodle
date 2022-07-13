@@ -19,7 +19,8 @@ module.exports = {
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
         cookierun: ['COOKIERUN'],
-        cookierun_regular: ['COOKIERUN_R'],
+        cookierun_m: ['COOKIERUN_M'],
+        cookierun_s: ['COOKIERUN_S'],
       },
     },
   },
