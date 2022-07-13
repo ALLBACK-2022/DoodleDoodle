@@ -70,7 +70,7 @@ class user_num(Resource):
 class randwords(Resource):
     def get(self):
         randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
-        if randword is None:
+        if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name.rstrip(), 200)
 
