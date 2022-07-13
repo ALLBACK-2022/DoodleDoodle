@@ -3,8 +3,7 @@ from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-import os, models
-import sqlalchemy
+import os, models, random, json
 
 app = Flask(__name__)
 load_dotenv()
@@ -17,7 +16,7 @@ MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_USER=os.environ.get("MYSQL_USER")
 MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3300/DoodleDoodle'
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER
@@ -30,6 +29,22 @@ ns = api.namespace('/', description='DoodleDoodle API')
 parser = ns.parser()
 file_parser = ns.parser()
 result_parser = ns.parser()
+
+db = SQLAlchemy()
+db.init_app(app)
+
+def insert_word():
+    f = open("classes.txt", "r", encoding="utf-8")
+    lines = f.readlines()
+    for line in lines:
+        row = models.Word(name=line)
+        db.session.add(row)
+    db.session.commit()
+    f.close()
+
+
+#with app.app_context():
+#    insert_word()
 
 
 @ns.route("/", methods=['GET'])
@@ -45,10 +60,19 @@ class user_num(Resource):
         print(value)
         if value['user-num'] > 6:
             return ('too many users', 200)
+        elif value['user-num'] < 1:
+            return ('no user', 200)        
         row = models.Game(random_word="", user_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
         return ('user-num created successfully', 201)
+
+
+@ns.route("/randwords", methods=['GET'])
+class randwords(Resource):
+    def get(self):
+        randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
+        return (randword[0].name.rstrip(), 200)
 
 
 if __name__=="__main__":

@@ -34,10 +34,11 @@ class Game(Base):
         self.random_word = random_word
         self.user_num = user_num
         self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
         
         
-    def set_updated_at(self, updated_at):
-        self.updated_at = updated_at
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 class Draw(Base):
@@ -56,10 +57,11 @@ class Draw(Base):
         self.player_no = player_no
         self.drawn_pic = drawn_pic
         self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
         
         
-    def set_updated_at(self, updated_at):
-        self.updated_at = updated_at
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
         
 
 class Word(Base):
@@ -71,13 +73,14 @@ class Word(Base):
     word_id = db.relationship('Result', backref='word', lazy='dynamic')
     
     
-    def __init__(self, similarity):
-        self.similarity = similarity
+    def __init__(self, name):
+        self.name = name
         self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
         
     
-    def set_updated_at(self, updated_at):
-        self.updated_at = updated_at
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 class Result(Base):
@@ -94,10 +97,11 @@ class Result(Base):
     def __init__(self, similarity):
         self.similarity = similarity
         self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
         
         
-    def set_updated_at(self, updated_at):
-        self.updated_at = updated_at
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 Base.metadata.create_all(engine)
