@@ -6,3 +6,7 @@
   font-family: "COOKIERUN";
   src: url("assets/fonts/CookieRun Black.ttf");
 }
+@font-face {
+  font-family: "COOKIERUN_R";
+  src: url("assets/fonts/CookieRun Regular.ttf");
+}
