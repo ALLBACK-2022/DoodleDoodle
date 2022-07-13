@@ -54,6 +54,17 @@ services:
       - data_mysql:/var/lib/mysql
     tty: true
 
+  # nginx:
+  #   image: nginx:1.21.5-alpine
+  #   ports:
+  #     - 80:80
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #   container_name: nginx-con
+  #   depends_on:
+  #     - frontend
+  #     - backend
+
 
 volumes:
   data_mysql:
