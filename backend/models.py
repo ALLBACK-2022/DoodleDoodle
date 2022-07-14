@@ -111,21 +111,6 @@ class Word(Base):
             "img_url" : self.img_url
         }
 
-    def serialize(self):
-        return {
-            "id" : self.id,
-            "name" : self.name,
-            "eng_name" : self.eng_name,
-            "img_url" : self.img_url
-        }
-
-    def serialize(self):
-        return {
-            "id" : self.id,
-            "name" : self.name,
-            "img_url" : self.img_url
-        }
-
 
 class Result(Base):
     __tablename__ = 'result'
