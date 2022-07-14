@@ -37,6 +37,14 @@ class Game(Base):
         self.updated_at = self.created_at
         
         
+    def serialize(self):
+        return {
+        "id" : self.id,
+        "random_word" : self.random_word,
+        "created_at" : str(self.created_at),
+        "user_num" : self.user_num,
+        "updated_at" : str(self.updated_at)
+    }
 
         
     
@@ -91,6 +99,12 @@ class Word(Base):
         
     
 
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name" : self.name,
+            "img_url" : self.img_url
+        }
 
     def serialize(self):
         return {
