@@ -47,15 +47,17 @@ db.init_app(app)
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
+    
     def get(self):
         return 'Doodle, Doodle!'
 
 
 @ns.route("/user-num", methods=['POST'])
 class user_num(Resource):
+    
     def post(self):
         value = request.get_json()
-        print(value)
+        #print(value)
         if value['user-num'] > 6:
             return ('too many users', 400)
         elif value['user-num'] < 1:
@@ -63,16 +65,26 @@ class user_num(Resource):
         row = models.Game(random_word="", user_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
-        return ('user-num created successfully', 201)
+        return (row.serialize(), 201)
 
 
-@ns.route("/randwords", methods=['GET'])
+@ns.route("/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
+    
     def get(self):
         randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name.rstrip(), 200)
+    
+    def post(self):
+        value = request.get_json()
+        if not value:
+            return('no word found', 400)
+        selectgame = db.session.query(models.Game).filter(models.Game.id == value['id']).first()
+        selectgame.random_word = value['name']
+        db.session.commit()
+        return ('random word saved', 201)
 
 
 if __name__=="__main__":

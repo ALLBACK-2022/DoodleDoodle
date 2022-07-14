@@ -39,6 +39,16 @@ class Game(Base):
         
     def set_updated_at(self):
         self.updated_at = datetime.datetime.now().replace(microsecond=0)
+        
+    
+    def serialize(self):
+        return {
+        "id" : self.id,
+        "random_word" : self.random_word,
+        "user_num" : self.user_num,
+        "created_at" : str(self.created_at),
+        "updated_at" : str(self.updated_at)
+    }
 
 
 class Draw(Base):
@@ -81,6 +91,13 @@ class Word(Base):
     
     def set_updated_at(self):
         self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name" : self.name,
+            "img_url" : self.img_url
+        }
 
 
 class Result(Base):
