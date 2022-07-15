@@ -24,15 +24,15 @@ class Game(Base):
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     random_word = db.Column(db.String(20))
-    user_num = db.Column(db.Integer)
+    player_num = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draws = db.relationship('Draw', backref='game', lazy='dynamic')
     
     
-    def __init__(self, random_word, user_num):
+    def __init__(self, random_word, player_num):
         self.random_word = random_word
-        self.user_num = user_num
+        self.player_num = player_num
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
@@ -45,7 +45,7 @@ class Game(Base):
         return {
         "id" : self.id,
         "random_word" : self.random_word,
-        "user_num" : self.user_num,
+        "player_num" : self.player_num,
         "created_at" : str(self.created_at),
         "updated_at" : str(self.updated_at)
     }
@@ -55,8 +55,8 @@ class Draw(Base):
     __tablename__ = 'draw'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
-    player_no = db.Column(db.Integer)
-    drawn_pic = db.Column(db.Text)
+    draw_no = db.Column(db.Integer)
+    doodle = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
