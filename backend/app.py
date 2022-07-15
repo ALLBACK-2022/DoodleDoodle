@@ -33,16 +33,20 @@ result_parser = ns.parser()
 db = SQLAlchemy()
 db.init_app(app)
 
-# def insert_word():
-#     f = open("classes.txt", "r", encoding="utf-8")
-#     lines = f.readlines()
-#     for line in lines:
-#         row = models.Word(name=line)
-#         db.session.add(row)
-#     db.session.commit()
-#     f.close()
-# with app.app_context():
-#     insert_word()
+
+def insert_word():
+    f = open("classes.txt", "r", encoding="utf-8")
+    lines = f.readlines()
+    for line in lines:
+        row = models.Word(name=line)
+        db.session.add(row)
+    db.session.commit()
+    f.close()
+
+with app.app_context():
+    word = db.session.query(models.Word).filter(models.Word.id == 1).first()
+    if word is None:
+        insert_word()
 
 
 @ns.route("/", methods=['GET'])
@@ -61,8 +65,8 @@ class user_num(Resource):
         if value['user-num'] > 6:
             return ('too many users', 400)
         elif value['user-num'] < 1:
-            return ('no user', 400)        
-        row = models.Game(random_word="", user_num=value['user-num'])
+            return ('no user', 400)
+        row = models.Game(random_word="", player_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
         return (row.serialize(), 201)
