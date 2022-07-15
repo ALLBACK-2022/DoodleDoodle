@@ -1,6 +1,5 @@
-import React from 'react';
-import '../css/Start.css';
-
-function Main() {}
+function Main() {
+  return <h1>Main page!</h1>;
+}
 
 export default Main;
