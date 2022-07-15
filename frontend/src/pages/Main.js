@@ -1,7 +1,7 @@
 import MainText from '../components/MainText';
 import AboutIcon from '../assets/icons/aboutIcon.png';
 import MainIcon from '../assets/icons/mainIcon.png';
-import NumIcon from '../components/NumIcon';
+import SetNum from '../components/SetNum';
 
 /*
  *   '두들 두들!' 시작 페이지
@@ -27,7 +27,7 @@ function Main() {
             <div className="flex ">
               <button className="text-6xl text-primary-1 font-cookierun startshadow textborder">start</button>
               <div className="ml-20">
-                <NumIcon Num="2" />
+                <SetNum />
               </div>
             </div>
           </div>
