@@ -14,5 +14,5 @@ task_routes = {
 
 # 작업 속도를 제한하는 설정
 task_annotations = {
-    'tasks.add': {'rate_limit': '10/m'
+    'tasks.add': {'rate_limit': '10/m' }
 }
