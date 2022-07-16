@@ -1,4 +1,4 @@
-FROM python:3.10.5
+FROM python:3.8.8
 # This prevents Python from writing out pyc files
 ENV PYTHONDONTWRITEBYTECODE 1
 # This keeps Python from buffering stdin/stdout
@@ -8,8 +8,9 @@ RUN pip install --upgrade pip
 RUN pip install -U flask
 RUN pip install -U flask-cors
 RUN pip install Flask-Session
-RUN pip install CMake
-RUN pip install dlib
+RUN pip install gunicorn
+# RUN pip install CMake
+# RUN pip install dlib
 COPY requirements.txt /backend/
 RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
