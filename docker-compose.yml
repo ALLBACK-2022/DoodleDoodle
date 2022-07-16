@@ -30,7 +30,7 @@ services:
       - 5000
     # image: run
     restart: always
-    command: gunicorn -b 0.0.0.0:5000 app:app
+    command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
       - "rabbitmq"
       - "db"
@@ -40,7 +40,7 @@ services:
     #gunicorn backend.wsgi --bind 0.0.0.0:5000
     # python manage.py runserver 0.0.0.0:5000
     #flask run --host=0.0.0.0 --port=5000
-    
+
   db:
     image: mysql
     container_name: mysql-con
@@ -68,6 +68,7 @@ services:
     depends_on:
       - frontend
       - backend
+    tty: true
 
   rabbitmq:
     image : rabbitmq:3-management
@@ -80,11 +81,36 @@ services:
       - "15672:15672"
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
+    tty: true
+
+  worker:
+      build:
+        context: ./backend
+      container_name: worker-con
+      volumes:
+        - ./backend:/backend
+      depends_on:
+        - db
+        - rabbitmq
+      environment:
+        - USE_MYSQL=1
+        - IS_DOCKER=1
+      tty: true
+
+  flower:  
+    image: mher/flower
+    container_name: flower-con
+    environment:
+      - CELERY_BROKER_URL=pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq//
+      - FLOWER_PORT=7777
+    ports:  
+      - 7777:7777
+    tty: true
 
 volumes:
   data_mysql:
   data_rabbitmq:
-     
+
 #docker-compose up --build
 #volume
 #docker volume prune

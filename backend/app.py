@@ -19,6 +19,7 @@ MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
 RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
 RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
 sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
