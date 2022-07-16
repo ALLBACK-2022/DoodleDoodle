@@ -2,6 +2,6 @@
     -webkit-user-drag: none; /* 이미지 드래그 방지 */
 }
 
-#drawingCanvas{
+div{
     user-select: none; /* 캔버스 드래그 및 선택 방지 */
 }
