@@ -1,32 +1,63 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
 import gameBGImg from '../assets/icons/gameBGImg.png';
 import trashImg from '../assets/icons/trashImg.png';
 import nextImg from '../assets/icons/nextImg.png';
 import checkImg from '../assets/icons/checkImg.png';
+
 import '../GamePage.css';
 
 const maxPlayer = 2; // 게임 시작 화면에서 설정한 플레이어 수
 const wordArray = ['사과', '바나나', '비행기', '새', '텔레비전']; // 임시 단어 배열
 const randWord = wordArray[Math.floor(Math.random() * wordArray.length)]; // 임시 랜덤 숫자(0~4)
+const maxNum = 9999; // 좌표 기본값 1
+const minNum = -1; // 좌표 기본값 2
+let minX = maxNum; // 입력된 X의 최소값
+let minY = maxNum; // 입력된 Y의 최소값
+let maxX = minNum; // 입력된 X의 최대값
+let maxY = minNum; // 입력된 Y의 최대값
 
 // 게임 페이지
 function GamePage() {
   const [currentPlayer, countPlayer] = useState(1); // 현재 플레이어 번호
   const [ctx, setCtx] = useState(); // 캔버스 데이터
   const [isDrawing, setIsDrawing] = useState(false); // 현재 그림을 그리고 있는가?
-  const canvasRef = useRef(null);
-  const contextRef = useRef(null);
 
-  // 페이지 로드 시 1회 실행, 캔버스 기본 세팅
-  useEffect(function () {
+  const canvasRef = useRef(null); // setCanvas
+
+  const canvasWidth = useRef(null); // 캔버스 넓이
+  const canvasHeight = useRef(null); // 캔버스 높이
+
+  const imgArray = new Array(maxPlayer); // 임시 단어 배열
+
+  // x,y값 초기화
+  function setXY() {
+    minX = maxNum;
+    minY = maxNum;
+    maxX = minNum;
+    maxY = minNum;
+  }
+
+  // 캔버스 초기 설정
+  function setCanvas() {
     const canvas = canvasRef.current;
-    canvas.width = 1000;
-    canvas.height = 800;
+    const { width, height } = canvas.getBoundingClientRect();
+    canvasWidth.current = width;
+    canvasHeight.current = height;
+    canvas.width = width;
+    canvas.height = height;
     const context = canvas.getContext('2d');
     context.strokeStyle = 'black';
     context.lineWidth = 2.5;
-    contextRef.current = context;
     setCtx(context);
+    setXY();
+  }
+
+  // 페이지 로드 시 1회 실행, 캔버스 기본 세팅
+  useEffect(() => {
+    setCanvas();
+    window.addEventListener('resize', setCanvas);
   }, []);
 
   // 그리기 시작하면 호출(마우스 누를때)
@@ -47,6 +78,10 @@ function GamePage() {
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
       } else {
+        if (offsetX > maxX) maxX = offsetX;
+        if (offsetX < minX) minX = offsetX;
+        if (offsetY > maxY) maxY = offsetY;
+        if (offsetY < minY) minY = offsetY;
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
       }
@@ -55,51 +90,111 @@ function GamePage() {
 
   // 캔버스 내용 지우기
   function clearCanvas() {
-    ctx.clearRect(0, 0, 1000, 800);
+    ctx.clearRect(0, 0, canvasWidth.current, canvasHeight.current);
+    setXY();
+  }
+
+  // 현재 캔버스에있는 그림을 이미지파일로 반환
+  function convertCanvasToImage() {
+    const image = new Image();
+
+    const whiteRange = 10; // 여백의 크기
+
+    let w = 0; // 그린 그림의 넓이
+    let h = 0; // 그린 그림의 높이
+
+    // 그림을 안그렸으면 기본 넓이 주기
+    if (maxX === minNum) {
+      maxX = 0;
+      maxY = 0;
+      minX = 0;
+      minY = 0;
+      w = 1;
+      h = 1;
+    }
+    // 그렸으면 여백 조금 주고 좌표 수정
+    else {
+      if (maxX + whiteRange > canvasWidth) maxX = canvasWidth;
+      else maxX += whiteRange;
+
+      if (maxY + whiteRange > canvasHeight) maxY = canvasWidth;
+      else maxY += whiteRange;
+
+      if (minX - whiteRange < 0) minX = 0;
+      else minX -= whiteRange;
+
+      if (minY - whiteRange < 0) minY = 0;
+      else minY -= whiteRange;
+
+      w = maxX - minX;
+      h = maxY - minY;
+    }
+
+    const imageData = ctx.getImageData(minX, minY, w, h); // 영역 내의 이미지 데이터 추출
+    clearCanvas(); // 내용 지우기
+    const imgMax = w > h ? w : h; // 가로나 세로중 큰 값 획득
+    const center = Math.abs(w - h) / 2 + whiteRange; // 이미지의 실제 여백
+
+    // 캔버스의 가로세로를 출력할 이미지에 맞게 변경
+    canvasRef.current.width = imgMax + whiteRange * 2;
+    canvasRef.current.height = imgMax + whiteRange * 2;
+
+    // 가로가 길면 이미지를 세로 중앙에 배치, 반대는 반대로
+    if (w > h) ctx.putImageData(imageData, whiteRange, center);
+    else ctx.putImageData(imageData, center, whiteRange);
+
+    image.src = canvasRef.current.toDataURL(); // 캔버스 이미지 URL저장
+    console.log(image.src);
+    setCanvas(); // 캔버스 리셋
+    return image;
   }
 
   // 다음 버튼 클릭 시 호출
   function NextButtonClick() {
-    // 그림 저장해서 백엔드에 저장하기 추가 예정
-    clearCanvas();
-    // 현재 플레이어가 마지막 플레이어면 결과페이지로 이동
-    if (currentPlayer + 1 > maxPlayer) {
-      console.log('Go To Result Page'); // 결과페이지 이동 추가 예정
-    } else countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
+    imgArray[currentPlayer - 1] = convertCanvasToImage(); // 추출한 이미지 배열에 이미지 저장
+    // 현재 플레이어가 마지막 플레이어면 결과페이지로 이동및 imgArray 백엔드에 넘기기
+    if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
   }
 
+  // Link태그 눌렀을때 마지막 플레이어가 아니면 페이지 이동 못하게하는 함수
+  const testHandler = event => {
+    if (currentPlayer < maxPlayer) event.preventDefault();
+  };
+
   return (
-    <div className="flex w-full h-full bg-primary relative text-[4vw]">
-      <img id="gameBGImg" src={gameBGImg} className="px-[2vw] py-[2vh] m-auto w-screen h-screen" alt="" />
+    <div className="w-screen h-screen bg-primary relative">
+      <img id="gameBGImg" src={gameBGImg} className="absolute w-screen h-screen px-[2vw] py-[2vh]" alt="" />
       <canvas
-        ref={canvasRef}
         id="drawingCanvas"
-        className="w-[1000] h-[800] left-1/2 translate-x-[-50%] mt-[15vh] border-2 border-black absolute"
+        ref={canvasRef}
+        className="absolute w-[80%] h-[75%] left-[10%] top-[15%] border-2 border-black"
         onMouseDown={startDrawing}
         onMouseMove={drawing}
         onMouseLeave={finishDrawing}
         onMouseUp={finishDrawing}
       />
-      <span
-        className="text-primary-3 font-cookierun
-        absolute mt-[8vh] ml-[5.5vw] text-[2.5vw] translate-y-[-50%]"
+      <div
+        className="text-primary-3 font-cookierun text-[4.5vmin]
+        absolute h-[7vmin] left-[5.5%] top-[5.5%] flex items-center"
       >
         {maxPlayer === 1 ? '' : ''.concat('플레이어 ', currentPlayer, '/', maxPlayer)}
-      </span>
-      <span
-        className="text-grey font-cookierun
-        absolute left-1/2 text-center translate-x-[-50%] translate-y-[-50%] mt-[8vh] text-[4vw]"
+      </div>
+      <div
+        className="text-grey font-cookierun text-[7vmin]
+        absolute h-[7vmin] top-[5.5%] left-[50%] translate-x-[-50%] flex items-center"
       >
         &lt;{randWord}&gt;
-      </span>
-      <span className="right-0 absolute mt-[8.7vh] mr-[5.5vw] translate-y-[-50%]">
-        <button className="" onClick={clearCanvas}>
-          <img src={trashImg} alt="" className="w-[3.2vw]" />
+      </div>
+      <div className="absolute right-[10%] top-[5.5%] h-[7vmin] flex items-center">
+        <button onClick={clearCanvas} className="mr-[3vmin]">
+          <img src={trashImg} alt="" className="h-[7vmin] " />
         </button>
-        <button className="px-[2.5vw]" onClick={NextButtonClick}>
-          <img src={currentPlayer === maxPlayer ? checkImg : nextImg} alt="" className="w-[3.2vw]" />
-        </button>
-      </span>
+        <Link to="ResultdforOne" onClick={testHandler}>
+          <button onClick={NextButtonClick}>
+            <img src={currentPlayer === maxPlayer ? checkImg : nextImg} alt="" className="h-[7vmin]" />
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
