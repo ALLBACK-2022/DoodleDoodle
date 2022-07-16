@@ -5,9 +5,9 @@ import Plus from '../assets/icons/plus.png';
 // NumIcon 은 Main 페이지에서 인원수를 설정할 때 사용하는 코드로 Main.js에서 사용
 
 function SetNum() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
   const minusClicked = () => {
-    if (count > 0) setCount(count - 1);
+    if (count > 1) setCount(count - 1);
   };
   const plusClicked = () => {
     if (count < 6) setCount(count + 1);

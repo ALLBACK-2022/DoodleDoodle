@@ -1,7 +1,9 @@
+import React from 'react';
 import MainText from '../components/MainText';
 import AboutIcon from '../assets/icons/aboutIcon.png';
 import MainIcon from '../assets/icons/mainIcon.png';
 import SetNum from '../components/SetNum';
+import GameStartButton from '../components/GameStartButton';
 
 /*
  *   '두들 두들!' 시작 페이지
@@ -25,12 +27,13 @@ function Main() {
 
           <div className="flex-row flex left-0 mt-[16vh] ml-[5.5vw]">
             <div className="flex ">
-              <button className="text-6xl text-primary-1 font-cookierun startshadow textborder">start</button>
+              <GameStartButton />
               <div className="ml-20">
                 <SetNum />
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
