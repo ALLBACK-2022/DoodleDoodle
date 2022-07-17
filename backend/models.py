@@ -37,8 +37,7 @@ class Game(Base):
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
         
     
     def serialize(self):
@@ -63,15 +62,14 @@ class Draw(Base):
     user_id = db.relationship('Result', backref='draw', lazy='dynamic')
 
 
-    def __init__(self, player_no, drawn_pic):
-        self.player_no = player_no
-        self.drawn_pic = drawn_pic
+    def __init__(self, draw_no, doodle):
+        self.draw_no = draw_no
+        self.doodle = doodle
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
         
 
 class Word(Base):
@@ -79,23 +77,26 @@ class Word(Base):
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
+    eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
     word_id = db.relationship('Result', backref='word', lazy='dynamic')
     
     
-    def __init__(self, name):
+    def __init__(self, name, eng_name, img_url):
         self.name = name
+        self.eng_name = eng_name
+        self.img_url = img_url
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
     
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
 
     def serialize(self):
         return {
             "id" : self.id,
             "name" : self.name,
+            "eng_name" : self.eng_name,
             "img_url" : self.img_url
         }
 
@@ -117,8 +118,6 @@ class Result(Base):
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 Base.metadata.create_all(engine)
