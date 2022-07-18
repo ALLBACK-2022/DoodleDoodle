@@ -17,6 +17,7 @@ services:
   backend:
     depends_on:
       - "db"
+      - "rabbitmq"
     build:
       context: ./backend
     ports:
@@ -29,14 +30,37 @@ services:
       - 5000
     # image: run
     restart: always
-    command: flask run --host=0.0.0.0 --port=5000
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    links:
+      - "rabbitmq"
+      - "db"
     volumes:
       - ./backend:/usr/local/app/
     tty: true
     #gunicorn backend.wsgi --bind 0.0.0.0:5000
     # python manage.py runserver 0.0.0.0:5000
     #flask run --host=0.0.0.0 --port=5000
-    
+
+  ai:
+      build:
+        context: ./ai
+      ports:
+      - "5001:5001" 
+      environment:
+        FLASK_DEBUG: 1
+        FLASK_APP: ./server.py
+      container_name: ai-con
+      expose:
+        - 5001
+      restart: always
+      command: flask run --host=0.0.0.0 --port=5001
+      volumes:
+        - ./ai:/usr/local/app/
+      depends_on:
+        - rabbitmq
+      links:
+        - rabbitmq
+
   db:
     image: mysql
     container_name: mysql-con
@@ -54,21 +78,61 @@ services:
       - data_mysql:/var/lib/mysql
     tty: true
 
-  # nginx:
-  #   image: nginx:1.21.5-alpine
-  #   ports:
-  #     - 80:80
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #   container_name: nginx-con
-  #   depends_on:
-  #     - frontend
-  #     - backend
+  nginx:
+    image: nginx:1.21.5-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    container_name: nginx-con
+    depends_on:
+      - frontend
+      - backend
+    tty: true
 
+  rabbitmq:
+    image : rabbitmq:3-management
+    container_name: rabbitmq-con
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+    ports:
+      - "5672:5672"  
+      - "15672:15672"
+    volumes:
+      - data_rabbitmq:/var/lib/rabbitmq
+    tty: true
+
+  worker:
+      build:
+        context: ./backend
+      container_name: worker-con
+      volumes:
+        - ./backend:/backend
+      depends_on:
+        - db
+        - rabbitmq
+      environment:
+        - USE_MYSQL=1
+        - IS_DOCKER=1
+      tty: true
+
+  flower:  
+    image: mher/flower
+    container_name: flower-con
+    depends_on:
+      - worker
+    environment:
+      - CELERY_BROKER_URL=pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq//
+      - FLOWER_PORT=7777
+    ports:  
+      - 7777:7777
+    tty: true
 
 volumes:
   data_mysql:
-     
+  data_rabbitmq:
+
 #docker-compose up --build
 #volume
 #docker volume prune
