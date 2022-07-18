@@ -29,7 +29,6 @@ class Game(Base):
     updated_at = db.Column(db.DateTime)
     draws = db.relationship('Draw', backref='game', lazy='dynamic')
     
-    
     def __init__(self, random_word, player_num):
         self.random_word = random_word
         self.player_num = player_num
