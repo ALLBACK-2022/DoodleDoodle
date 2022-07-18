@@ -37,6 +37,7 @@ class Game(Base):
         self.updated_at = self.created_at
         
         
+<<<<<<< HEAD
     def serialize(self):
         return {
         "id" : self.id,
@@ -46,6 +47,10 @@ class Game(Base):
         "updated_at" : str(self.updated_at)
     }
 
+=======
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+>>>>>>> docker
         
     
     def serialize(self):
@@ -111,6 +116,13 @@ class Word(Base):
             "id" : self.id,
             "name" : self.name,
             "eng_name" : self.eng_name,
+            "img_url" : self.img_url
+        }
+
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name" : self.name,
             "img_url" : self.img_url
         }
 
