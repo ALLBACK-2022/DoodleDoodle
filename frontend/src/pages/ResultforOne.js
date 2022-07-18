@@ -18,8 +18,8 @@ function ResultforOne() {
 
       <div className="flex absolute px-[8vw] py-[8vh] w-screen h-screen flex-col">
         <ResultText text="AI는 무엇으로 예측했을까요?" />
-        <div className="flex flex-row ml-[4vw] mt-[6vh] h-[80%]">
-          <div className="w-[45%]">
+        <div className="flex flex-row ml-[4vw] mt-[6vh] items-stretch">
+          <div className="w-[45%] sm:h-[30%] md:h-[60%] lg:h-[100%]">
             <div className="relative inline-flex flex-col w-[50%] h-[60%]">
               <ResultPieChart chartData={chartData} />
               <img
@@ -29,7 +29,7 @@ function ResultforOne() {
               />
               <PieChartLabel text="시계" />
             </div>
-            <div className="inline-flex flex-col w-[20%] h-[25%] -translate-y-[100%] translate-x-[20%]">
+            <div className="inline-flex flex-col w-[25%] h-[32%] -translate-y-[80%] translate-x-[20%]">
               <ResultPieChart chartData={chartData} />
               <img
                 src={sketchbook}
@@ -38,7 +38,7 @@ function ResultforOne() {
               />
               <PieChartLabel text="원숭이" />
             </div>
-            <div className="inline-flex flex-col w-[20%] h-[25%] -translate-x-[100%] translate-y-[30%]">
+            <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
               <ResultPieChart chartData={chartData} />
               <img
                 src={sketchbook}
@@ -47,7 +47,7 @@ function ResultforOne() {
               />
               <PieChartLabel text="책상" />
             </div>
-            <div className="inline-flex flex-col w-[20%] h-[25%] translate-y-[15%]">
+            <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
               <ResultPieChart chartData={chartData} />
               <img
                 src={sketchbook}
@@ -56,7 +56,7 @@ function ResultforOne() {
               />
               <PieChartLabel text="우산" />
             </div>
-            <div className="inline-flex flex-col w-[20%] h-[25%] translate-x-[50%] translate-y-[15%]">
+            <div className="inline-flex flex-col w-[25%] h-[32%] translate-x-[20%] translate-y-[15%]">
               <ResultPieChart chartData={chartData} />
               <img
                 src={sketchbook}
@@ -67,7 +67,15 @@ function ResultforOne() {
             </div>
           </div>
           <div className="w-[45%] ml-[3vw] flex flex-col justify-items-centers">
-            <img src={sketchbook} alt="" />
+            <div className="flex self-center relative">
+              <img src={sketchbook} alt="" />
+              <img
+                src={gameBGImg}
+                alt=""
+                className="absolute w-[50%] h-[50%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
+              />
+            </div>
+
             <ResultText text="AI는 (지정 단어)를 6%밖에 예측을 못했네요.." textSize={3} />
             <div>
               <ResultButtons isforOne />
