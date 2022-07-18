@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 // }
 
 const baseURL = 'http://localhost:5000/randwords';
+// const baseURL = 'http://127.0.0.1:5000/randwords';
 function StartDrawButton({ image, word }) {
   async function onClick() {
     const response = await axios.post(baseURL, word);
