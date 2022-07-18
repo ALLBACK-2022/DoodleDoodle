@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+// import word from './Random';
 
 import gameBGImg from '../assets/icons/gameBGImg.png';
 import trashImg from '../assets/icons/trashImg.png';
@@ -8,9 +10,10 @@ import checkImg from '../assets/icons/checkImg.png';
 
 import '../GamePage.css';
 
+const saveURL = 'http://localhost:5000/save';
+
 const maxPlayer = 2; // 게임 시작 화면에서 설정한 플레이어 수
-const wordArray = ['사과', '바나나', '비행기', '새', '텔레비전']; // 임시 단어 배열
-const randWord = wordArray[Math.floor(Math.random() * wordArray.length)]; // 임시 랜덤 숫자(0~4)
+const randWord = 'word'; // 임시 랜덤 숫자(0~4)
 const maxNum = 9999; // 좌표 기본값 1
 const minNum = -1; // 좌표 기본값 2
 let minX = maxNum; // 입력된 X의 최소값
@@ -149,11 +152,21 @@ function GamePage() {
     return image;
   }
 
+  async function PostImage(image) {
+    const response = await axios.post(saveURL, image);
+    console.log(response);
+  }
+
   // 다음 버튼 클릭 시 호출
   function NextButtonClick() {
     imgArray[currentPlayer - 1] = convertCanvasToImage(); // 추출한 이미지 배열에 이미지 저장
     // 현재 플레이어가 마지막 플레이어면 결과페이지로 이동및 imgArray 백엔드에 넘기기
     if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
+    else {
+      for (let i = 0; i < imgArray.length; i += 1) {
+        PostImage(imgArray[i]);
+      }
+    }
   }
 
   // Link태그 눌렀을때 마지막 플레이어가 아니면 페이지 이동 못하게하는 함수
@@ -189,7 +202,7 @@ function GamePage() {
         <button onClick={clearCanvas} className="mr-[3vmin]">
           <img src={trashImg} alt="" className="h-[7vmin] " />
         </button>
-        <Link to="ResultdforOne" onClick={testHandler}>
+        <Link to="../resultone" onClick={testHandler}>
           <button onClick={NextButtonClick}>
             <img src={currentPlayer === maxPlayer ? checkImg : nextImg} alt="" className="h-[7vmin]" />
           </button>

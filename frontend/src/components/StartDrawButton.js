@@ -16,7 +16,7 @@ function StartDrawButton({ image, word }) {
   }
 
   return (
-    <Link to="/">
+    <Link to="../gamepage">
       <button onClick={onClick}>
         <img src={image} alt="" className="w-6.25 h-6.553" />
       </button>
