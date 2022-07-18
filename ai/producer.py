@@ -1,10 +1,5 @@
 import sys
-import pika, os
-from dotenv import load_dotenv
-load_dotenv() 
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-
+import pika
  
 queue = 'heo_queue'
 message ='hello'
@@ -16,7 +11,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host='localhost'
                 , port=5672
                 , virtual_host='/'
-                , credentials=pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)   # username, password
+                , credentials=pika.PlainCredentials('jiwon', 'jiwon')   # username, password
             ))
  
 # Server와 통신하기 위한 channel 생성
