@@ -24,44 +24,52 @@ class Game(Base):
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     random_word = db.Column(db.String(20))
-    user_num = db.Column(db.Integer)
+    player_num = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draws = db.relationship('Draw', backref='game', lazy='dynamic')
     
     
-    def __init__(self, random_word, user_num):
+    def __init__(self, random_word, player_num):
         self.random_word = random_word
-        self.user_num = user_num
+        self.player_num = player_num
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
+        
+    
+    def serialize(self):
+        return {
+        "id" : self.id,
+        "random_word" : self.random_word,
+        "player_num" : self.player_num,
+        "created_at" : str(self.created_at),
+        "updated_at" : str(self.updated_at)
+    }
 
 
 class Draw(Base):
     __tablename__ = 'draw'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
-    player_no = db.Column(db.Integer)
-    drawn_pic = db.Column(db.Text)
+    draw_no = db.Column(db.Integer)
+    doodle = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
     user_id = db.relationship('Result', backref='draw', lazy='dynamic')
 
 
-    def __init__(self, player_no, drawn_pic):
-        self.player_no = player_no
-        self.drawn_pic = drawn_pic
+    def __init__(self, draw_no, doodle):
+        self.draw_no = draw_no
+        self.doodle = doodle
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
         
 
 class Word(Base):
@@ -69,18 +77,28 @@ class Word(Base):
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
+    eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
     word_id = db.relationship('Result', backref='word', lazy='dynamic')
     
     
-    def __init__(self, name):
+    def __init__(self, name, eng_name, img_url):
         self.name = name
+        self.eng_name = eng_name
+        self.img_url = img_url
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
     
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
+
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name" : self.name,
+            "eng_name" : self.eng_name,
+            "img_url" : self.img_url
+        }
 
 
 class Result(Base):
@@ -100,8 +118,6 @@ class Result(Base):
         self.updated_at = self.created_at
         
         
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 Base.metadata.create_all(engine)

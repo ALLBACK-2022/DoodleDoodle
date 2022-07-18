@@ -10,11 +10,6 @@ RUN pip install -U flask-cors
 RUN pip install Flask-Session
 RUN pip install CMake
 RUN pip install dlib
-RUN pip install python-dotenv
-RUN pip install flask-restx
-RUN pip install flask-sqlalchemy
-RUN pip install pymysql
-RUN pip install cryptography
 COPY requirements.txt /backend/
 RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics

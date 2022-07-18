@@ -1,8 +1,12 @@
+from asyncio.windows_events import NULL
+from fileinput import filename
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from connection import s3_connection, s3_put_object, s3_get_image_url
+from config import BUCKET_NAME, BUCKET_REGION
 import os, models, random, json
 
 app = Flask(__name__)
@@ -33,47 +37,93 @@ result_parser = ns.parser()
 db = SQLAlchemy()
 db.init_app(app)
 
-# def insert_word():
-#     f = open("classes.txt", "r", encoding="utf-8")
-#     lines = f.readlines()
-#     for line in lines:
-#         row = models.Word(name=line)
-#         db.session.add(row)
-#     db.session.commit()
-#     f.close()
-# with app.app_context():
-#     insert_word()
 
+def insert_word():
+    f1 = open("classes.txt", "r", encoding="utf-8")
+    f2 = open("engclasses.txt", "r", encoding="utf-8")
+    lines1 = f1.readlines()
+    lines2 = f2.readlines()
+    for idx, line in enumerate(lines1):
+        row = models.Word(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        db.session.add(row)
+    db.session.commit()
+    f1.close()
+    f2.close()
+
+
+
+with app.app_context():
+    word = db.session.query(models.Word).filter(models.Word.id == 1).first()
+    if word is None:
+        insert_word()
+
+
+s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
+    
     def get(self):
         return 'Doodle, Doodle!'
 
 
 @ns.route("/user-num", methods=['POST'])
 class user_num(Resource):
+    
     def post(self):
         value = request.get_json()
-        print(value)
+        #print(value)
         if value['user-num'] > 6:
             return ('too many users', 400)
         elif value['user-num'] < 1:
-            return ('no user', 400)        
-        row = models.Game(random_word="", user_num=value['user-num'])
+            return ('no user', 400)
+        row = models.Game(random_word="", player_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
-        return ('user-num created successfully', 201)
+        return (row.serialize(), 201)
 
 
-@ns.route("/randwords", methods=['GET'])
+@ns.route("/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
+    
     def get(self):
         randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
-        if randword is None:
+        if randword.first() is None:
             return ('Can not access data', 400)
-        return (randword[0].name.rstrip(), 200)
+        return (randword[0].name, 200)
+    
+    def post(self):
+        value = request.get_json()
+        if not value:
+            return('no word found', 400)
+        selectgame = db.session.query(models.Game).filter(models.Game.id == value['id']).first()
+        selectgame.random_word = value['name']
+        db.session.commit()
+        return ('random word saved', 201)
 
+@ns.route("/save",methods=['POST'])
+class save(Resource):
+
+#filename: 파일명 ./temp 파일경로로 확인하기 
+    def post(self):
+        value = request.form.to_dict(flat=False)
+        f = request.files['filename']
+        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        
+        print(value)
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+         'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+
+        if retPut :
+            
+            retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(draw_no=value['draw-no'], doodle=retGet)
+            db.session.add(row)
+            db.session.commit()
+            return('draw saved success',201)
+        else:
+           # print("파일 저장 실패")
+            return('draw saved fail',400)
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
