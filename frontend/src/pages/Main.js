@@ -27,6 +27,7 @@ function Main() {
           <div className="flex-row flex left-0 mt-[14vh] ml-[6vw]">
             <div className="flex ">
               <GameStartButton />
+              {/* // history 부분 설정해서 뒤로 가도 숫자는 그대로인걸 구현해보기  */}
             </div>
           </div>
         </div>

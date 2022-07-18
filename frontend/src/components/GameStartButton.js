@@ -6,6 +6,7 @@ import Plus from '../assets/icons/plus.png';
 
 // 인원수 설정 후 Main페이지에서 랜덤단어생성 페이지로 이동
 
+// const NumURL = 'http://localhost:5000/user-num';
 const NumURL = 'http://127.0.0.1:5000/user-num';
 
 function GameStartButton() {
@@ -32,7 +33,7 @@ function GameStartButton() {
         'content-type': 'application/json',
       },
       body: JSON.stringify(req),
-    });
+    }).then(response => console.log(response));
   }
 
   return (
