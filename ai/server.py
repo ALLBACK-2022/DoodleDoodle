@@ -20,15 +20,15 @@ with open("./ai-model/class_names.txt", "r") as ins:
 
 # Load the model
 model = keras.models.load_model('./ai-model/doodleNet-model.h5')
-model.summary()
+#model.summary()
 
 @app.route("/AI", methods=['GET'])
 def index():
-    print('함수실행')
+    
     # if request.method =='GET':
     #     return render_template('index.html')
     if request.method =='GET':
-        parameter_dict = request.args.to_dict()
+        parameter_dict = request.args.to_dict() 
         if len(parameter_dict) == 0:
             return 'No parameter'
         #랜덤 단어와 이미지 url을 받아온다.
@@ -44,7 +44,7 @@ def index():
         img = (255 - img) / 255
         # predict
         pred = model.predict(np.expand_dims(img, axis=0))[0]
-        ind = (-pred).argsort()[0:] # ind is index of classname 5
+        ind = (-pred).argsort()[0:] # all sequence with similarity sorted by highest.  
         latex = [class_names[x] for x in ind] # latex is top 10 classname
 
         otherResults={}
@@ -52,17 +52,13 @@ def index():
         for x in range(0,len(ind)):
             if(latex[x]==ranword):
                 result[ latex[x] ] = str(round(pred[ind[x]]*100, 2))+'%'
-                print('random의 해당 단어는'+latex[x]+'유사도는'+str(round(pred[ind[x]]*100, 2)) + '%')
+                #print('random의 해당 단어는'+latex[x]+'유사도는'+str(round(pred[ind[x]]*100, 2)) + '%')
             if(x<5):
                 otherResults[ latex[x] ] = str(round(pred[ind[x]]*100, 2)) + '%'
-            #print('rank ' + sctr(x+1) + ': ' + latex[x])
-            #print('accuarcy: ' + str(round(pred[ind[x]]*100, 2)) + '%')
-        for x in otherResults:
-            print('otherResults'+otherResults[x])
-        #print('otherResults'+otherResults)
-        #print('result'+ result)
         
-        return result
+        otherResults['result'] = result
+
+        return (otherResults, 200)
 
 if __name__ =='__main__':
     app.run(port=5001, debug=True)
