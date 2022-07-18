@@ -13,7 +13,7 @@ import '../GamePage.css';
 const saveURL = 'http://localhost:5000/save';
 
 const maxPlayer = 2; // 게임 시작 화면에서 설정한 플레이어 수
-const randWord = 'word'; // 임시 랜덤 숫자(0~4)
+const randWord = 'word'; // 임시
 const maxNum = 9999; // 좌표 기본값 1
 const minNum = -1; // 좌표 기본값 2
 let minX = maxNum; // 입력된 X의 최소값
