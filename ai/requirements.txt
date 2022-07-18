@@ -1,0 +1,8 @@
+opencv-python==4.6.0.66
+runway==2.6.2
+Flask==2.0.2
+gunicorn==20.1.0
+requests==2.27.1
+numpy==1.23.1
+Keras==2.9.0
+tensorflow-gpu==2.9.1

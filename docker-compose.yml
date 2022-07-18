@@ -41,6 +41,26 @@ services:
     # python manage.py runserver 0.0.0.0:5000
     #flask run --host=0.0.0.0 --port=5000
 
+  ai:
+      build:
+        context: ./ai
+      ports:
+      - "5001:5001" 
+      environment:
+        FLASK_DEBUG: 1
+        FLASK_APP: ./server.py
+      container_name: ai-con
+      expose:
+        - 5001
+      restart: always
+      command: flask run --host=0.0.0.0 --port=5001
+      volumes:
+        - ./ai:/usr/local/app/
+      depends_on:
+        - rabbitmq
+      links:
+        - rabbitmq
+
   db:
     image: mysql
     container_name: mysql-con
@@ -100,6 +120,8 @@ services:
   flower:  
     image: mher/flower
     container_name: flower-con
+    depends_on:
+      - worker
     environment:
       - CELERY_BROKER_URL=pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq//
       - FLOWER_PORT=7777
