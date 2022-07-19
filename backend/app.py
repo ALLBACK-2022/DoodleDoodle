@@ -176,21 +176,9 @@ class player(Resource):
             .filter(models.Draw.draw_no == value['draw-no']).first()
         selecturl = ret.doodle
         db.session.commit()
-        print(selecturl[0])
-        return(selecturl)
-
-
-# @ns.route("/results/player",methods=['POST'])
-# class player(Resource):
-
-#     def post(self):
-#         value = request.get_json()
-#         selecturl = 'https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/' + 'drawimage/' \
-#             + str(value['game-id']) + '_' + str(value['draw-no']) + '.png'
-#         return(str(selecturl), 201)
+        #print(selecturl)
+        return(selecturl,201)
 
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
-    connect_rabbitmq()
-  
