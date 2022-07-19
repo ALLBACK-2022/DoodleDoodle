@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from fileinput import filename
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
@@ -117,7 +116,7 @@ class save(Resource):
         if retPut :
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet)
+            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             db.session.add(row)
             db.session.commit()
             return('draw saved success',201)
@@ -125,6 +124,18 @@ class save(Resource):
            # print("파일 저장 실패")
             return('draw saved fail',400)
 
+@ns.route("/results/player",methods=['POST'])
+class player(Resource):
+
+    def post(self):
+        value = request.get_json()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        selecturl = ret.doodle
+        db.session.commit()
+        #print(selecturl)
+        return(selecturl,201)
+
+
 if __name__=="__main__":
     app.run(port="5000", debug=True)
-  

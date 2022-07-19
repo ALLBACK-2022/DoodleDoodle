@@ -62,9 +62,10 @@ class Draw(Base):
     user_id = db.relationship('Result', backref='draw', lazy='dynamic')
 
 
-    def __init__(self, draw_no, doodle):
+    def __init__(self, draw_no, doodle,game_id):
         self.draw_no = draw_no
         self.doodle = doodle
+        self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
