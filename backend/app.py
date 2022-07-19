@@ -5,23 +5,28 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
+import os
+import models
+import random
+import json
+import requests
 
 app = Flask(__name__)
 load_dotenv()
 CORS(app)
 api = Api(app)
 
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD=os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+RABBITMQ_DEFAULT_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST = os.environ.get("RABBITMQ_DEFAULT_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER
@@ -41,8 +46,10 @@ db.init_app(app)
 
 def connect_rabbitmq():
     time.sleep(3)
-    credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER,RABBITMQ_DEFAULT_PASS)
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+    credentials = pika.PlainCredentials(
+        RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
     channel = connection.channel()
     channel.queue_declare(queue='task_queue', durable=True)
     channel.queue_declare(queue='result_queue', durable=True)
@@ -50,14 +57,17 @@ def connect_rabbitmq():
 
 class FibonacciRpcClient(object):
     def __init__(self):
-        credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        credentials = pika.PlainCredentials(
+            RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.callback_queue = result.method.queue
-        self.channel.basic_consume(queue=self.callback_queue,on_message_callback=self.on_response,auto_ack=True)
-    
+        self.channel.basic_consume(
+            queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
+
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             self.response = body
@@ -65,8 +75,8 @@ class FibonacciRpcClient(object):
     def call(self, n):
         self.response = None
         self.corr_id = str(uuid.uuid4())
-        self.channel.basic_publish(exchange='',routing_key='rpc_queue',properties=pika.BasicProperties(
-                    reply_to=self.callback_queue,correlation_id=self.corr_id,),body=str(n))
+        self.channel.basic_publish(exchange='', routing_key='rpc_queue', properties=pika.BasicProperties(
+            reply_to=self.callback_queue, correlation_id=self.corr_id,), body=str(n))
         time.sleep(5)
         while self.response is None:
             self.connection.process_data_events()
@@ -93,7 +103,6 @@ def insert_word():
     f2.close()
 
 
-
 with app.app_context():
     word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
@@ -102,19 +111,20 @@ with app.app_context():
 
 s3 = s3_connection()
 
+
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
-    
+
     def get(self):
         return 'Doodle, Doodle!'
 
 
 @ns.route("/user-num", methods=['POST'])
 class user_num(Resource):
-    
+
     def post(self):
         value = request.get_json()
-        #print(value)
+        # print(value)
         if value['user-num'] > 6:
             return ('too many users', 400)
         elif value['user-num'] < 1:
@@ -127,34 +137,37 @@ class user_num(Resource):
 
 @ns.route("/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
-    
+
     def get(self):
         randword = db.session.query(models.Dictionary).filter(models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
-    
+
     def post(self):
         value = request.get_json()
         if not value:
             return('no word found', 400)
-        selectgame = db.session.query(models.Game).filter(models.Game.id == value['id']).first()
+        selectgame = db.session.query(models.Game).filter(
+            models.Game.id == value['id']).first()
         selectgame.random_word = value['name']
         db.session.commit()
         return ('random word saved', 201)
 
-@ns.route("/save",methods=['POST'])
+
+@ns.route("/save", methods=['POST'])
 class save(Resource):
 
-#filename: 파일명 ./temp 파일경로로 확인하기 
+    # filename: 파일명 ./temp 파일경로로 확인하기
     def post(self):
         value = request.form.to_dict(flat=False)
         f = request.files['filename']
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
+
         print(value)
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
-         'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
 
         if retPut :
             
@@ -162,10 +175,10 @@ class save(Resource):
             row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             db.session.add(row)
             db.session.commit()
-            return('draw saved success',201)
+            return('draw saved success', 201)
         else:
            # print("파일 저장 실패")
-            return('draw saved fail',400)
+            return('draw saved fail', 400)
 
 @ns.route("/results/player",methods=['POST'])
 class player(Resource):
@@ -180,5 +193,5 @@ class player(Resource):
         return(selecturl,201)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app.run(port="5000", debug=True)

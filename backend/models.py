@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime, os
+import datetime
+import os
 from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -9,9 +10,10 @@ from dotenv import load_dotenv
 app = Flask(__name__)
 load_dotenv()
 db = SQLAlchemy()
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
@@ -28,31 +30,25 @@ class Game(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draws = db.relationship('Draw', backref='game', lazy='dynamic')
-    
-    
+
     def __init__(self, random_word, player_num):
         self.random_word = random_word
         self.player_num = player_num
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-        
-<<<<<<< HEAD
+
     def serialize(self):
         return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "created_at" : str(self.created_at),
-        "user_num" : self.user_num,
-        "updated_at" : str(self.updated_at)
-    }
+            "id": self.id,
+            "random_word": self.random_word,
+            "created_at": str(self.created_at),
+            "user_num": self.user_num,
+            "updated_at": str(self.updated_at)
+        }
 
-=======
     def set_updated_at(self):
         self.updated_at = datetime.datetime.now().replace(microsecond=0)
->>>>>>> docker
-        
-    
+
     def serialize(self):
         return {
         "id" : self.id
@@ -77,10 +73,7 @@ class Draw(Base):
         self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-        
 
-        
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
@@ -90,37 +83,34 @@ class Dictionary(Base):
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
     word_id = db.relationship('Result', backref='word', lazy='dynamic')
-    
-    
+
     def __init__(self, name, eng_name, img_url):
         self.name = name
         self.eng_name = eng_name
         self.img_url = img_url
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-    
 
     def serialize(self):
         return {
-            "id" : self.id,
-            "name" : self.name,
-            "img_url" : self.img_url
+            "id": self.id,
+            "name": self.name,
+            "img_url": self.img_url
         }
 
     def serialize(self):
         return {
-            "id" : self.id,
-            "name" : self.name,
-            "eng_name" : self.eng_name,
-            "img_url" : self.img_url
+            "id": self.id,
+            "name": self.name,
+            "eng_name": self.eng_name,
+            "img_url": self.img_url
         }
 
     def serialize(self):
         return {
-            "id" : self.id,
-            "name" : self.name,
-            "img_url" : self.img_url
+            "id": self.id,
+            "name": self.name,
+            "img_url": self.img_url
         }
 
 
