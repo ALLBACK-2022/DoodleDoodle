@@ -1,4 +1,3 @@
-from flask import Flask, jsonify, request
 from fileinput import filename
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -160,7 +159,7 @@ class save(Resource):
         if retPut :
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet)
+            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             db.session.add(row)
             db.session.commit()
             return('draw saved success',201)
@@ -168,16 +167,27 @@ class save(Resource):
            # print("파일 저장 실패")
             return('draw saved fail',400)
 
-def create_app(config_filename):
-    app = Flask(__name__)
-    app.config.from_pyfile(config_filename)
+@ns.route("/results/player",methods=['POST'])
+class player(Resource):
 
-    # from yourapplication.views.admin import admin
-    # from yourapplication.views.frontend import frontend
-    # app.register_blueprint(admin)
-    # app.register_blueprint(frontend)
-    
-    return app
+    def post(self):
+        value = request.get_json()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        selecturl = ret.doodle
+        db.session.commit()
+        print(selecturl[0])
+        return(selecturl)
+
+
+# @ns.route("/results/player",methods=['POST'])
+# class player(Resource):
+
+#     def post(self):
+#         value = request.get_json()
+#         selecturl = 'https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/' + 'drawimage/' \
+#             + str(value['game-id']) + '_' + str(value['draw-no']) + '.png'
+#         return(str(selecturl), 201)
 
 
 if __name__=="__main__":
