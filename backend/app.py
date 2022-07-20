@@ -1,4 +1,6 @@
 from fileinput import filename
+import time
+from flask import jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -96,7 +98,8 @@ def insert_word():
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        row = models.Dictionary(
+            name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -104,7 +107,8 @@ def insert_word():
 
 
 with app.app_context():
-    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
+    word = db.session.query(models.Dictionary).filter(
+        models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
@@ -139,7 +143,8 @@ class user_num(Resource):
 class randwords(Resource):
 
     def get(self):
-        randword = db.session.query(models.Dictionary).filter(models.Dictionary.id == random.randint(1, 345))
+        randword = db.session.query(models.Dictionary).filter(
+            models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
@@ -169,10 +174,12 @@ class save(Resource):
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
 
-        if retPut :
-            
-            retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+        if retPut:
+
+            retGet = s3_get_image_url(
+                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(
+                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             db.session.add(row)
             db.session.commit()
             return('draw saved success', 201)
@@ -180,24 +187,40 @@ class save(Resource):
            # print("파일 저장 실패")
             return('draw saved fail', 400)
 
-@ns.route("/results/player",methods=['POST'])
-class player(Resource):
 
-@ns.route("/results/ai", methods=['POST'])
-class ai(Resource):
+@ns.route("/results/player", methods=['POST'])
+class player(Resource):
     def post(self):
         value = request.get_json()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
         selecturl = ret.doodle
         db.session.commit()
-        #print(selecturl)
-        return(selecturl,201)
+        # print(selecturl)
+        return(selecturl, 201)
 
+
+@ns.route("/results/ai", methods=['POST'])
+class ai(Resource):
+    def post(self):
+        value = request.get_json()
+
+        draw_id = value['draw-id']
+        draw = db.session.query(models.Draw).filter(models.Draw.id == draw_id)
+        if draw.first() is None:
+            return ('Can not access data', 400)
+        game_id = draw[0].game_id
+        draw_no = draw[0].draw_no
+        game = db.session.query(models.Game).filter(
+            models.Game.id == game_id)
+        if game.first() is None:
+            return ('Can not access data', 400)
+        randword = game[0].random_word
 
         try:
+            # 여기서 AI 모델에서 Task ID를 response로 받아와 클라로 전송
             res = requests.post(
-                "http://localhost:5001/AI/randword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
+                f"http://localhost:5001/AI/randword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
             return (jsonify(res), 200)
         except:
             return ('Request to AI fail', 400)
@@ -205,22 +228,35 @@ class ai(Resource):
 
 @ns.route("/results/similarity", methods=['POST'])
 class similarity(Resource):
-    def _is_complete(self, draw_id):
-        # draw_id 로 result row가 있는지 찾고 5개 이상 있는지 return(True, False)
-        results = db.session.query(models.Result).filter(
-            models.Result.draw_id == draw_id).all()
-        return (len(results) >= 5)
+    def _is_complete(self, task_id):
+        # task_id 로 status가 성공인지 아닌지
+        task = db.session.query(models.Task).get(task_id)
+        if task.status == "success":
+            return True
+        else:
+            return False
+        # results = db.session.query(models.Result).filter(
+        #     models.Result.draw_id == draw_id).all()
+        # return (len(results) >= 5)
 
     def post(self):
+        # here we want to get the value of num (i.e. ?num=some-value)
+        user_num = request.args.get('num')
         value = request.get_json()
-        draw_id = value['draw-id']
-        while not self._is_complete(draw_id):
+        if user_num == 1:
+            task_id = value['task-id']
+        else:
+            task_id = value['task-id']
+        while not self._is_complete(task_id):
             time.sleep(0.5)
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == draw_id).all()
         topfive = []
         for result in results:
             word_id = result.word_id
+            word = db.session.query(models.Dictionary).filter(
+                models.Dictionary.id == word_id).all()[0]
+            word.serialized()
             similarity = result.similarity
 
 
