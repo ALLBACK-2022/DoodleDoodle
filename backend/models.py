@@ -55,11 +55,7 @@ class Game(Base):
     
     def serialize(self):
         return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "player_num" : self.player_num,
-        "created_at" : str(self.created_at),
-        "updated_at" : str(self.updated_at)
+        "id" : self.id
     }
 
 
@@ -75,9 +71,10 @@ class Draw(Base):
     user_id = db.relationship('Result', backref='draw', lazy='dynamic')
 
 
-    def __init__(self, draw_no, doodle):
+    def __init__(self, draw_no, doodle,game_id):
         self.draw_no = draw_no
         self.doodle = doodle
+        self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
@@ -85,8 +82,8 @@ class Draw(Base):
 
         
 
-class Word(Base):
-    __tablename__ = 'word'
+class Dictionary(Base):
+    __tablename__ = 'dictionary'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
@@ -131,11 +128,12 @@ class Result(Base):
     __tablename__ = 'result'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
+    game_id = db.column(db.Integer)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
-    word_id = db.Column(db.Integer, db.ForeignKey(Word.id))
+    draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
+    word_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     
     
     def __init__(self, similarity):
@@ -143,7 +141,19 @@ class Result(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-        
+
+class Task(Base):
+    __tablename__ = 'task'
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+
+    def __init__(self,status):
+        self.status = status
+        self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
 
 
 Base.metadata.create_all(engine)

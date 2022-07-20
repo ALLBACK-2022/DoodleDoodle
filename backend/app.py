@@ -1,4 +1,3 @@
-from flask import Flask, jsonify, request
 from fileinput import filename
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -87,7 +86,7 @@ def insert_word():
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Word(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -96,7 +95,7 @@ def insert_word():
 
 
 with app.app_context():
-    word = db.session.query(models.Word).filter(models.Word.id == 1).first()
+    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
@@ -130,7 +129,7 @@ class user_num(Resource):
 class randwords(Resource):
     
     def get(self):
-        randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
+        randword = db.session.query(models.Dictionary).filter(models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
@@ -160,7 +159,7 @@ class save(Resource):
         if retPut :
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet)
+            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             db.session.add(row)
             db.session.commit()
             return('draw saved success',201)
@@ -168,19 +167,18 @@ class save(Resource):
            # print("파일 저장 실패")
             return('draw saved fail',400)
 
-def create_app(config_filename):
-    app = Flask(__name__)
-    app.config.from_pyfile(config_filename)
+@ns.route("/results/player",methods=['POST'])
+class player(Resource):
 
-    # from yourapplication.views.admin import admin
-    # from yourapplication.views.frontend import frontend
-    # app.register_blueprint(admin)
-    # app.register_blueprint(frontend)
-    
-    return app
+    def post(self):
+        value = request.get_json()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        selecturl = ret.doodle
+        db.session.commit()
+        #print(selecturl)
+        return(selecturl,201)
 
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
-    connect_rabbitmq()
-  

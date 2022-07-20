@@ -1,9 +1,9 @@
-aircraft carrier
+aircraft_carrier
 airplane
-alarm clock
+alarm_clock
 ambulance
 angel
-animal migration
+animal_migration
 ant
 anvil
 apple
@@ -15,7 +15,7 @@ banana
 bandage
 barn
 baseball
-baseball bat
+baseball_bat
 basket
 basketball
 bat
@@ -30,7 +30,7 @@ bench
 bicycle
 binoculars
 bird
-birthday cake
+birthday_cake
 blackberry
 blueberry
 book
@@ -63,9 +63,9 @@ car
 carrot
 castle
 cat
-ceiling fan
+ceiling_fan
 cello
-cell phone
+cell_phone
 chair
 chandelier
 church
@@ -73,7 +73,7 @@ circle
 clarinet
 clock
 cloud
-coffee cup
+coffee_cup
 compass
 computer
 cookie
@@ -84,11 +84,11 @@ crab
 crayon
 crocodile
 crown
-cruise ship
+cruise_ship
 cup
 diamond
 dishwasher
-diving board
+diving_board
 dog
 dolphin
 donut
@@ -111,25 +111,25 @@ fan
 feather
 fence
 finger
-fire hydrant
+fire_hydrant
 fireplace
 firetruck
 fish
 flamingo
 flashlight
-flip flops
-floor lamp
+flip_flops
+floor_lamp
 flower
-flying saucer
+flying_saucer
 foot
 fork
 frog
-frying pan
+frying_pan
 garden
-garden hose
+garden_hose
 giraffe
 goatee
-golf club
+golf_club
 grapes
 grass
 guitar
@@ -143,18 +143,18 @@ hedgehog
 helicopter
 helmet
 hexagon
-hockey puck
-hockey stick
+hockey_puck
+hockey_stick
 horse
 hospital
-hot air balloon
-hot dog
-hot tub
+hot_air_balloon
+hot_dog
+hot_tub
 hourglass
 house
-house plant
+house_plant
 hurricane
-ice cream
+ice_cream
 jacket
 jail
 kangaroo
@@ -167,7 +167,7 @@ lantern
 laptop
 leaf
 leg
-light bulb
+light_bulb
 lighter
 lighthouse
 lightning
@@ -204,11 +204,11 @@ onion
 oven
 owl
 paintbrush
-paint can
-palm tree
+paint_can
+palm_tree
 panda
 pants
-paper clip
+paper_clip
 parachute
 parrot
 passport
@@ -218,20 +218,20 @@ peas
 pencil
 penguin
 piano
-pickup truck
-picture frame
+pickup_truck
+picture_frame
 pig
 pillow
 pineapple
 pizza
 pliers
-police car
+police_car
 pond
 pool
 popsicle
 postcard
 potato
-power outlet
+power_outlet
 purse
 rabbit
 raccoon
@@ -239,22 +239,22 @@ radio
 rain
 rainbow
 rake
-remote control
+remote_control
 rhinoceros
 rifle
 river
-roller coaster
+roller_coaster
 rollerskates
 sailboat
 sandwich
 saw
 saxophone
-school bus
+school_bus
 scissors
 scorpion
 screwdriver
-sea turtle
-see saw
+sea_turtle
+see_saw
 shark
 sheep
 shoe
@@ -264,14 +264,14 @@ sink
 skateboard
 skull
 skyscraper
-sleeping bag
-smiley face
+sleeping_bag
+smiley_face
 snail
 snake
 snorkel
 snowflake
 snowman
-soccer ball
+soccer_ball
 sock
 speedboat
 spider
@@ -286,17 +286,17 @@ steak
 stereo
 stethoscope
 stitches
-stop sign
+stop_sign
 stove
 strawberry
 streetlight
-string bean
+string_bean
 submarine
 suitcase
 sun
 swan
 sweater
-swing set
+swing_set
 sword
 syringe
 table
@@ -304,11 +304,11 @@ teapot
 teddy-bear
 telephone
 television
-tennis racquet
+tennis_racquet
 tent
-The Eiffel Tower
-The Great Wall of China
-The Mona Lisa
+The-Eiffel_Tower
+The_Great_Wall_of_China
+The_Mona_Lisa
 tiger
 toaster
 toe
@@ -318,7 +318,7 @@ toothbrush
 toothpaste
 tornado
 tractor
-traffic light
+traffic_light
 train
 tree
 triangle
@@ -331,14 +331,14 @@ underwear
 van
 vase
 violin
-washing machine
+washing_machine
 watermelon
 waterslide
 whale
 wheel
 windmill
-wine bottle
-wine glass
+wine_bottle
+wine_glass
 wristwatch
 yoga
 zebra
