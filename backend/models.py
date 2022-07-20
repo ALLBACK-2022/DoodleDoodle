@@ -106,7 +106,7 @@ class Result(Base):
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
+    draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
     word_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     
     
