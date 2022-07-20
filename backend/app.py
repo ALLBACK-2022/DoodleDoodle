@@ -183,6 +183,8 @@ class save(Resource):
 @ns.route("/results/player",methods=['POST'])
 class player(Resource):
 
+@ns.route("/results/ai", methods=['POST'])
+class ai(Resource):
     def post(self):
         value = request.get_json()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
@@ -191,6 +193,47 @@ class player(Resource):
         db.session.commit()
         #print(selecturl)
         return(selecturl,201)
+
+
+        try:
+            res = requests.post(
+                "http://localhost:5001/AI/randword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
+            return (jsonify(res), 200)
+        except:
+            return ('Request to AI fail', 400)
+
+
+@ns.route("/results/similarity", methods=['POST'])
+class similarity(Resource):
+    def _is_complete(self, draw_id):
+        # draw_id 로 result row가 있는지 찾고 5개 이상 있는지 return(True, False)
+        results = db.session.query(models.Result).filter(
+            models.Result.draw_id == draw_id).all()
+        return (len(results) >= 5)
+
+    def post(self):
+        value = request.get_json()
+        draw_id = value['draw-id']
+        while not self._is_complete(draw_id):
+            time.sleep(0.5)
+        results = db.session.query(models.Result).filter(
+            models.Result.draw_id == draw_id).all()
+        topfive = []
+        for result in results:
+            word_id = result.word_id
+            similarity = result.similarity
+
+
+def create_app(config_filename):
+    app = Flask(__name__)
+    app.config.from_pyfile(config_filename)
+
+    # from yourapplication.views.admin import admin
+    # from yourapplication.views.frontend import frontend
+    # app.register_blueprint(admin)
+    # app.register_blueprint(frontend)
+
+    return app
 
 
 if __name__ == "__main__":
