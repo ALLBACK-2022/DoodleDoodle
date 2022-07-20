@@ -18,8 +18,8 @@ with open("./ai-model/class_names.txt", "r") as ins:
     class_names.append(line.rstrip('\n'))
 
 # Load the model
-model = keras.models.load_model('./ai-model/doodleNet-model.h5')
-#model.summary()
+model = keras.models.load_model('./ai-model/keras.h5')
+# model.summary()
 
 @app.route("/AI", methods=['GET'])
 def index():
