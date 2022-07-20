@@ -36,22 +36,6 @@ class Game(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-        
-<<<<<<< HEAD
-    def serialize(self):
-        return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "created_at" : str(self.created_at),
-        "user_num" : self.user_num,
-        "updated_at" : str(self.updated_at)
-    }
-
-=======
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
->>>>>>> docker
-        
     
     def serialize(self):
         return {
@@ -127,8 +111,6 @@ class Result(Base):
         self.similarity = similarity
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-        
 
 
 Base.metadata.create_all(engine)

@@ -6,7 +6,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
+import os, models, random, json, time, pika, uuid
 
 app = Flask(__name__)
 load_dotenv()
