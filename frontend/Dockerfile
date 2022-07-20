@@ -6,6 +6,7 @@ WORKDIR /frontend
 COPY . /frontend
 RUN npm install
 RUN npm install react-scripts
+RUN npm install axios
 #CMD ['node', 'server.js']
 COPY . ./
 # permission
