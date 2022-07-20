@@ -86,7 +86,7 @@ def insert_word():
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Word(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -95,7 +95,7 @@ def insert_word():
 
 
 with app.app_context():
-    word = db.session.query(models.Word).filter(models.Word.id == 1).first()
+    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
@@ -129,7 +129,7 @@ class user_num(Resource):
 class randwords(Resource):
     
     def get(self):
-        randword = db.session.query(models.Word).filter(models.Word.id == random.randint(1, 345))
+        randword = db.session.query(models.Dictionary).filter(models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
