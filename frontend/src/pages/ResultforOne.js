@@ -6,10 +6,11 @@ import PieChartLabel from '../components/PieChartLabel';
 import ResultButtons from '../components/ResultButtons';
 
 function ResultforOne() {
-  const chartData = [
-    { name: '거북이', value: 70 },
-    { name: '거북이', value: 30 },
-  ];
+  const [name, setName] = useState('');
+  const [value, setValue] = useState('');
+  const [url, setUrl] = useState('');
+  const [chartData, setChartData] = useState([{ name: '', value: 0.0 },])
+  const [randomWordData, setRandomWordData] = useState({ name: '', value: 0.0 })
 
   // 여기서 GET API 불러오기(각 데이터 넣어주기)
   return (
@@ -21,7 +22,7 @@ function ResultforOne() {
         <div className="flex flex-row ml-[4vw] mt-[6vh] items-stretch">
           <div className="w-[45%] sm:h-[30%] md:h-[60%] lg:h-[100%]">
             <div className="relative inline-flex flex-col w-[50%] h-[60%]">
-              <ResultPieChart chartData={chartData} />
+              <ResultPieChart chartData={chartData[0]} />
               <img
                 src={sketchbook}
                 alt=""
@@ -30,7 +31,7 @@ function ResultforOne() {
               <PieChartLabel text="시계" />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-y-[80%] translate-x-[20%]">
-              <ResultPieChart chartData={chartData} />
+              <ResultPieChart chartData={chartData[1]} />
               <img
                 src={sketchbook}
                 alt=""
@@ -39,7 +40,7 @@ function ResultforOne() {
               <PieChartLabel text="원숭이" />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
-              <ResultPieChart chartData={chartData} />
+              <ResultPieChart chartData={chartData[2]} />
               <img
                 src={sketchbook}
                 alt=""
@@ -48,7 +49,7 @@ function ResultforOne() {
               <PieChartLabel text="책상" />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
-              <ResultPieChart chartData={chartData} />
+              <ResultPieChart chartData={chartData[3]} />
               <img
                 src={sketchbook}
                 alt=""
@@ -57,7 +58,7 @@ function ResultforOne() {
               <PieChartLabel text="우산" />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-x-[20%] translate-y-[15%]">
-              <ResultPieChart chartData={chartData} />
+              <ResultPieChart chartData={chartData[4]} />
               <img
                 src={sketchbook}
                 alt=""
@@ -76,7 +77,7 @@ function ResultforOne() {
               />
             </div>
 
-            <ResultText text="AI는 (지정 단어)를 6%밖에 예측을 못했네요.." textSize={3} />
+            <ResultText text="AI는 ${randomWordData.name}를 ${randomWordData.value}%밖에 예측을 못했네요.." textSize={3} />
             <div>
               <ResultButtons isforOne />
             </div>
