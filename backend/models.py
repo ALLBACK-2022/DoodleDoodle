@@ -42,11 +42,7 @@ class Game(Base):
     
     def serialize(self):
         return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "player_num" : self.player_num,
-        "created_at" : str(self.created_at),
-        "updated_at" : str(self.updated_at)
+        "id" : self.id
     }
 
 
@@ -73,7 +69,7 @@ class Draw(Base):
 
         
 
-class Word(Base):
+class Dictionary(Base):
     __tablename__ = 'word'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
@@ -106,11 +102,12 @@ class Result(Base):
     __tablename__ = 'result'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
+    game_id = db.colume(db.Interger)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
-    word_id = db.Column(db.Integer, db.ForeignKey(Word.id))
+    word_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     
     
     def __init__(self, similarity):
