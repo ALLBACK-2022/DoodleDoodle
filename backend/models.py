@@ -70,7 +70,7 @@ class Draw(Base):
         
 
 class Dictionary(Base):
-    __tablename__ = 'word'
+    __tablename__ = 'dictionary'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
@@ -102,7 +102,7 @@ class Result(Base):
     __tablename__ = 'result'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
-    game_id = db.colume(db.Interger)
+    game_id = db.column(db.Integer)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
@@ -115,7 +115,19 @@ class Result(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-        
+
+class Task(Base):
+    __tablename__ = 'task'
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+
+    def __init__(self,status):
+        self.status = status
+        self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
 
 
 Base.metadata.create_all(engine)
