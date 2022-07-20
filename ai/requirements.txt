@@ -6,3 +6,4 @@ requests==2.27.1
 numpy==1.23.1
 Keras==2.9.0
 tensorflow-gpu==2.9.1
+celery==4.4.7

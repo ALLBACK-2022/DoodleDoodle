@@ -46,6 +46,8 @@ services:
         context: ./ai
       ports:
       - "5001:5001" 
+
+      
       environment:
         FLASK_DEBUG: 1
         FLASK_APP: ./server.py

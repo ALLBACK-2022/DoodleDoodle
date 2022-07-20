@@ -12,13 +12,16 @@ import runway
 app = Flask(__name__)
 
 # Read class names
-with open("./ai-model/class_names.txt", "r") as ins:
+with open("./ai-model/class_names2.txt", "r") as ins:
   class_names = []
   for line in ins:
     class_names.append(line.rstrip('\n'))
 
 # Load the model
-model = keras.models.load_model('./ai-model/doodleNet-model.h5')
+#model = keras.models.load_model('./ai-model/keras.h5')
+f = open('./ai-model/model/model.json')
+json = f.read()
+#f.close()
 #model.summary()
 
 @app.route("/AI", methods=['GET'])
@@ -36,7 +39,7 @@ def index():
             ranword += request.args[key]
         # open a local image
         #img = cv2.imread('apple.png')
-        img = cv2.imread('ai-model/umbrella.png')
+        img = cv2.imread('ai-model/rainbow.png')
         img = cv2.resize(img, (28, 28))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = img.reshape((28, 28, 1))
