@@ -4,15 +4,15 @@ import sketchbook from '../assets/icons/sketchbook.png';
 import ResultPieChart from '../components/ResultPieChart';
 import PieChartLabel from '../components/PieChartLabel';
 import ResultButtons from '../components/ResultButtons';
+import GetSimilarity from '../components/GetSimilarity';
 
 function ResultforOne() {
-  const [name, setName] = useState('');
-  const [value, setValue] = useState('');
-  const [url, setUrl] = useState('');
   const [chartData, setChartData] = useState([{ name: '', value: 0.0 },])
   const [randomWordData, setRandomWordData] = useState({ name: '', value: 0.0 })
+  const [imageUrl, setImageUrl] = useState([{url: ''},])
 
-  // 여기서 GET API 불러오기(각 데이터 넣어주기)
+  // 여기서 POST API 불러오기(각 데이터 넣어주기)
+  GetSimilarity(setChartData, setRandomWordData, setImageUrl)
   return (
     <div className="flex relative w-full h-full bg-primary">
       <img id="gameBGImg" src={gameBGImg} className="px-[2vw] py-[2vh] w-screen h-screen" alt="" />
@@ -22,48 +22,28 @@ function ResultforOne() {
         <div className="flex flex-row ml-[4vw] mt-[6vh] items-stretch">
           <div className="w-[45%] sm:h-[30%] md:h-[60%] lg:h-[100%]">
             <div className="relative inline-flex flex-col w-[50%] h-[60%]">
-              <ResultPieChart chartData={chartData[0]} />
-              <img
-                src={sketchbook}
-                alt=""
-                className="absolute w-[50%] h-[50%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
-              />
-              <PieChartLabel text="시계" />
+              <ResultPieChart chartData={chartData[0].value} />
+              <GetImage imageUrl={setImageUrl[0]} />
+              <PieChartLabel text={chartData[0].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-y-[80%] translate-x-[20%]">
-              <ResultPieChart chartData={chartData[1]} />
-              <img
-                src={sketchbook}
-                alt=""
-                className="absolute w-[40%] h-[40%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
-              />
-              <PieChartLabel text="원숭이" />
+              <ResultPieChart chartData={chartData[1].value} />
+              <GetImage imageUrl={setImageUrl[1]} />
+              <PieChartLabel text={chartData[2].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
-              <ResultPieChart chartData={chartData[2]} />
-              <img
-                src={sketchbook}
-                alt=""
-                className="absolute w-[40%] h-[40%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
-              />
-              <PieChartLabel text="책상" />
+              <ResultPieChart chartData={chartData[2].value} />
+              <GetImage imageUrl={setImageUrl[2]} />
+              <PieChartLabel text={chartData[3].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
-              <ResultPieChart chartData={chartData[3]} />
-              <img
-                src={sketchbook}
-                alt=""
-                className="absolute w-[40%] h-[40%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
-              />
-              <PieChartLabel text="우산" />
+              <ResultPieChart chartData={chartData[3].value} />
+              <GetImage imageUrl={setImageUrl[3]} />
+              <PieChartLabel text={chartData[4].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-x-[20%] translate-y-[15%]">
-              <ResultPieChart chartData={chartData[4]} />
-              <img
-                src={sketchbook}
-                alt=""
-                className="absolute w-[40%] h-[40%] top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"
-              />
+              <ResultPieChart chartData={chartData[4].value} />
+              <GetImage imageUrl={setImageUrl[5]} />
               <PieChartLabel text="지우개" />
             </div>
           </div>
@@ -77,7 +57,7 @@ function ResultforOne() {
               />
             </div>
 
-            <ResultText text="AI는 ${randomWordData.name}를 ${randomWordData.value}%밖에 예측을 못했네요.." textSize={3} />
+            <ResultText text={`AI는 ${randomWordData.name}를 ${randomWordData.value}%밖에 예측을 못했네요..`} textSize={3} />
             <div>
               <ResultButtons isforOne />
             </div>

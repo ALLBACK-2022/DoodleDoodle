@@ -1,9 +1,6 @@
-import axios from 'axios';
-import React, { useEffect } from 'react';
-import GetImage from './GetImage';
-
 const baseURL = 'http://localhost:5000/results/similarity';
-function GetSimilarity({setName, setValue}){
+function GetSimilarity({setChartData, setRandomWordData, setImageUrl}){
+    var array = []
     function getResult(){
         fetch(baseURL, {
             method: "POST",
@@ -14,8 +11,13 @@ function GetSimilarity({setName, setValue}){
                 "draw-id" : 1
             }),
         }).then(res => res.json())
-        .then(res => setName(res.name))
-        .then(res => setValue(res.value))
+        .then(res => res.topfive.foreach(
+            element => array.push({name : element.dictionary.name, value : element.similarity})
+        ).then(setImageUrl(element.dictionary.img_url))).then(setChartData(array))
+        .then(res => array = {
+            name : res.randword.dictionary.name, value : res.randword.similarity
+        })
+        setRandomWordData(array)
         return res
     }
     return getResult()
