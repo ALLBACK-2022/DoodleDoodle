@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
-from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
+from config import BUCKET_NAME
+import os, models, random, time, pika, uuid
+from flask import Flask, request
 
 app = Flask(__name__)
 load_dotenv()
@@ -48,6 +49,14 @@ def connect_rabbitmq():
     channel = connection.channel()
     channel.queue_declare(queue='task_queue', durable=True)
     channel.queue_declare(queue='result_queue', durable=True)
+def insert_word():
+    f = open("classes.txt", "r", encoding="utf-8")
+    lines = f.readlines()
+    for line in lines:
+        row = models.Word(name=line)
+        db.session.add(row)
+    db.session.commit()
+    f.close()
 
 
 class FibonacciRpcClient(object):
@@ -103,6 +112,7 @@ with app.app_context():
 
 
 s3 = s3_connection()
+
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
