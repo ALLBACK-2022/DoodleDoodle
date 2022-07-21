@@ -1,18 +1,17 @@
 import { useLocation } from 'react-router';
 
-const baseURL = 'http://localhost:5000/results/similarity?user-num=';
+const baseURL = 'http://localhost:5000/results/similarity';
 function ResultSimilarity({setChartData, setRandomWordData, setImageUrl}){
     const location = useLocation();
     const array = []
     function getResult(){
-        fetch(baseURL, {
+        fetch(baseURL+String(location.playerNum), {
             method: "POST",
             headers: {
                 "Content-Type" : "application/json",
             },
             body: JSON.stringify({
-                "draw-id" : location.drawId,
-                "player-num" : location.playerNum,
+                "game_id" : location.gameId,
             }),
         }).then(res => res.json())
         .then(res => res.topfive.foreach(

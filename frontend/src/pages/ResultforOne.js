@@ -32,22 +32,22 @@ function ResultforOne() {
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-y-[80%] translate-x-[20%]">
               <ResultPieChart chartData={chartData[1].value} />
               <ResultImage imageUrl={imageUrl[1]} />
-              <PieChartLabel text={chartData[2].name} />
+              <PieChartLabel text={chartData[1].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
               <ResultPieChart chartData={chartData[2].value} />
               <GetImage imageUrl={imageUrl[2]} />
-              <PieChartLabel text={chartData[3].name} />
+              <PieChartLabel text={chartData[2].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
               <ResultPieChart chartData={chartData[3].value} />
               <ResultImage imageUrl={imageUrl[3]} />
-              <PieChartLabel text={chartData[4].name} />
+              <PieChartLabel text={chartData[3].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-x-[20%] translate-y-[15%]">
               <ResultPieChart chartData={chartData[4].value} />
-              <ResultImage imageUrl={imageUrl[5]} />
-              <PieChartLabel text="지우개" />
+              <ResultImage imageUrl={imageUrl[4]} />
+              <PieChartLabel text={chartData[4].name} />
             </div>
           </div>
           <div className="w-[45%] ml-[3vw] flex flex-col justify-items-centers">
