@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios'; // AI API없앨때 같이 없애기
+import { useLocation, useNavigate } from 'react-router-dom';
+// import axios from 'axios'; // AI API없앨때 같이 없애기
 
 import gameBGImg from '../assets/icons/gameBGImg.png';
 import trashImg from '../assets/icons/trashImg.png';
@@ -10,7 +10,7 @@ import checkImg from '../assets/icons/checkImg.png';
 import '../GamePage.css';
 
 const postImageURL = 'http://127.0.0.1:5000/save'; // 백엔드에 이미지 보내는 API주소
-const getAIURL = 'http://localhost:5001/AI'; // AI에게 결과값 요청하는 API주소(임시)
+// const getAIURL = 'http://localhost:5001/AI'; // AI에게 결과값 요청하는 API주소(임시)
 
 const maxNum = 9999; // min 좌표 기본값
 const minNum = -1; // max 좌표 기본값
@@ -18,6 +18,7 @@ let minX = maxNum; // 입력된 X의 최소값
 let minY = maxNum; // 입력된 Y의 최소값
 let maxX = minNum; // 입력된 X의 최대값
 let maxY = minNum; // 입력된 Y의 최대값
+// let taskIDArray = [];
 
 // 게임 페이지
 function GamePage() {
@@ -29,6 +30,8 @@ function GamePage() {
   const [isDrawing, setIsDrawing] = useState(false); // 현재 그림을 그리고 있는가?
 
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
+
+  const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수
 
   const canvasRef = useRef(null); // 캔버스 참조용
   const canvasWidth = useRef(null); // 캔버스 넓이
@@ -66,6 +69,8 @@ function GamePage() {
     setRandWord(location.state.drawWord);
     setGameID(location.state.gameID);
     setMaxPlayer(location.state.playerNum);
+    // taskIDArray = new Array(maxPlayer.current);
+    // console.log(taskIDArray.length);
   }
 
   // 페이지 로드 시 1회 실행, 게임 Data 세팅 및 캔버스 기본 세팅
@@ -115,6 +120,19 @@ function GamePage() {
     setXY(); // 그림을 지웠으므로 x,y도 초기화
   }
 
+  // AI API호출, 임시
+  /* function getAIData() {
+    axios
+      .get(getAIURL, {
+        params: {
+          ranword: randWord,
+          'game-id': gameID,
+          'draw-no': currentPlayer,
+        },
+      })
+      .then(response => console.log(response));
+  } */
+
   // 이미지 URL을 받아 Blob객체로 변환해주는 함수
   function dataURItoBlob(dataURI) {
     // convert base64/URLEncoded data component to raw binary data held in a string
@@ -147,20 +165,11 @@ function GamePage() {
     };
 
     fetch(postImageURL, requestOptions)
-      .then(response => console.log(response))
-      .catch(() => console.log('error'));
-  }
-
-  function getAIData() {
-    axios
-      .get(getAIURL, {
-        params: {
-          ranword: randWord,
-          'game-id': gameID,
-          'draw-no': currentPlayer,
-        },
+      .then(response => {
+        console.log(response);
+        //
       })
-      .then(response => console.log(response));
+      .catch(() => console.log('error'));
   }
 
   // 현재 캔버스에있는 그림을 이미지파일로 반환
@@ -207,19 +216,24 @@ function GamePage() {
     // 캔버스의 가로세로를 출력할 이미지에 맞게 변경
     canvasRef.current.width = imgMax + whiteRange * 2;
     canvasRef.current.height = imgMax + whiteRange * 2;
+
     // 가로가 길면 이미지를 세로 중앙에 배치, 반대는 반대로
     if (w > h) ctx.putImageData(imageData, whiteRange, center);
     else ctx.putImageData(imageData, center, whiteRange);
+
     // 이미지 로딩이 완료되면 이미지에 배경을 넣어서 파일객체로 변환후 POST
-    image.addEventListener('load', function () {
+    image.addEventListener('load', function makeBGAndPost() {
       ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 캔버스를 흰색으로 채움
       ctx.drawImage(image, 0, 0); // img를 캔버스에 그리는 코드
-      const data = dataURItoBlob(canvasRef.current.toDataURL());
+      const data = dataURItoBlob(canvasRef.current.toDataURL()); // 이미지 URL을 Blob객체로 변환
+
+      // 파일객체 생성 및 백엔드에 저장
       const metadata = { type: 'image/png' };
       const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
       postImage(file);
-      getAIData();
+      // getAIData();
+      if (currentPlayer >= maxPlayer) navigate('../resultone', { replace: true, state: { gameId: gameID } });
       setCanvas();
     });
 
@@ -232,11 +246,6 @@ function GamePage() {
     convertCanvasToImage(); // 캔버스 이미지를 백엔드에 저장
     if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
   }
-
-  // Link태그 눌렀을때 마지막 플레이어가 아니면 페이지 이동 못하게하는 함수
-  const testHandler = event => {
-    if (currentPlayer < maxPlayer) event.preventDefault();
-  };
 
   return (
     <div className="w-screen h-screen bg-primary relative">
@@ -266,18 +275,9 @@ function GamePage() {
         <button onClick={clearCanvas} className="mr-[3vmin]">
           <img src={trashImg} alt="" className="h-[7vmin] " />
         </button>
-        <Link
-          to="../resultone"
-          onClick={testHandler}
-          state={{
-            gameID,
-            playerNum: maxPlayer,
-          }}
-        >
-          <button onClick={NextButtonClick}>
-            <img src={currentPlayer === maxPlayer ? checkImg : nextImg} alt="" className="h-[7vmin]" />
-          </button>
-        </Link>
+        <button onClick={NextButtonClick}>
+          <img src={currentPlayer === maxPlayer ? checkImg : nextImg} alt="" className="h-[7vmin]" />
+        </button>
       </div>
     </div>
   );
