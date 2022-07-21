@@ -1,5 +1,6 @@
 
 from fileinput import filename
+from re import A
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -113,8 +114,8 @@ def insert_word():
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Dictionary(
-            name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
+             img_url=str('https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/image/' + lines2[idx].rstrip())+'.png')
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -195,66 +196,28 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/' + str(drawid) + '.png')
-        retPut = s3_put_object(
-            s3, BUCKET_NAME, 'temp/' + str(drawid) + '.png', 'drawimage/' + str(drawid) + '.png')
-        os.remove('temp/' + str(drawid) + '.png')
-        gameid = value['game-id']
-        game = db.session.query(models.Game).get(gameid)
-        if game is None:
-            return ('Can not access data', 400)
-        ranword = game.random_word
-        if retPut is None:
-            return('Draw saved fail', 400)
-
-        retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
-        ret.doodle = retGet
-        db.session.commit()
-
-        try:
-            return_data = {'ranword': ranword, 'draw_id': drawid}
-            return return_data, 200
-        except:
-            return('Requset to AI fail', 400)
-
-
-@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
-class draw(Resource):
-
-    def get(self, drawid):
-        '''사용자가 그렸던 그림을 불러온다'''
-        ret = db.session.query(models.Draw).filter(
-            models.Draw.id == drawid).first()
-        retimage = ret.doodle
-        if ret is None:
-            return('NO image in database', 400)
-        db.session.commit()
-        return(retimage, 200)
-
-
-@ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
-class game(Resource):
-    def get(self, gameid):
-        '''게임id가 같은 사용자 전체의 그림을 불러온다'''
-        ret = db.session.query(models.Game).filter(
-            models.Game.id == gameid).first()
-        retusernum = int(ret.player_num)
-        if ret is None:
-            return('Can not access data', 400)
-        db.session.commit()
-        print(retusernum)
-        ret1 = []
-        ret2 = []
-        for i in range(1, retusernum+1):
-            row = db.session.query(models.Draw).filter(
-                models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
-            returl = row.doodle
+        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        
+        print(value)
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+         'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        #os.remove('temp/' + filepath)
+        
+        if retPut :
+            
+            retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            draw_id = ret.id
+            db.session.add(row)
             db.session.commit()
-            ret1.append(i)
-            ret2.append(returl)
-        retdict = {name: value for name, value in zip(ret1, ret2)}
-        # print(retdict)
-        return (retdict, 200)
+            return_data = {'draw_id': draw_id}
+            return return_data
+            #return jsonify({'draw_id' : draw_id}) , 201
+        else:
+            #print("파일 저장 실패")
+            return('draw saved fail',400)
 
 
 @ns.route("/api/v1/draws/results", methods=['POST'])
