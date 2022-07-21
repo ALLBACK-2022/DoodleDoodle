@@ -1,1 +1,5 @@
 .env
+
+backend/__pycache__/app.cpython-310.pyc
+
+*.pyc
