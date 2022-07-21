@@ -5,6 +5,7 @@ from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from backend.models import Draw, Game
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
 import os
@@ -220,7 +221,7 @@ class ai(Resource):
         try:
             # 여기서 AI 모델에서 Task ID를 response로 받아와 클라로 전송
             res = requests.post(
-                f"http://localhost:5001/AI/randword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
+                f"http://localhost:5001/AI/?ranword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
             return (jsonify(res), 200)
         except:
             return ('Request to AI fail', 400)
@@ -228,36 +229,39 @@ class ai(Resource):
 
 @ns.route("/results/similarity", methods=['POST'])
 class similarity(Resource):
-    def _is_complete(self, task_id):
+    def _is_complete(self, task_ids):
         # task_id 로 status가 성공인지 아닌지
-        task = db.session.query(models.Task).get(task_id)
-        if task.status == "success":
-            return True
-        else:
-            return False
-        # results = db.session.query(models.Result).filter(
-        #     models.Result.draw_id == draw_id).all()
-        # return (len(results) >= 5)
+        for task_id in task_ids:
+            task = db.session.query(models.Task).get(task_id)
+            if task.status == "wait":
+                return False
+        return True
 
     def post(self):
         # here we want to get the value of num (i.e. ?num=some-value)
-        user_num = request.args.get('num')
+        user_num = request.args.get('user-num')
         value = request.get_json()
-        if user_num == 1:
-            task_id = value['task-id']
-        else:
-            task_id = value['task-id']
-        while not self._is_complete(task_id):
+        task_ids = []
+        task_ids = value['task-id']
+
+        while not self._is_complete(task_ids):
             time.sleep(0.5)
-        results = db.session.query(models.Result).filter(
-            models.Result.draw_id == draw_id).all()
-        topfive = []
-        for result in results:
-            word_id = result.word_id
-            word = db.session.query(models.Dictionary).filter(
-                models.Dictionary.id == word_id).all()[0]
-            word.serialized()
-            similarity = result.similarity
+
+        draw_ids = value['draw-id']
+        # session.query(Game).join(Draw).\
+        #     filter(Address.email_address == 'jack@gmail.com').all()
+        # for draw_id in draw_ids:
+        #     session.query(User).join(Address).\
+        #         filter(Address.email_address == 'jack@gmail.com').all()
+        # results = db.session.query(models.Result).filter(
+        #     models.Result.draw_id == draw_id).all()
+        # topfive = []
+        # for result in results:
+        #     word_id = result.word_id
+        #     word = db.session.query(models.Dictionary).filter(
+        #         models.Dictionary.id == word_id).all()[0]
+        #     word.serialized()
+        #     similarity = result.similarity
 
 
 def create_app(config_filename):
