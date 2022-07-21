@@ -1,4 +1,5 @@
 // import axios from 'axios';
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Minus from '../assets/icons/minus.png';
@@ -6,10 +7,13 @@ import Plus from '../assets/icons/plus.png';
 
 // 인원수 설정 후 Main페이지에서 랜덤단어생성 페이지로 이동
 
-const NumURL = 'http://127.0.0.1:5000/user-num';
+// const NumURL = 'http://127.0.0.1:5000/user-num';
+const NumURL = 'http://localhost:5000/user-num';
 
 function GameStartButton() {
   const [count, setCount] = useState(1);
+  const [gameId, setgameId] = useState(0);
+
   const minusClicked = () => {
     if (count > 1) setCount(count - 1);
   };
@@ -17,28 +21,29 @@ function GameStartButton() {
     if (count < 6) setCount(count + 1);
   };
 
-  // const usernum = document.querySelector(count);
-
   async function start() {
-    // const response = await axios.post(NumURL, count);
     const req = {
       'user-num': count,
     };
-    // console.log(response);
+
     console.log(count);
-    fetch(NumURL, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(req),
-    }).then(response => console.log(response));
+
+    await axios.post(NumURL, req).then(response => {
+      console.log(response.data);
+      setgameId(response.data);
+    });
   }
 
   return (
     <div className="flex-auto flex flex-row space-x-10">
       <div>
-        <Link to="random">
+        <Link
+          to="random"
+          state={{
+            playerNum: count,
+            gameID: gameId,
+          }}
+        >
           <button
             type="button"
             className="text-6xl text-primary-1 font-cookierun startshadow textborder"

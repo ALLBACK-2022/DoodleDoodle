@@ -42,11 +42,8 @@ class Game(Base):
     
     def serialize(self):
         return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "player_num" : self.player_num,
-        "created_at" : str(self.created_at),
-        "updated_at" : str(self.updated_at)
+        "id" : self.id
+        
     }
 
 
