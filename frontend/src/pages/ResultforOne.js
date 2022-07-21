@@ -1,4 +1,4 @@
-import useState from 'react'
+import useState from 'react';
 import ResultText from '../components/ResultText';
 import gameBGImg from '../assets/icons/gameBGImg.png';
 import sketchbook from '../assets/icons/sketchbook.png';
@@ -6,16 +6,16 @@ import ResultPieChart from '../components/ResultPieChart';
 import PieChartLabel from '../components/PieChartLabel';
 import ResultButtons from '../components/ResultButtons';
 import ResultSimilarity from '../components/ResultSimilarity';
-import ResultImage from '../components/ResultImage'
+import ResultImage from '../components/ResultImage';
 
 function ResultforOne() {
-  const [chartData, setChartData] = useState([{ name: '', value: 0.0 },])
-  const [randomWordData, setRandomWordData] = useState({ name: '', value: 0.0 })
-  const [imageUrl, setImageUrl] = useState([{url: ''},])
+  const [chartData, setChartData] = useState([{ name: '', value: 0.0 }]);
+  const [randomWordData, setRandomWordData] = useState({ name: '', value: 0.0 });
+  const [imageUrl, setImageUrl] = useState([{ url: '' }]);
 
   // 여기서 POST API 불러오기(각 데이터 넣어주기)
-  ResultSimilarity(setChartData, setRandomWordData, setImageUrl)
-  
+  ResultSimilarity(setChartData, setRandomWordData, setImageUrl);
+
   return (
     <div className="flex relative w-full h-full bg-primary">
       <img id="gameBGImg" src={gameBGImg} className="px-[2vw] py-[2vh] w-screen h-screen" alt="" />
@@ -36,7 +36,7 @@ function ResultforOne() {
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
               <ResultPieChart chartData={chartData[2].value} />
-              <GetImage imageUrl={imageUrl[2]} />
+              <ResultImage imageUrl={imageUrl[2]} />
               <PieChartLabel text={chartData[3].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
@@ -60,7 +60,10 @@ function ResultforOne() {
               />
             </div>
 
-            <ResultText text={`AI는 ${randomWordData.name}를 ${randomWordData.value}%밖에 예측을 못했네요..`} textSize={3} />
+            <ResultText
+              text={`AI는 ${randomWordData.name}를 ${randomWordData.value}%밖에 예측을 못했네요..`}
+              textSize={3}
+            />
             <div>
               <ResultButtons isforOne />
             </div>

@@ -135,7 +135,7 @@ class user_num(Resource):
         db.session.add(row)
         db.session.commit()
         #return (json.dumps(row.serialize()), 201)
-        return ((row.id),201)         // 숫자값만 반환 -> 성공
+        return ((row.id),201)         # 숫자값만 반환 -> 성공
         
 
 

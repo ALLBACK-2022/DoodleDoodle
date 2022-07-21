@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Minus from '../assets/icons/minus.png';
 import Plus from '../assets/icons/plus.png';
 
@@ -11,7 +11,8 @@ const NumURL = 'http://localhost:5000/user-num';
 
 function GameStartButton() {
   const [count, setCount] = useState(1);
-  const [gameId, setgameId] = useState(0);
+
+  const navigate = useNavigate();
 
   const minusClicked = () => {
     if (count > 1) setCount(count - 1);
@@ -29,28 +30,16 @@ function GameStartButton() {
 
     await axios.post(NumURL, req).then(response => {
       console.log(response.data);
-      setgameId(response.data);
+      navigate('random', { replace: true, state: { playerNum: count, gameID: response.data } });
     });
   }
 
   return (
     <div className="flex-auto flex flex-row space-x-10">
       <div>
-        <Link
-          to="random"
-          state={{
-            playerNum: count,
-            gameID: gameId,
-          }}
-        >
-          <button
-            type="button"
-            className="text-6xl text-primary-1 font-cookierun startshadow textborder"
-            onClick={start}
-          >
-            start
-          </button>
-        </Link>
+        <button type="button" className="text-6xl text-primary-1 font-cookierun startshadow textborder" onClick={start}>
+          start
+        </button>
       </div>
 
       <div className="ml-20 mr-20">
