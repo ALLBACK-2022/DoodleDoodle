@@ -14,13 +14,13 @@ from connection import s3_connection, s3_get_object
 app = Flask(__name__)
 
 # Read class names
-with open("./ai-model/class_names.txt", "r") as ins:
+with open("ai-model/class_names.txt", "r") as ins:
   class_names = []
   for line in ins:
     class_names.append(line.rstrip('\n'))
 
 # Load the model
-model = keras.models.load_model('./ai-model/keras.h5')
+model = keras.models.load_model('ai-model/keras.h5')
 # model.summary()
 
 @app.route("/AI", methods=['POST'])
@@ -32,6 +32,7 @@ def index():
             return ('No parameter', 400)
         #랜덤 단어와 이미지 url을 받아온다.
         s3 = s3_connection()
+        os.mkdir('temp')
         filepath = str(value['game-id']) + '_' + str(value['draw-no']) + '.png'
         if s3_get_object(s3, BUCKET_NAME, 'drawimage/'+ filepath, 'temp/' + filepath):
             ranword = request.args.get('ranword')
