@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-
 function GetImage({imageUrl}){
     return <img
         src={imageUrl}

@@ -7,5 +7,5 @@ app = celery('tasks', broker='amqps://bolerruj:aLY*************-EeMMLjd15VZ@jagu
 
 @app.task
 def reverse(text):
-	    sleep(3)
+    sleep(3)
     return text[::-1]

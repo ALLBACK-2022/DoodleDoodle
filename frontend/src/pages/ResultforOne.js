@@ -1,3 +1,4 @@
+import useState from 'react'
 import ResultText from '../components/ResultText';
 import gameBGImg from '../assets/icons/gameBGImg.png';
 import sketchbook from '../assets/icons/sketchbook.png';
@@ -5,6 +6,7 @@ import ResultPieChart from '../components/ResultPieChart';
 import PieChartLabel from '../components/PieChartLabel';
 import ResultButtons from '../components/ResultButtons';
 import GetSimilarity from '../components/GetSimilarity';
+import GetImage from '../components/GetImage'
 
 function ResultforOne() {
   const [chartData, setChartData] = useState([{ name: '', value: 0.0 },])
@@ -13,6 +15,7 @@ function ResultforOne() {
 
   // 여기서 POST API 불러오기(각 데이터 넣어주기)
   GetSimilarity(setChartData, setRandomWordData, setImageUrl)
+  
   return (
     <div className="flex relative w-full h-full bg-primary">
       <img id="gameBGImg" src={gameBGImg} className="px-[2vw] py-[2vh] w-screen h-screen" alt="" />
@@ -23,27 +26,27 @@ function ResultforOne() {
           <div className="w-[45%] sm:h-[30%] md:h-[60%] lg:h-[100%]">
             <div className="relative inline-flex flex-col w-[50%] h-[60%]">
               <ResultPieChart chartData={chartData[0].value} />
-              <GetImage imageUrl={setImageUrl[0]} />
+              <GetImage imageUrl={imageUrl[0]} />
               <PieChartLabel text={chartData[0].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-y-[80%] translate-x-[20%]">
               <ResultPieChart chartData={chartData[1].value} />
-              <GetImage imageUrl={setImageUrl[1]} />
+              <GetImage imageUrl={imageUrl[1]} />
               <PieChartLabel text={chartData[2].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] -translate-x-[100%] translate-y-[30%]">
               <ResultPieChart chartData={chartData[2].value} />
-              <GetImage imageUrl={setImageUrl[2]} />
+              <GetImage imageUrl={imageUrl[2]} />
               <PieChartLabel text={chartData[3].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-y-[15%]">
               <ResultPieChart chartData={chartData[3].value} />
-              <GetImage imageUrl={setImageUrl[3]} />
+              <GetImage imageUrl={imageUrl[3]} />
               <PieChartLabel text={chartData[4].name} />
             </div>
             <div className="inline-flex flex-col w-[25%] h-[32%] translate-x-[20%] translate-y-[15%]">
               <ResultPieChart chartData={chartData[4].value} />
-              <GetImage imageUrl={setImageUrl[5]} />
+              <GetImage imageUrl={imageUrl[5]} />
               <PieChartLabel text="지우개" />
             </div>
           </div>

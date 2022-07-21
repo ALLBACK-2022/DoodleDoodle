@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
-from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
+from config import BUCKET_NAME
+import os, models, random, time, pika, uuid
+from flask import Flask, request
 
 app = Flask(__name__)
 load_dotenv()
@@ -110,11 +111,6 @@ with app.app_context():
 
 
 s3 = s3_connection()
-
-with app.app_context():
-    word = db.session.query(models.Word).filter(models.Word.id == 1).first()
-    if word is None:
-        insert_word()
 
 
 @ns.route("/", methods=['GET'])
