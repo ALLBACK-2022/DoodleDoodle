@@ -1,6 +1,12 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 
+// async function getWord() {
+//   const response = await axios.get('localhost:5000/randwords');
+//   console.log(response);
+//   return response.data;
+// }
+
 const baseURL = 'http://localhost:5000/randwords';
 // const baseURL = 'http://127.0.0.1:5000/randwords';
 function RandomWordButton({ image, setWord }) {

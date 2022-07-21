@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Minus from '../assets/icons/minus.png';
+import Plus from '../assets/icons/plus.png';
 
 // 인원수 설정 후 Main페이지에서 랜덤단어생성 페이지로 이동
 

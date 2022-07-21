@@ -2,7 +2,6 @@ import React from 'react';
 import MainText from '../components/MainText';
 import AboutIcon from '../assets/icons/aboutIcon.png';
 import MainIcon from '../assets/icons/mainIcon.png';
-import SetNum from '../components/SetNum';
 import GameStartButton from '../components/GameStartButton';
 
 /*
@@ -19,13 +18,13 @@ function Main() {
 
         <img className=" absolute mt-[13vh] right-10  h-[35rem]  " src={MainIcon} alt="" />
 
-        <div className=" flex-col ml-[13vh] mt-[28vh] flex ">
+        <div className=" flex-col ml-[13vh] mt-[30vh] flex ">
           <MainText text=" 두들, 두들! " />
           <h2 className="className = mt-8 ml-52 text-5xl text-primary-1 font-cookierun doddleshadow textborder">
             Doodle, Doodle
           </h2>
 
-          <div className="flex-row flex left-0 mt-[16vh] ml-[5.5vw]">
+          <div className="flex-row flex left-0 mt-[14vh] ml-[6vw]">
             <div className="flex ">
               <GameStartButton />
               {/* // history 부분 설정해서 뒤로 가도 숫자는 그대로인걸 구현해보기  */}
