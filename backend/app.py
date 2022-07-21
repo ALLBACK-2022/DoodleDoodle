@@ -1,4 +1,5 @@
 from fileinput import filename
+from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -93,7 +94,7 @@ def insert_word():
     f2.close()
 
 
-
+    
 with app.app_context():
     word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
@@ -146,7 +147,6 @@ class randwords(Resource):
 @ns.route("/save",methods=['POST'])
 class save(Resource):
 
-#filename: 파일명 ./temp 파일경로로 확인하기 
     def post(self):
         value = request.form.to_dict(flat=False)
         f = request.files['filename']
@@ -155,16 +155,22 @@ class save(Resource):
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
          'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-
+        #os.remove('temp/' + filepath)
+        
         if retPut :
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
             row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            draw_id = ret.id
             db.session.add(row)
             db.session.commit()
-            return('draw saved success',201)
+            return_data = {'draw_id': draw_id}
+            return return_data
+            #return jsonify({'draw_id' : draw_id}) , 201
         else:
-           # print("파일 저장 실패")
+            #print("파일 저장 실패")
             return('draw saved fail',400)
 
 @ns.route("/results/player",methods=['POST'])

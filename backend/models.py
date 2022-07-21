@@ -70,7 +70,7 @@ class Dictionary(Base):
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
-    dictionary_id = db.relationship('Result', backref='dictionary', lazy='dynamic')
+    #dictionary_id = db.relationship('Result', backref='dictionary', lazy='dynamic')
     
     
     def __init__(self, name, eng_name, img_url):
@@ -98,9 +98,9 @@ class Result(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
-    word_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
-    game_id = db.column(db.Integer, db.ForeignKey(Game.id))
-    result_id = db.relationship('Result', backref='result', lazy='dynamic')
+    dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
+    game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
+    #result_id = db.relationship('Result', backref='result', lazy='dynamic')
     
     
     def __init__(self, similarity):
@@ -117,8 +117,8 @@ class Task(Base):
     status = db.Column(db.String(20))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    result_id = db.Column(db.result_id, db.ForeignKey(Result.id))
-    task_id = db.relationship('Result', backref='task', lazy='dynamic')
+    result_id = db.Column(db.Integer, db.ForeignKey(Result.id))
+    #task_id = db.relationship('Result', backref='task', lazy='dynamic')
 
 
     def __init__(self,status):
