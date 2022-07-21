@@ -8,18 +8,19 @@ import { Link, useLocation } from 'react-router-dom';
 //   return response.data;
 // }
 
-const baseURL = 'http://localhost:5000/randwords';
-// const baseURL = 'http://127.0.0.1:5000/randwords';
+// const baseURL = 'http://localhost:5000/randwords';
+const baseURL = 'http://127.0.0.1:5000/randwords';
 function StartDrawButton({ image, word }) {
   const location = useLocation();
   async function onClick() {
     const response = await axios.post(baseURL, word);
     console.log(response);
   }
+  const location = useLocation(); // 이전 페이지에서 받아온 데이터
 
   return (
     <Link
-      to="/"
+      to="../gamepage"
       state={{
         drawWord: word,
         playerNum: location.state.playerNum,
