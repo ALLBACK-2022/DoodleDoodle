@@ -1,3 +1,4 @@
+
 from fileinput import filename
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
@@ -123,7 +124,9 @@ class user_num(Resource):
         row = models.Game(random_word="", player_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
-        return (row.serialize(), 201)
+        #return (json.dumps(row.serialize()), 201)
+        return ((row.id),201)         // 숫자값만 반환 -> 성공
+        
 
 
 @ns.route("/randwords", methods=['GET', 'POST'])

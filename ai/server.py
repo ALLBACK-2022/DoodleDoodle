@@ -1,6 +1,7 @@
 """
 Flask Server with AI model
 """
+
 from flask import Flask, render_template, request
 from requests import session
 
