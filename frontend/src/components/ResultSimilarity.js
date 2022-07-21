@@ -1,5 +1,8 @@
+import { useLocation } from 'react-router';
+
 const baseURL = 'http://localhost:5000/results/similarity?user-num=';
-function GetSimilarity({setChartData, setRandomWordData, setImageUrl}){
+function ResultSimilarity({setChartData, setRandomWordData, setImageUrl}){
+    const location = useLocation();
     const array = []
     function getResult(){
         fetch(baseURL, {
@@ -8,7 +11,8 @@ function GetSimilarity({setChartData, setRandomWordData, setImageUrl}){
                 "Content-Type" : "application/json",
             },
             body: JSON.stringify({
-                "draw-id" : 1
+                "draw-id" : location.drawId,
+                "player-num" : location.playerNum,
             }),
         }).then(res => res.json())
         .then(res => res.topfive.foreach(
@@ -22,4 +26,4 @@ function GetSimilarity({setChartData, setRandomWordData, setImageUrl}){
     getResult()
 }
 
-export default GetSimilarity
+export default ResultSimilarity
