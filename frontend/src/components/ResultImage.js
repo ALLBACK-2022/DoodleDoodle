@@ -1,4 +1,4 @@
-function GetImage({imageUrl}){
+function ResultImage({imageUrl}){
     return <img
         src={imageUrl}
         alt=""
@@ -6,4 +6,4 @@ function GetImage({imageUrl}){
     />
 }
 
-export default GetImage
+export default ResultImage
