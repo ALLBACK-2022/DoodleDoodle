@@ -9,7 +9,7 @@ import checkImg from '../assets/icons/checkImg.png';
 
 import '../GamePage.css';
 
-const postImageURL = 'http://127.0.0.1:5000/save'; // 백엔드에 이미지 보내는 API주소
+const postImageURL = 'http://localhost:5000/save'; // 백엔드에 이미지 보내는 API주소
 // const getAIURL = 'http://127.0.0.1:5001/AI?ranword=umbrella'; // AI에게 결과값 요청하는 API주소(임시)
 
 const maxNum = 9999; // min 좌표 기본값
