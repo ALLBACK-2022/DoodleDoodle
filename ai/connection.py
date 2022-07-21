@@ -1,4 +1,5 @@
 import boto3
+
 from config import BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY
 
 def s3_connection():
