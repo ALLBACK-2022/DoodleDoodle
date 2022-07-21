@@ -10,7 +10,7 @@ import checkImg from '../assets/icons/checkImg.png';
 import '../GamePage.css';
 
 const postImageURL = 'http://127.0.0.1:5000/save'; // 백엔드에 이미지 보내는 API주소
-// const getAIURL = 'http://localhost:5001/AI'; // AI에게 결과값 요청하는 API주소(임시)
+// const getAIURL = 'http://127.0.0.1:5001/AI?ranword=umbrella'; // AI에게 결과값 요청하는 API주소(임시)
 
 const maxNum = 9999; // min 좌표 기본값
 const minNum = -1; // max 좌표 기본값
@@ -70,7 +70,7 @@ function GamePage() {
     setGameID(location.state.gameID);
     setMaxPlayer(location.state.playerNum);
     // taskIDArray = new Array(maxPlayer.current);
-    // console.log(taskIDArray.length);
+    console.log('gameID: ', location.state.gameID);
   }
 
   // 페이지 로드 시 1회 실행, 게임 Data 세팅 및 캔버스 기본 세팅
@@ -120,17 +120,29 @@ function GamePage() {
     setXY(); // 그림을 지웠으므로 x,y도 초기화
   }
 
-  // AI API호출, 임시
-  /* function getAIData() {
-    axios
-      .get(getAIURL, {
-        params: {
-          ranword: randWord,
-          'game-id': gameID,
-          'draw-no': currentPlayer,
-        },
+  /*
+  // AI API호출, 임시, 수많은 오류 생겨서 못쓸듯
+  async function getAIData() {
+    const postdata = JSON.stringify({
+      'game-id': 71,
+      'draw-no': 1,
+    });
+    const config = {
+      method: 'post',
+      url: 'http://127.0.0.1:5001/AI?ranword=umbrella',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: postdata,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
       })
-      .then(response => console.log(response));
+      .catch(function (error) {
+        console.log(error);
+      });
   } */
 
   // 이미지 URL을 받아 Blob객체로 변환해주는 함수
@@ -167,7 +179,7 @@ function GamePage() {
     fetch(postImageURL, requestOptions)
       .then(response => {
         console.log(response);
-        //
+        // getAIData(); AI API호출용, 못쓸듯
       })
       .catch(() => console.log('error'));
   }
@@ -232,7 +244,6 @@ function GamePage() {
       const metadata = { type: 'image/png' };
       const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
       postImage(file);
-      // getAIData();
       if (currentPlayer >= maxPlayer) navigate('../resultone', { replace: true, state: { gameId: gameID } });
       setCanvas();
     });
