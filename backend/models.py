@@ -36,22 +36,6 @@ class Game(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-        
-<<<<<<< HEAD
-    def serialize(self):
-        return {
-        "id" : self.id,
-        "random_word" : self.random_word,
-        "created_at" : str(self.created_at),
-        "user_num" : self.user_num,
-        "updated_at" : str(self.updated_at)
-    }
-
-=======
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
->>>>>>> docker
-        
     
     def serialize(self):
         return {
@@ -68,7 +52,7 @@ class Draw(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    user_id = db.relationship('Result', backref='draw', lazy='dynamic')
+    draw_id = db.relationship('Result', backref='draw', lazy='dynamic')
 
 
     def __init__(self, draw_no, doodle,game_id):
@@ -77,10 +61,7 @@ class Draw(Base):
         self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-        
-
-        
+            
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
@@ -89,7 +70,7 @@ class Dictionary(Base):
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
-    word_id = db.relationship('Result', backref='word', lazy='dynamic')
+    #dictionary_id = db.relationship('Result', backref='dictionary', lazy='dynamic')
     
     
     def __init__(self, name, eng_name, img_url):
@@ -99,15 +80,7 @@ class Dictionary(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-    
-
-    def serialize(self):
-        return {
-            "id" : self.id,
-            "name" : self.name,
-            "img_url" : self.img_url
-        }
-
+ 
     def serialize(self):
         return {
             "id" : self.id,
@@ -116,31 +89,26 @@ class Dictionary(Base):
             "img_url" : self.img_url
         }
 
-    def serialize(self):
-        return {
-            "id" : self.id,
-            "name" : self.name,
-            "img_url" : self.img_url
-        }
-
 
 class Result(Base):
     __tablename__ = 'result'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
-    game_id = db.column(db.Integer)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
-    word_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
+    dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
+    game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
+    #result_id = db.relationship('Result', backref='result', lazy='dynamic')
     
     
     def __init__(self, similarity):
         self.similarity = similarity
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
+
+
 
 class Task(Base):
     __tablename__ = 'task'
@@ -149,11 +117,19 @@ class Task(Base):
     status = db.Column(db.String(20))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
+    result_id = db.Column(db.Integer, db.ForeignKey(Result.id))
+    #task_id = db.relationship('Result', backref='task', lazy='dynamic')
+
 
     def __init__(self,status):
         self.status = status
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+
+
+    def set_updated_at(self):
+        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
 
 
 Base.metadata.create_all(engine)
