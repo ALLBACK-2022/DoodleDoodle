@@ -1,5 +1,6 @@
 
 from fileinput import filename
+from re import A
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -62,7 +63,8 @@ def insert_word():
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
+        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
+             img_url=str('https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/image/' + lines2[idx].rstrip())+'.png')
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -141,12 +143,13 @@ class save(Resource):
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
             row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
-            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-                .filter(models.Draw.draw_no == value['draw-no']).first()
-            draw_id = ret.id
             db.session.add(row)
             db.session.commit()
-            return_data = {'draw_id': draw_id}
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            return_draw_id = ret.id
+            db.session.commit()
+            return_data = { "draw_id" : return_draw_id }
             return return_data
             #return jsonify({'draw_id' : draw_id}) , 201
         else:
