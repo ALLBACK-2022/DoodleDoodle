@@ -1,6 +1,5 @@
 
 from fileinput import filename
-from re import A
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -20,17 +19,16 @@ CORS(app)
 api = Api(app)
 migrate = Migrate(app, db)
 
-MYSQL_USER = os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER = os.environ.get("MYSQL_USER")
-MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST = os.environ.get("MYSQL_HOST")
-RABBITMQ_DEFAULT_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST = os.environ.get("RABBITMQ_DEFAULT_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
-    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_USER=os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD=os.environ.get("MYSQL_PASSWORD")
+MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_USER=os.environ.get("MYSQL_USER")
+MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
+MYSQL_HOST=os.environ.get("MYSQL_HOST")
+RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER
@@ -46,42 +44,28 @@ result_parser = ns.parser()
 
 db = SQLAlchemy()
 db.init_app(app)
+s3 = s3_connection()
 
 
 def connect_rabbitmq():
     time.sleep(3)
-    credentials = pika.PlainCredentials(
-        RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+    credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER,RABBITMQ_DEFAULT_PASS)
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
     channel = connection.channel()
     channel.queue_declare(queue='task_queue', durable=True)
     channel.queue_declare(queue='result_queue', durable=True)
 
 
-def insert_word():
-    f = open("classes.txt", "r", encoding="utf-8")
-    lines = f.readlines()
-    for line in lines:
-        row = models.Word(name=line)
-        db.session.add(row)
-    db.session.commit()
-    f.close()
-
-
 class FibonacciRpcClient(object):
     def __init__(self):
-        credentials = pika.PlainCredentials(
-            RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.callback_queue = result.method.queue
-        self.channel.basic_consume(
-            queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
-
+        self.channel.basic_consume(queue=self.callback_queue,on_message_callback=self.on_response,auto_ack=True)
+    
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             self.response = body
@@ -89,8 +73,8 @@ class FibonacciRpcClient(object):
     def call(self, n):
         self.response = None
         self.corr_id = str(uuid.uuid4())
-        self.channel.basic_publish(exchange='', routing_key='rpc_queue', properties=pika.BasicProperties(
-            reply_to=self.callback_queue, correlation_id=self.corr_id,), body=str(n))
+        self.channel.basic_publish(exchange='',routing_key='rpc_queue',properties=pika.BasicProperties(
+                    reply_to=self.callback_queue,correlation_id=self.corr_id,),body=str(n))
         time.sleep(5)
         while self.response is None:
             self.connection.process_data_events()
@@ -111,7 +95,7 @@ def insert_word():
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
         row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
-             img_url=str('https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/image/' + lines2[idx].rstrip())+'.png')
+            img_url=str(s3_get_image_url(s3, 'image/' + lines2[idx].rstrip() + '.png')))
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -126,7 +110,6 @@ with app.app_context():
 
 
 s3 = s3_connection()
-
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -248,19 +231,12 @@ class result(Resource):
     def post(self):
         '''AI가 분석한 결과를 가져온다'''
         value = request.get_json()
-        # task_id(list 형태) game_id 받기
-        task_ids = value['task-id']
-        user_num = len(task_ids)
-        game = db.session.query(models.Game).get(value['game-id'])
-        randword = game.random_word
-        # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (self._is_complete(task_ids) == "WAIT"):
-            time.sleep(1.0)
-        if self._is_complete(task_ids) == "FAIL":
-            return ("Get result fail", 200)
-        # task가 다 완료되었다면 result 받아오기
-        results = db.session.query(models.Result).filter(
-            models.Result.game_id == game.id).all()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        selecturl = ret.doodle
+        db.session.commit()
+        #print(selecturl)
+        return(selecturl,201)
 
         # for문을 돌면서 results로 가져온 결과들을 정리
         res = {}
