@@ -166,6 +166,8 @@ class save(Resource):
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
         drawid=ret.id
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
         f = request.files['filename']
         if not os.path.exists('temp'):
             os.mkdir('temp')
