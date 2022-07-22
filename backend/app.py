@@ -201,32 +201,6 @@ class player(Resource):
         return(selecturl, 201)
 
 
-@ns.route("/results/ai", methods=['POST'])
-class ai(Resource):
-    def post(self):
-        value = request.get_json()
-
-        draw_id = value['draw-id']
-        draw = db.session.query(models.Draw).filter(models.Draw.id == draw_id)
-        if draw.first() is None:
-            return ('Can not access data', 400)
-        game_id = draw[0].game_id
-        draw_no = draw[0].draw_no
-        game = db.session.query(models.Game).filter(
-            models.Game.id == game_id)
-        if game.first() is None:
-            return ('Can not access data', 400)
-        randword = game[0].random_word
-
-        try:
-            # 여기서 AI 모델에서 Task ID를 response로 받아와 클라로 전송
-            res = requests.post(
-                f"http://localhost:5001/AI/?ranword={randword}", jsonify({"game-id": game_id, "draw-no": draw_no})).json()
-            return (jsonify(res), 200)
-        except:
-            return ('Request to AI fail', 400)
-
-
 @ns.route("/results/similarity", methods=['POST'])
 class similarity(Resource):
     def _is_complete(self, task_ids):
