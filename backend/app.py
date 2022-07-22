@@ -7,14 +7,11 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
-from config import BUCKET_NAME
-import os
-import models
-import random
-import time
+from config import BUCKET_NAME, BUCKET_REGION
+import os, models, random, requests, json
 import pika
 import uuid
-from flask import Flask, request
+
 
 
 app = Flask(__name__)
@@ -186,17 +183,17 @@ class save(Resource):
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
-        row = models.Draw(draw_no=value['draw-no'],
-                          doodle="", game_id=value['game-id'])
-        db.session.add(row)
-        db.session.commit()
-        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-            .filter(models.Draw.draw_no == value['draw-no']).first()
-        drawid = ret.id
-        if not os.path.exists('temp'):
-            os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        f.save('temp/'+ str(drawid) + '.png')
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
+        os.remove('temp/' + str(drawid) +'.png')
+        gameid = value['game-id']
+        game = db.session.query(models.Game).get(gameid)
+        if game is None:
+            return ('Can not access data', 400)
+        ranword = game.random_word
+        if retPut is None:
+            return('Draw saved fail',400)
         
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
@@ -207,36 +204,21 @@ class save(Resource):
             
             retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
             row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
-            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-                .filter(models.Draw.draw_no == value['draw-no']).first()
-            draw_id = ret.id
             db.session.add(row)
             db.session.commit()
-            return_data = {'draw_id': draw_id}
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            return_draw_id = ret.id
+            db.session.commit()
+            return_data = { "draw_id" : return_draw_id }
             return return_data
             #return jsonify({'draw_id' : draw_id}) , 201
         else:
             #print("파일 저장 실패")
             return('draw saved fail',400)
 
-        # for문을 돌면서 results로 가져온 결과들을 정리
-        res = {}
-        if user_num == 1:
-            res = self._organize_result(results, randword)
-        else:
-            res_list = []
-            # draw-id가 같은 result끼리 분류
-            result_list = [[] for _ in range(user_num)]
-            for result in results:
-                result_list[result.draw_id - 1].append(result)
-            # 이제 result 조회해서 가져오기
-            for results in result_list:
-                user_res = self._organize_result(results, randword)
-                user_res['draw-no'] = results[0].draw.draw_no
-                res_list.append(user_res)
-            res['res'] = res_list
-        # 반환
-        return (res, 200)
+@ns.route("/results/player",methods=['POST'])
+class player(Resource):
 
 @ns.route("/api/v1/draws/results", methods=['POST'])
 class result(Resource):
