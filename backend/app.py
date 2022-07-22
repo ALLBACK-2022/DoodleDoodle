@@ -212,30 +212,70 @@ class similarity(Resource):
         return True
 
     def post(self):
-        # here we want to get the value of num (i.e. ?num=some-value)
-        user_num = request.args.get('user-num')
         value = request.get_json()
+
+        # task_id(list 형태) game_id 받기
         task_ids = []
         task_ids = value['task-id']
+        user_num = len(task_ids)
+        game_id = value['game-id']
+        game = db.session.query(models.Game).get(game_id)
+        randword = game.random_word
 
+        # task_id들로 task가 완료되었는지 while문을 돌며 check
         while not self._is_complete(task_ids):
             time.sleep(0.5)
 
-        draw_ids = value['draw-id']
-        # session.query(Game).join(Draw).\
-        #     filter(Address.email_address == 'jack@gmail.com').all()
-        # for draw_id in draw_ids:
-        #     session.query(User).join(Address).\
-        #         filter(Address.email_address == 'jack@gmail.com').all()
-        # results = db.session.query(models.Result).filter(
-        #     models.Result.draw_id == draw_id).all()
-        # topfive = []
-        # for result in results:
-        #     word_id = result.word_id
-        #     word = db.session.query(models.Dictionary).filter(
-        #         models.Dictionary.id == word_id).all()[0]
-        #     word.serialized()
-        #     similarity = result.similarity
+        # task가 다 완료되었다면 result 받아오기
+        results = db.session.query(models.Result).filter(
+            models.Result.game_id == game.id).all()
+
+        # for문을 돌면서 results로 가져온 결과들을 정리
+        if user_num == 1:
+            res = {}
+            topfive = []
+            for result in results:
+                word = {}
+                word['dictionary'] = result.dictionary.serialize()
+                word['similarity'] = result.similarity
+                if result.dictionary.name == randword:
+                    res['randword'] = word
+                else:
+                    topfive.append(word)
+            res['topfive'] = topfive
+            res['draw-id'] = results[0].draw_id
+            # 반환
+            return (res, 200)
+        else:
+            res = {}
+            res_list = []
+
+            # draw-id가 같은 result끼리 분류
+            result_list = [[] for _ in range(user_num)]
+            for result in results:
+                result_list[result.draw_id - 1].append(result)
+
+            # 이제 result 조회해서 가져오기
+            for results in result_list:
+                user_res = {}
+                topfive = []
+                for result in results:
+                    word = {}
+                    word['dictionary'] = result.dictionary.serialize()
+                    word['similarity'] = result.similarity
+                    print(result.dictionary.name)
+                    if result.dictionary.name == randword:
+                        user_res['randword'] = word
+                    else:
+                        topfive.append(word)
+                user_res['topfive'] = topfive
+                user_res['draw-id'] = results[0].draw_id
+                user_res['draw-no'] = results[0].draw.draw_no
+                res_list.append(user_res)
+
+            res['res'] = res_list
+            # 반환
+            return (res, 200)
 
 
 def create_app(config_filename):
