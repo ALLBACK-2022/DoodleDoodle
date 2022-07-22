@@ -8,9 +8,17 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import requests
 from connection import s3_connection, s3_put_object, s3_get_image_url
+<<<<<<< HEAD
 from config import BUCKET_NAME
 import os, models, random, time, pika, uuid
 from flask import Flask, request
+=======
+from config import BUCKET_NAME, BUCKET_REGION
+import os
+import models
+import random
+import json
+>>>>>>> backend-halin
 
 app = Flask(__name__)
 load_dotenv()
