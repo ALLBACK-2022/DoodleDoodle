@@ -1,6 +1,5 @@
 
 from fileinput import filename
-from re import A
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
@@ -8,7 +7,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random
+import os, models, random, boto3, json
 from flask import Flask, request
 from models import db
 from flask_migrate import Migrate
@@ -27,7 +26,6 @@ MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_USER=os.environ.get("MYSQL_USER")
 MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
-MYSQL_PORT=os.environ.get("MYSQL_PORT")
 RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
 RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
 RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
@@ -47,16 +45,48 @@ result_parser = ns.parser()
 
 db = SQLAlchemy()
 db.init_app(app)
+s3 = s3_connection()
 
 
-def insert_word():
-    f = open("classes.txt", "r", encoding="utf-8")
-    lines = f.readlines()
-    for line in lines:
-        row = models.Word(name=line)
-        db.session.add(row)
-    db.session.commit()
-    f.close()
+def connect_rabbitmq():
+    time.sleep(3)
+    credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER,RABBITMQ_DEFAULT_PASS)
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+    channel = connection.channel()
+    channel.queue_declare(queue='task_queue', durable=True)
+    channel.queue_declare(queue='result_queue', durable=True)
+
+
+class FibonacciRpcClient(object):
+    def __init__(self):
+        credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        self.channel = self.connection.channel()
+
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(queue=self.callback_queue,on_message_callback=self.on_response,auto_ack=True)
+    
+    def on_response(self, ch, method, props, body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def call(self, n):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(exchange='',routing_key='rpc_queue',properties=pika.BasicProperties(
+                    reply_to=self.callback_queue,correlation_id=self.corr_id,),body=str(n))
+        time.sleep(5)
+        while self.response is None:
+            self.connection.process_data_events()
+        return self.response
+
+
+def rabbit():
+    fibonacci_rpc = FibonacciRpcClient()
+    # print(" [x] Requesting fib(30)")
+    # response = fibonacci_rpc.call(30)
+    # print(" [.] Got %r" % response)
 
 
 def insert_word():
@@ -66,7 +96,7 @@ def insert_word():
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
         row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
-             img_url=str('https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/image/' + lines2[idx].rstrip())+'.png')
+            img_url=str(s3_get_image_url(s3, 'image/' + lines2[idx].rstrip() + '.png')))
         db.session.add(row)
     db.session.commit()
     f1.close()
@@ -81,7 +111,6 @@ with app.app_context():
 
 
 s3 = s3_connection()
-
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -162,6 +191,8 @@ class player(Resource):
         value = request.get_json()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
+        if ret is None:
+            return('Can not access data', 400)
         selecturl = ret.doodle
         db.session.commit()
         #print(selecturl)
