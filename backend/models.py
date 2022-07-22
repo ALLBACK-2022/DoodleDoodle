@@ -27,7 +27,7 @@ class Game(Base):
     player_num = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    draws = db.relationship('Draw', backref='game', lazy='dynamic')
+    draw = db.relationship('Draw', backref='game')
     
     
     def __init__(self, random_word, player_num):
@@ -52,7 +52,7 @@ class Draw(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    draw_id = db.relationship('Result', backref='draw', lazy='dynamic')
+    
 
 
     def __init__(self, draw_no, doodle,game_id):
@@ -70,8 +70,7 @@ class Dictionary(Base):
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
-    #dictionary_id = db.relationship('Result', backref='dictionary', lazy='dynamic')
-    
+    result = db.relationship('Result', backref='dictionary')
     
     def __init__(self, name, eng_name, img_url):
         self.name = name
@@ -100,9 +99,8 @@ class Result(Base):
     draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
     dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    #result_id = db.relationship('Result', backref='result', lazy='dynamic')
-    
-    
+
+     
     def __init__(self, similarity):
         self.similarity = similarity
         self.created_at = datetime.datetime.now().replace(microsecond=0)
@@ -117,8 +115,6 @@ class Task(Base):
     status = db.Column(db.String(20))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    result_id = db.Column(db.Integer, db.ForeignKey(Result.id))
-    #task_id = db.relationship('Result', backref='task', lazy='dynamic')
 
 
     def __init__(self,status):
