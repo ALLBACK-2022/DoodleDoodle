@@ -113,6 +113,8 @@ class save(Resource):
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
         drawid=ret.id
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
         f = request.files['filename']
         f.save('temp/'+ str(drawid) + '.png')
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
