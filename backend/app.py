@@ -195,7 +195,25 @@ class draw(Resource):
         db.session.commit()
         return(retimage, 200)
 
+@ns.route("/api/v1/results/game/<int:gameid>",methods=['GET'])
+class game(Resource):
 
+    def get(self, gameid):
+        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
+        retusernum = int(ret.player_num)
+        db.session.commit()
+        print(retusernum)
+        ret1 = []
+        ret2 = []
+        for i in range(1,retusernum+1):
+            row = db.session.query(models.Draw).filter(models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()            
+            returl = row.doodle
+            db.session.commit()
+            ret1.append(i)
+            ret2.append(returl)
+        retdict = { name:value for name, value in zip(ret1, ret2)}
+        print(retdict)
+        return (retdict, 200)
 
 
 if __name__=="__main__":
