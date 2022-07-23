@@ -124,9 +124,14 @@ class randwords(Resource):
 
 @ns.route("/save",methods=['POST'])
 class save(Resource):
-
     def post(self):
         value = request.form.to_dict(flat=False)
+        row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
+        db.session.add(row)
+        db.session.commit()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        drawid=ret.id
         f = request.files['filename']
         if not os.path.exists('temp'):
             os.mkdir('temp')

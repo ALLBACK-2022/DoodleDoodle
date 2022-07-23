@@ -5,3 +5,22 @@
 div{
     user-select: none; /* 캔버스 드래그 및 선택 방지 */
 }
+
+@media(max-width: 450px){ /* 모바일 화면 */
+    #gameBGImg{
+        width: 600px;
+        height: 80vh;
+        top: 10vh;
+        overflow: visible;
+    }
+}
+@media(min-width: 450px){ /* PC 및 가로화면 */
+    #gameBGImg{
+        width: 100vw;
+        height: 100vh;
+        padding-right: 2vw;
+        padding-left: 2vw;
+        padding-top: 2vh;
+        padding-bottom: 2vh;
+    }
+}
