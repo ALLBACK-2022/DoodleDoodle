@@ -7,7 +7,12 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME
-import os, models, random
+import os
+import models
+import random
+import time
+import pika
+import uuid
 from flask import Flask, request
 from models import db
 from flask_migrate import Migrate
@@ -18,17 +23,17 @@ CORS(app)
 api = Api(app)
 migrate = Migrate(app, db)
 
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD=os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-MYSQL_PORT=os.environ.get("MYSQL_PORT")
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+RABBITMQ_DEFAULT_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST = os.environ.get("RABBITMQ_DEFAULT_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER
@@ -46,6 +51,17 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
+def connect_rabbitmq():
+    time.sleep(3)
+    credentials = pika.PlainCredentials(
+        RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+    channel = connection.channel()
+    channel.queue_declare(queue='task_queue', durable=True)
+    channel.queue_declare(queue='result_queue', durable=True)
+
+
 def insert_word():
     f = open("classes.txt", "r", encoding="utf-8")
     lines = f.readlines()
@@ -54,6 +70,41 @@ def insert_word():
         db.session.add(row)
     db.session.commit()
     f.close()
+
+
+class FibonacciRpcClient(object):
+    def __init__(self):
+        credentials = pika.PlainCredentials(
+            RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        self.channel = self.connection.channel()
+
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
+
+    def on_response(self, ch, method, props, body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def call(self, n):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(exchange='', routing_key='rpc_queue', properties=pika.BasicProperties(
+            reply_to=self.callback_queue, correlation_id=self.corr_id,), body=str(n))
+        time.sleep(5)
+        while self.response is None:
+            self.connection.process_data_events()
+        return self.response
+
+
+def rabbit():
+    fibonacci_rpc = FibonacciRpcClient()
+    # print(" [x] Requesting fib(30)")
+    # response = fibonacci_rpc.call(30)
+    # print(" [.] Got %r" % response)
 
 
 def insert_word():
@@ -136,14 +187,13 @@ class save(Resource):
             .filter(models.Draw.draw_no == value['draw-no']).first()
         drawid=ret.id
         f = request.files['filename']
-        if not os.path.exists('temp'):
-            os.mkdir('temp')
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
+
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        # os.remove('temp/' + filepath)
+        #os.remove('temp/' + filepath)
 
         if retPut:
 
@@ -160,30 +210,7 @@ class save(Resource):
             return return_data
             # return jsonify({'draw_id' : draw_id}) , 201
         else:
-            # print("파일 저장 실패")
-            return('draw saved fail', 400)
-
-        print(value)
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
-                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        # os.remove('temp/' + filepath)
-
-        if retPut:
-
-            retGet = s3_get_image_url(
-                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(
-                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
-            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-                .filter(models.Draw.draw_no == value['draw-no']).first()
-            draw_id = ret.id
-            db.session.add(row)
-            db.session.commit()
-            return_data = {'draw_id': draw_id}
-            return return_data
-            # return jsonify({'draw_id' : draw_id}) , 201
-        else:
-            # print("파일 저장 실패")
+            #print("파일 저장 실패")
             return('draw saved fail', 400)
 
 
@@ -206,11 +233,10 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-            if task.status == "FAILURE":
-                return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
-
+            if task.status == "FAILURE":
+                return "FAIL"
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
