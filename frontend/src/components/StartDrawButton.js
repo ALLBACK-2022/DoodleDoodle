@@ -8,8 +8,8 @@ import { Link, useLocation } from 'react-router-dom';
 //   return response.data;
 // }
 
-const baseURL = 'http://localhost:5000/randwords';
-// const baseURL = 'http://127.0.0.1:5000/randwords';
+// const baseURL = 'http://localhost:5000/randwords';
+const baseURL = 'http://127.0.0.1:5000/randwords';
 function StartDrawButton({ image, word }) {
   const location = useLocation();
   async function onClick() {
