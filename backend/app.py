@@ -1,4 +1,3 @@
-
 from fileinput import filename
 import time
 from flask import Flask, jsonify, request
@@ -8,18 +7,14 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import requests
 from connection import s3_connection, s3_put_object, s3_get_image_url
-<<<<<<< HEAD
 from config import BUCKET_NAME
-import os, models, random, time, pika, uuid
-from flask import Flask, request
-=======
-from config import BUCKET_NAME, BUCKET_REGION
 import os
 import models
 import random
-import json
->>>>>>> backend-halin
-
+import time
+import pika
+import uuid
+from flask import Flask, request
 app = Flask(__name__)
 load_dotenv()
 CORS(app)
@@ -62,6 +57,8 @@ def connect_rabbitmq():
     channel = connection.channel()
     channel.queue_declare(queue='task_queue', durable=True)
     channel.queue_declare(queue='result_queue', durable=True)
+
+
 def insert_word():
     f = open("classes.txt", "r", encoding="utf-8")
     lines = f.readlines()
@@ -138,10 +135,11 @@ class main_page(Resource):
         return 'Doodle, Doodle!'
 
 
-@ns.route("/user-num", methods=['POST'])
+@ns.route("/api/v1/games", methods=['POST'])
 class user_num(Resource):
 
     def post(self):
+        '''사용자가 그린 그림을 저장한다.'''
         value = request.get_json()
         # print(value)
         if value['user-num'] > 6:
@@ -151,15 +149,15 @@ class user_num(Resource):
         row = models.Game(random_word="", player_num=value['user-num'])
         db.session.add(row)
         db.session.commit()
-        #return (json.dumps(row.serialize()), 201)
-        return ((row.id),201)         # 숫자값만 반환 -> 성공
-        
+        # return (json.dumps(row.serialize()), 201)
+        return ((row.id), 201)         # 숫자값만 반환 -> 성공
 
 
-@ns.route("/randwords", methods=['GET', 'POST'])
+@ns.route("/api/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
 
     def get(self):
+        '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
             models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
@@ -167,6 +165,7 @@ class randwords(Resource):
         return (randword[0].name, 200)
 
     def post(self):
+        '''최종결정한 단어를 저장한다'''
         value = request.get_json()
         if not value:
             return('no word found', 400)
@@ -177,10 +176,11 @@ class randwords(Resource):
         return ('random word saved', 201)
 
 
-@ns.route("/save", methods=['POST'])
+@ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
 
     def post(self):
+        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
         f = request.files['filename']
         f.save('temp/' + str(value['game-id'][0]) +
@@ -223,81 +223,68 @@ class player(Resource):
         return(selecturl, 201)
 
 
-@ns.route("/results/similarity", methods=['POST'])
-class similarity(Resource):
+@ns.route("/api/v1/draws/results", methods=['POST'])
+class result(Resource):
     def _is_complete(self, task_ids):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-            if task.status == "wait":
-                return False
-        return True
+            if not task.status == "SUCCESS":
+                return "WAIT"
+            if task.status == "FAILURE":
+                return "FAIL"
+        return "SUCCESS"
+
+    def _organize_result(self, results, randword):
+        res = {}
+        topfive = []
+        for result in results:
+            word = {}
+            word['dictionary'] = result.dictionary.serialize()
+            word['similarity'] = result.similarity
+            if result.dictionary.name == randword:
+                res['randword'] = word
+            else:
+                topfive.append(word)
+        res['topfive'] = topfive
+        res['draw-id'] = results[0].draw_id
+        return res
 
     def post(self):
+        '''AI가 분석한 결과를 가져온다'''
         value = request.get_json()
-
         # task_id(list 형태) game_id 받기
-        task_ids = []
         task_ids = value['task-id']
         user_num = len(task_ids)
-        game_id = value['game-id']
-        game = db.session.query(models.Game).get(game_id)
+        game = db.session.query(models.Game).get(value['game-id'])
         randword = game.random_word
-
         # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while not self._is_complete(task_ids):
-            time.sleep(0.5)
-
+        while (self._is_complete(task_ids) == "WAIT"):
+            time.sleep(1.0)
+        if self._is_complete(task_ids) == "FAIL":
+            return ("Get result fail", 200)
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.game_id == game.id).all()
 
         # for문을 돌면서 results로 가져온 결과들을 정리
+        res = {}
         if user_num == 1:
-            res = {}
-            topfive = []
-            for result in results:
-                word = {}
-                word['dictionary'] = result.dictionary.serialize()
-                word['similarity'] = result.similarity
-                if result.dictionary.name == randword:
-                    res['randword'] = word
-                else:
-                    topfive.append(word)
-            res['topfive'] = topfive
-            res['draw-id'] = results[0].draw_id
-            # 반환
-            return (res, 200)
+            res = self._organize_result(results, randword)
         else:
-            res = {}
             res_list = []
-
             # draw-id가 같은 result끼리 분류
             result_list = [[] for _ in range(user_num)]
             for result in results:
                 result_list[result.draw_id - 1].append(result)
-
             # 이제 result 조회해서 가져오기
             for results in result_list:
-                user_res = {}
-                topfive = []
-                for result in results:
-                    word = {}
-                    word['dictionary'] = result.dictionary.serialize()
-                    word['similarity'] = result.similarity
-                    print(result.dictionary.name)
-                    if result.dictionary.name == randword:
-                        user_res['randword'] = word
-                    else:
-                        topfive.append(word)
-                user_res['topfive'] = topfive
-                user_res['draw-id'] = results[0].draw_id
+                user_res = self._organize_result(results, randword)
                 user_res['draw-no'] = results[0].draw.draw_no
                 res_list.append(user_res)
-
             res['res'] = res_list
-            # 반환
-            return (res, 200)
+        # 반환
+        return (res, 200)
 
 
 if __name__ == "__main__":

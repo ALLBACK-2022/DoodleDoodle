@@ -28,13 +28,8 @@ class Game(Base):
     player_num = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-<<<<<<< HEAD
     draws = db.relationship('Draw', backref='game', lazy='dynamic')
-    
-=======
-    draw = db.relationship('Draw', backref='game')
 
->>>>>>> backend-halin
     def __init__(self, random_word, player_num):
         self.random_word = random_word
         self.player_num = player_num
