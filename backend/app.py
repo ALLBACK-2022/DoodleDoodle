@@ -163,6 +163,8 @@ class save(Resource):
     def post(self):
         value = request.form.to_dict(flat=False)
         f = request.files['filename']
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
         f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
         
         print(value)

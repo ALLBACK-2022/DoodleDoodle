@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router';
 
-const baseURL = 'http://localhost:5000/results/similarity?user-num=';
+const baseURL = 'http://localhost:5000/api/draws/results';
 function ResultSimilarity({setChartData, setRandomWordData, setImageUrl}){
     const location = useLocation();
     const array = []
@@ -11,8 +11,8 @@ function ResultSimilarity({setChartData, setRandomWordData, setImageUrl}){
                 "Content-Type" : "application/json",
             },
             body: JSON.stringify({
-                "draw-id" : location.drawId,
-                "player-num" : location.playerNum,
+                "game-id" : location.gameId,
+                "task-id" : location.taskId,
             }),
         }).then(res => res.json())
         .then(res => res.topfive.foreach(

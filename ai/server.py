@@ -7,6 +7,7 @@ import os, keras, numpy as np, os
 
 from skimage.transform import resize
 import matplotlib.pyplot as plt
+from troposphere import Not
 
 from config import BUCKET_NAME
 from connection import s3_connection, s3_get_object
@@ -32,8 +33,9 @@ def index():
             return ('No parameter', 400)
         #랜덤 단어와 이미지 url을 받아온다.
         s3 = s3_connection()
-        os.mkdir('temp')
-        filepath = str(value['game-id']) + '_' + str(value['draw-no']) + '.png'
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
+        filepath = str(value['draw-id']) + '.png'
         if s3_get_object(s3, BUCKET_NAME, 'drawimage/'+ filepath, 'temp/' + filepath):
             ranword = request.args.get('ranword')
             
