@@ -118,7 +118,7 @@ class main_page(Resource):
         return 'Doodle, Doodle!'
 
 
-@ns.route("/api/user-num", methods=['POST'])
+@ns.route("/api/v1/games", methods=['POST'])
 class user_num(Resource):
 
     def post(self):
@@ -158,8 +158,7 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
-
-@ns.route("/api/v1/draws", methods=['POST'])
+@ns.route("/api/v1/draws",methods=['POST'])
 class save(Resource):
 
     def post(self):
@@ -207,6 +206,8 @@ class game(Resource):
     def get(self, gameid):
         ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
+        if ret is None:
+            return('No data in database', 400)
         db.session.commit()
         print(retusernum)
         ret1 = []
@@ -218,7 +219,7 @@ class game(Resource):
             ret1.append(i)
             ret2.append(returl)
         retdict = { name:value for name, value in zip(ret1, ret2)}
-        print(retdict)
+        #print(retdict)
         return (retdict, 200)
 
 
