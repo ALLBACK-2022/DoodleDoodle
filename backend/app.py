@@ -206,7 +206,7 @@ class game(Resource):
         ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
         if ret is None:
-            return('No data in database', 400)
+            return('Can not access data', 400)
         db.session.commit()
         print(retusernum)
         ret1 = []
