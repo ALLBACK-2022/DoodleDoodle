@@ -200,25 +200,25 @@ class draw(Resource):
         db.session.commit()
         return(retimage, 200)
 
-        # for문을 돌면서 results로 가져온 결과들을 정리
-        res = {}
-        if user_num == 1:
-            res = self._organize_result(results, randword)
-        else:
-            res_list = []
-            # draw-id가 같은 result끼리 분류
-            result_list = [[] for _ in range(user_num)]
-            for result in results:
-                result_list[result.draw_id - 1].append(result)
-            # 이제 result 조회해서 가져오기
-            for results in result_list:
-                user_res = self._organize_result(results, randword)
-                user_res['draw-no'] = results[0].draw.draw_no
-                res_list.append(user_res)
-            res['res'] = res_list
-        # 반환
-        return (res, 200)
+@ns.route("/api/v1/results/game/<int:gameid>",methods=['GET'])
+class game(Resource):
 
+    def get(self, gameid):
+        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
+        retusernum = int(ret.player_num)
+        db.session.commit()
+        print(retusernum)
+        ret1 = []
+        ret2 = []
+        for i in range(1,retusernum+1):
+            row = db.session.query(models.Draw).filter(models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()            
+            returl = row.doodle
+            db.session.commit()
+            ret1.append(i)
+            ret2.append(returl)
+        retdict = { name:value for name, value in zip(ret1, ret2)}
+        print(retdict)
+        return (retdict, 200)
 
 
 if __name__=="__main__":
