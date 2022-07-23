@@ -165,6 +165,8 @@ class save(Resource):
         '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
         f = request.files['filename']
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
         f.save('temp/'+ str(drawid) + '.png')
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
         os.remove('temp/' + str(drawid) +'.png')
