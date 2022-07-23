@@ -6,11 +6,14 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
-from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
-from models import db
-from flask_migrate import Migrate
-from sqlalchemy_utils import database_exists, create_database
+from config import BUCKET_NAME
+import os
+import models
+import random
+import time
+import pika
+import uuid
+from flask import Flask, request
 
 
 app = Flask(__name__)
@@ -19,18 +22,17 @@ CORS(app)
 api = Api(app)
 migrate = Migrate(app, db)
 
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD=os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-MYSQL_PORT=os.environ.get("MYSQL_PORT")
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
-engine = create_engine(sqlurl)
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+RABBITMQ_DEFAULT_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST = os.environ.get("RABBITMQ_DEFAULT_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 
 app.config['MYSQL_DB'] = MYSQL_USER
@@ -49,23 +51,80 @@ db = SQLAlchemy()
 db.init_app(app)
 s3 = s3_connection()
 
+
+def connect_rabbitmq():
+    time.sleep(3)
+    credentials = pika.PlainCredentials(
+        RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+    channel = connection.channel()
+    channel.queue_declare(queue='task_queue', durable=True)
+    channel.queue_declare(queue='result_queue', durable=True)
+
+
+def insert_word():
+    f = open("classes.txt", "r", encoding="utf-8")
+    lines = f.readlines()
+    for line in lines:
+        row = models.Word(name=line)
+        db.session.add(row)
+    db.session.commit()
+    f.close()
+
+
+class FibonacciRpcClient(object):
+    def __init__(self):
+        credentials = pika.PlainCredentials(
+            RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        self.channel = self.connection.channel()
+
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
+
+    def on_response(self, ch, method, props, body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def call(self, n):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(exchange='', routing_key='rpc_queue', properties=pika.BasicProperties(
+            reply_to=self.callback_queue, correlation_id=self.corr_id,), body=str(n))
+        time.sleep(5)
+        while self.response is None:
+            self.connection.process_data_events()
+        return self.response
+
+
+def rabbit():
+    fibonacci_rpc = FibonacciRpcClient()
+    # print(" [x] Requesting fib(30)")
+    # response = fibonacci_rpc.call(30)
+    # print(" [.] Got %r" % response)
+
+
 def insert_word():
     f1 = open("classes.txt", "r", encoding="utf-8")
     f2 = open("engclasses.txt", "r", encoding="utf-8")
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
-            img_url=str(s3_get_image_url(s3, 'image/' + lines2[idx].rstrip() + '.png')))
+        row = models.Dictionary(
+            name=line.rstrip(), eng_name=lines2[idx].rstrip(), img_url="")
         db.session.add(row)
     db.session.commit()
     f1.close()
     f2.close()
-    
-def make_word():
-    if not database_exists(sqlurl):
-        create_database(sqlurl)
-    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
+
+
+with app.app_context():
+    word = db.session.query(models.Dictionary).filter(
+        models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
@@ -101,7 +160,6 @@ class user_num(Resource):
 class randwords(Resource):
 
     def get(self):
-        '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
             models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
@@ -119,7 +177,8 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
-@ns.route("/api/v1/draws",methods=['POST'])
+
+@ns.route("/save", methods=['POST'])
 class save(Resource):
 
     def post(self):
@@ -133,51 +192,78 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        ranword = game.random_word
-        retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
-        ret.doodle = retGet
-        db.session.commit()
-  
-        try:
-            return_data = {'ranword':ranword,'draw_id':drawid}
-            return return_data, 200
-        except:                  
-            return('Requset to AI fail', 400)
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
 
+        print(value)
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        #os.remove('temp/' + filepath)
 
-@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
-class draw(Resource):
+        if retPut:
 
-    def get(self, drawid):
-        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
-        retimage = ret.doodle
-        if ret is None:
-            return('NO image in database', 400)
-        db.session.commit()
-        return(retimage, 200)
-
-@ns.route("/api/v1/results/game/<int:gameid>",methods=['GET'])
-class game(Resource):
-
-    def get(self, gameid):
-        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
-        retusernum = int(ret.player_num)
-        if ret is None:
-            return('Can not access data', 400)
-        db.session.commit()
-        print(retusernum)
-        ret1 = []
-        ret2 = []
-        for i in range(1,retusernum+1):
-            row = db.session.query(models.Draw).filter(models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()            
-            returl = row.doodle
+            retGet = s3_get_image_url(
+                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(
+                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            draw_id = ret.id
+            db.session.add(row)
             db.session.commit()
-            ret1.append(i)
-            ret2.append(returl)
-        retdict = { name:value for name, value in zip(ret1, ret2)}
-        #print(retdict)
-        return (retdict, 200)
+            return_data = {'draw_id': draw_id}
+            return return_data
+            # return jsonify({'draw_id' : draw_id}) , 201
+        else:
+            #print("파일 저장 실패")
+            return('draw saved fail', 400)
+
+
+@ns.route("/results/player", methods=['POST'])
+class player(Resource):
+
+    def _organize_result(self, results, randword):
+        res = {}
+        topfive = []
+        for result in results:
+            word = {}
+            word['dictionary'] = result.dictionary.serialize()
+            word['similarity'] = result.similarity
+            if result.dictionary.name == randword:
+                res['randword'] = word
+                topfive.append(word)
+        res['topfive'] = topfive
+        res['draw-id'] = results[0].draw_id
+        return res
+
+    def post(self):
+        '''AI가 분석한 결과를 가져온다'''
+        value = request.get_json()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        selecturl = ret.doodle
+        db.session.commit()
+        # print(selecturl)
+        return(selecturl, 201)
+
+        # for문을 돌면서 results로 가져온 결과들을 정리
+        res = {}
+        if user_num == 1:
+            res = self._organize_result(results, randword)
+        else:
+            res_list = []
+            # draw-id가 같은 result끼리 분류
+            result_list = [[] for _ in range(user_num)]
+            for result in results:
+                result_list[result.draw_id - 1].append(result)
+            # 이제 result 조회해서 가져오기
+            for results in result_list:
+                user_res = self._organize_result(results, randword)
+                user_res['draw-no'] = results[0].draw.draw_no
+                res_list.append(user_res)
+            res['res'] = res_list
+        # 반환
+        return (res, 200)
 
 @ns.route("/api/v1/draws/results", methods=['POST'])
 class result(Resource):
@@ -185,10 +271,10 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-            if task.status == "FAILURE":
-                return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
+            if task.status == "FAILURE":
+                return "FAIL"
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
@@ -200,6 +286,7 @@ class result(Resource):
             word['similarity'] = result.similarity
             if result.dictionary.name == randword:
                 res['randword'] = word
+            else:
                 topfive.append(word)
         res['topfive'] = topfive
         res['draw-id'] = results[0].draw_id
@@ -241,6 +328,6 @@ class result(Resource):
         # 반환
         return (res, 200)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     app.run(port="5000", debug=True)
-    make_word()
