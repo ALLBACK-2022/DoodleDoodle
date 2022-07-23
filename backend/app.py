@@ -176,66 +176,29 @@ class save(Resource):
         if retPut is None:
             return('Draw saved fail',400)
         
-        print(value)
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
-         'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        #os.remove('temp/' + filepath)
-        
-        if retPut :
-            
-            retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
-            db.session.add(row)
-            db.session.commit()
-            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-                .filter(models.Draw.draw_no == value['draw-no']).first()
-            return_draw_id = ret.id
-            db.session.commit()
-            return_data = { "draw_id" : return_draw_id }
-            return return_data
-            #return jsonify({'draw_id' : draw_id}) , 201
-        else:
-            #print("파일 저장 실패")
-            return('draw saved fail',400)
+        retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
+        ret.doodle = retGet
+        db.session.commit()
+  
+        try:
+            return_data = {'ranword':ranword,'draw_id':drawid}
+            return return_data, 200
+        except:                  
+            return('Requset to AI fail', 400) 
 
 @ns.route("/results/player",methods=['POST'])
 class player(Resource):
 
-@ns.route("/api/v1/draws/results", methods=['POST'])
-class result(Resource):
-    def _is_complete(self, task_ids):
-        # task_id 로 status가 성공인지 아닌지
-        for task_id in task_ids:
-            task = db.session.query(models.Task).get(task_id)
-            if task.status == "FAILURE":
-                return "FAIL"
-            if not task.status == "SUCCESS":
-                return "WAIT"
-        return "SUCCESS"
+@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+class draw(Resource):
 
-    def _organize_result(self, results, randword):
-        res = {}
-        topfive = []
-        for result in results:
-            word = {}
-            word['dictionary'] = result.dictionary.serialize()
-            word['similarity'] = result.similarity
-            if result.dictionary.name == randword:
-                res['randword'] = word
-                topfive.append(word)
-        res['topfive'] = topfive
-        res['draw-id'] = results[0].draw_id
-        return res
-
-    def post(self):
-        '''AI가 분석한 결과를 가져온다'''
-        value = request.get_json()
-        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-            .filter(models.Draw.draw_no == value['draw-no']).first()
-        selecturl = ret.doodle
+    def get(self, drawid):
+        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
+        retimage = ret.doodle
+        if ret is None:
+            return('NO image in database', 400)
         db.session.commit()
-        #print(selecturl)
-        return(selecturl,201)
+        return(retimage, 200)
 
         # for문을 돌면서 results로 가져온 결과들을 정리
         res = {}
@@ -257,5 +220,6 @@ class result(Resource):
         return (res, 200)
 
 
-if __name__ == "__main__":
+
+if __name__=="__main__":
     app.run(port="5000", debug=True)
