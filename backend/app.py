@@ -135,24 +135,21 @@ class save(Resource):
             return_data = {'ranword':ranword,'draw_id':drawid}
             return return_data, 200
         except:                  
-            return('Requset to AI fail', 400)              
+            return('Requset to AI fail', 400) 
 
 
+@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+class draw(Resource):
 
-
-@ns.route("/results/player",methods=['POST'])
-class player(Resource):
-
-    def post(self):
-        value = request.get_json()
-        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-            .filter(models.Draw.draw_no == value['draw-no']).first()
+    def get(self, drawid):
+        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
+        retimage = ret.doodle
         if ret is None:
-            return('Can not access data', 400)
-        selecturl = ret.doodle
+            return('NO image in database', 400)
         db.session.commit()
-        #print(selecturl)
-        return(selecturl,201)
+        return(retimage, 200)
+
+
 
 
 if __name__=="__main__":
