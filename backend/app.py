@@ -172,6 +172,12 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
+<<<<<<< develop
+=======
+
+@ns.route("/save", methods=['POST'])
+class save(Resource):
+>>>>>>> feat: fix get AI result API
 
 @ns.route("/save", methods=['POST'])
 class save(Resource):
@@ -184,6 +190,7 @@ class save(Resource):
             .filter(models.Draw.draw_no == value['draw-no']).first()
         drawid=ret.id
         f = request.files['filename']
+<<<<<<< develop
         f.save('temp/'+ str(drawid) + '.png')
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
         os.remove('temp/' + str(drawid) +'.png')
@@ -202,11 +209,19 @@ class save(Resource):
             return return_data, 200
         except:
             return('Requset to AI fail', 400)
+=======
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
+>>>>>>> feat: fix get AI result API
 
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+<<<<<<< develop
         # os.remove('temp/' + filepath)
+=======
+        #os.remove('temp/' + filepath)
+>>>>>>> feat: fix get AI result API
 
         if retPut:
 
@@ -223,10 +238,17 @@ class save(Resource):
             return return_data
             # return jsonify({'draw_id' : draw_id}) , 201
         else:
+<<<<<<< develop
             # print("파일 저장 실패")
             return('draw saved fail', 400)
 
 
+=======
+            #print("파일 저장 실패")
+            return('draw saved fail', 400)
+
+
+>>>>>>> feat: fix get AI result API
 @ns.route("/results/player", methods=['POST'])
 class player(Resource):
 
@@ -246,11 +268,18 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
+<<<<<<< develop
             if task.status == "FAILURE":
                 return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
 
+=======
+            if not task.status == "SUCCESS":
+                return "WAIT"
+            if task.status == "FAILURE":
+                return "FAIL"
+>>>>>>> feat: fix get AI result API
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
