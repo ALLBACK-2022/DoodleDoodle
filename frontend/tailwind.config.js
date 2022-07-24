@@ -2,6 +2,10 @@
 module.exports = {
   content: ['./src/**/*.{html,js}'],
   theme: {
+    screens: {
+      mobile: { max: '700px' } /* 모바일 화면 */,
+      deskTop: { min: '701px' } /* PC 화면 */,
+    },
     extend: {
       colors: {
         primary: {

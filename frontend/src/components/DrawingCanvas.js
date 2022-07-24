@@ -187,7 +187,8 @@ function DrawingCanvas({ imgDataPost }, ref) {
     <canvas
       id="drawingCanvas"
       ref={canvasRef}
-      className="absolute w-[80%] h-[75%] left-[10%] top-[15%]"
+      className="absolute deskTop:w-[80%] deskTop:h-[75%] deskTop:left-[10%] deskTop:top-[15%]
+        mobile:w-[100%] mobile:h-[72%] mobile:top-[20%]"
       onMouseDown={startDrawing}
       onMouseMove={drawing}
       onMouseLeave={finishDrawing}
