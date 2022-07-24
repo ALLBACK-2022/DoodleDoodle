@@ -198,7 +198,7 @@ class save(Resource):
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        #os.remove('temp/' + filepath)
+        # os.remove('temp/' + filepath)
 
         if retPut:
 
@@ -215,7 +215,7 @@ class save(Resource):
             return return_data
             # return jsonify({'draw_id' : draw_id}) , 201
         else:
-            #print("파일 저장 실패")
+            # print("파일 저장 실패")
             return('draw saved fail', 400)
 
 
@@ -271,10 +271,11 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-            if not task.status == "SUCCESS":
-                return "WAIT"
             if task.status == "FAILURE":
                 return "FAIL"
+            if not task.status == "SUCCESS":
+                return "WAIT"
+
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
