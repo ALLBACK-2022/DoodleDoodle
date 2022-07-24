@@ -40,26 +40,25 @@ services:
     tty: true
 
   ai:
-    build:
-      context: ./ai
-    ports:
-    - 5001:5000
-    environment:
-      FLASK_DEBUG: 1
-      FLASK_APP: ./app.py
-    container_name: ai-con
-    expose:
-      - 5001
-    restart: always
-    # command: flask run --host=0.0.0.0 --port=5001
-    volumes:
-      - ./ai:/usr/local/app/
-    depends_on:
-      - rabbitmq
-      - db
-    links:
-      - rabbitmq
-      - db
+      build:
+        context: ./ai
+      ports:
+      - "5001:5001" 
+      environment:
+        FLASK_DEBUG: 1
+        FLASK_APP: ./server.py
+      container_name: ai-con
+      expose:
+        - 5001
+      restart: always
+      command: flask run --host=0.0.0.0 --port=5001
+      volumes:
+        - ./ai:/usr/local/app/
+      depends_on:
+        - rabbitmq
+        - db
+      links:
+        - rabbitmq
 
   db:
     image: mysql
@@ -105,18 +104,22 @@ services:
     tty: true
 
   worker:
-    build:
-      context: './ai'
-      dockerfile: Dockerfile.celery
-    container_name: worker-con
-    user: root
-    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
-    command: celery -A ai.tasks.celery_app worker --loglevel=info
-    depends_on:
-      - rabbitmq
-      - ai
-      - db
-    tty: true
+      build:
+        context: ./ai
+        dockerfile: Dockerfile.celery
+      container_name: worker-con
+      user: nobody
+      command: celery -A ai.tasks.celery_app worker --loglevel=info
+      volumes:
+        - ./ai:/ai
+      depends_on:
+        - db
+        - rabbitmq
+        - ai
+      environment:
+        - USE_MYSQL=1
+        - IS_DOCKER=1
+      tty: true
 
   flower:
     image: mher/flower
