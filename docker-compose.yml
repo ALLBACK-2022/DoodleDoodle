@@ -58,6 +58,7 @@ services:
         - ./ai:/usr/local/app/
       depends_on:
         - rabbitmq
+        - db
       links:
         - rabbitmq
 
@@ -105,13 +106,17 @@ services:
 
   worker:
       build:
-        context: ./backend
+        context: ./ai
+        dockerfile: Dockerfile.celery
       container_name: worker-con
+      user: nobody
+      command: celery -A ai.tasks.celery_app worker --loglevel=info
       volumes:
-        - ./backend:/backend
+        - ./ai:/ai
       depends_on:
         - db
         - rabbitmq
+        - ai
       environment:
         - USE_MYSQL=1
         - IS_DOCKER=1
