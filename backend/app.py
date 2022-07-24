@@ -221,10 +221,14 @@ class save(Resource):
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
 <<<<<<< develop
+<<<<<<< develop
         # os.remove('temp/' + filepath)
 =======
         #os.remove('temp/' + filepath)
 >>>>>>> feat: fix get AI result API
+=======
+        # os.remove('temp/' + filepath)
+>>>>>>> feat: start mobile randompage
 
         if retPut:
 
@@ -242,12 +246,16 @@ class save(Resource):
             # return jsonify({'draw_id' : draw_id}) , 201
         else:
 <<<<<<< develop
+<<<<<<< develop
             # print("파일 저장 실패")
             return('draw saved fail', 400)
 
 
 =======
             #print("파일 저장 실패")
+=======
+            # print("파일 저장 실패")
+>>>>>>> feat: start mobile randompage
             return('draw saved fail', 400)
 
 
@@ -272,6 +280,7 @@ class result(Resource):
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
 <<<<<<< develop
+<<<<<<< develop
             if task.status == "FAILURE":
                 return "FAIL"
             if not task.status == "SUCCESS":
@@ -283,6 +292,13 @@ class result(Resource):
             if task.status == "FAILURE":
                 return "FAIL"
 >>>>>>> feat: fix get AI result API
+=======
+            if task.status == "FAILURE":
+                return "FAIL"
+            if not task.status == "SUCCESS":
+                return "WAIT"
+
+>>>>>>> feat: start mobile randompage
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
