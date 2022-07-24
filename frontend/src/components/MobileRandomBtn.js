@@ -28,7 +28,11 @@ function MobileRandomBtn({ setWord, start, word }) {
     console.log(response.data);
   }
   useEffect(() => {
+<<<<<<< develop
     if (!start) {
+=======
+    if (start) {
+>>>>>>> feat: start mobile randompage
       getRandWord();
     }
     console.log('useEffect() here');
@@ -40,9 +44,15 @@ function MobileRandomBtn({ setWord, start, word }) {
       <button
         onClick={goNextPage}
         className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
+<<<<<<< develop
     font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
       >
         네!
+=======
+      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+      >
+        다른 거 그리고 싶어요
+>>>>>>> feat: start mobile randompage
       </button>
     );
   }
@@ -50,9 +60,15 @@ function MobileRandomBtn({ setWord, start, word }) {
     <button
       onClick={getRandWord}
       className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
+<<<<<<< develop
       font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
     >
       다른 거 그리고 싶어요
+=======
+    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+    >
+      네!
+>>>>>>> feat: start mobile randompage
     </button>
   );
 }
