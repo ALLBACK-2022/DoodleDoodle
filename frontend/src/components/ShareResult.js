@@ -46,28 +46,6 @@ function ShareResult({isforOne}){
 
     async function share() {
 
-        // const result = async (title, text, blob) => {
-
-        //     const data = {
-        //       files: [
-        //         new File([blob], 'result.png', {
-        //           type: 'image/png',
-        //         }),
-        //       ],
-        //       title: title,
-        //       text: text,
-        //     };
-
-        //     try {
-        //       if (!navigator.canShare || !(navigator.canShare(data))) {
-        //         throw new Error("Can't share data.", data);
-        //       }
-        //       await navigator.share(data);
-        //     } catch (err) {
-        //       console.error(err.name, err.message);
-        //     }
-        // };
-
         await html2canvas(document.getElementById("resultonepage")).then(async (canvas) => {
             await canvas.toBlob(function(blob) {
                 download(URL.createObjectURL(blob),"result.png")
