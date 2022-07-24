@@ -1,0 +1,21 @@
+FROM python:3.10.5
+# This prevents Python from writing out pyc files
+ENV PYTHONDONTWRITEBYTECODE 1
+# This keeps Python from buffering stdin/stdout
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /ai
+
+RUN pip install --upgrade pip
+# RUN apk update \
+#   && apk add python3-dev gcc libc-dev musl-dev mariadb-dev build-base
+
+COPY requirements.txt /ai/
+RUN pip install -r requirements.txt
+
+COPY . ./
+
+# Different here
+WORKDIR /
+
+CMD [ "flask", "run", "--host=0.0.0.0"]
