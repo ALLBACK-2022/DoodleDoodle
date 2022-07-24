@@ -10,7 +10,8 @@ services:
     volumes: 
       - build_folder:/frontend/build
       - ./frontend/node_modules/:/frontend/node_modules
-    restart: always
+    #   - 'our-vol:/app'
+    # restart: always
     image: run
     stdin_open: true
     tty: true
@@ -59,11 +60,14 @@ services:
         - db
       links:
         - rabbitmq
+        - db
 
   db:
     image: mysql
     # platform: linux/amd64
     container_name: mysql-con
+    platform: linux/x86_64
+    restart: always
     ports:
       - 3307:3306
     volumes:
@@ -79,7 +83,7 @@ services:
     image: nginx:1.21.5-alpine
     build: ./nginx
     ports:
-      - 80:80
+      - 80:8000
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - build_folder:/var/www/frontend
@@ -134,7 +138,7 @@ services:
     tty: true
 
 volumes:
-  build_folder:
+  build_folder: null
   data_mysql:
   data_rabbitmq:
 
