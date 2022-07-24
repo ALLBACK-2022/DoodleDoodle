@@ -4,7 +4,6 @@ import { useMediaQuery } from 'react-responsive';
 import recreate from '../assets/icons/changeImg.png';
 import play from '../assets/icons/startImg.png';
 import ContentText from '../components/ContentText';
-import DoodleBelt from '../components/DoodleBelt';
 import MobileRandomBtn from '../components/MobileRandomBtn';
 import RandomTitle from '../components/RandomTitle';
 import RandomWordButton from '../components/RandomWordButton';

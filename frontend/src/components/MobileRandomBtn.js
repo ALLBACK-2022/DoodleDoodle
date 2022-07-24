@@ -28,7 +28,7 @@ function MobileRandomBtn({ setWord, start, word }) {
     console.log(response.data);
   }
   useEffect(() => {
-    if (!start) {
+    if (start) {
       getRandWord();
     }
     console.log('useEffect() here');
@@ -40,9 +40,9 @@ function MobileRandomBtn({ setWord, start, word }) {
       <button
         onClick={goNextPage}
         className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
-    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
       >
-        네!
+        다른 거 그리고 싶어요
       </button>
     );
   }
@@ -50,9 +50,9 @@ function MobileRandomBtn({ setWord, start, word }) {
     <button
       onClick={getRandWord}
       className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
-      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
     >
-      다른 거 그리고 싶어요
+      네!
     </button>
   );
 }
