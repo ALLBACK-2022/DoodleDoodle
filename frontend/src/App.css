@@ -12,3 +12,11 @@
 .startshadow{
     text-shadow: 4px 3px 0px #000000;
 }
+
+.btnshadow{
+    box-shadow: 4px 4px 0px #e2d4a4;
+}
+
+.randomshadow{
+    text-shadow: 3px 3px 0px #000000;
+}

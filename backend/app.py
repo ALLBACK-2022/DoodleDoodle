@@ -161,6 +161,29 @@ class save(Resource):
             #print("파일 저장 실패")
             return('draw saved fail',400)
 
+        print(value)
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        # os.remove('temp/' + filepath)
+
+        if retPut:
+
+            retGet = s3_get_image_url(
+                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(
+                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+                .filter(models.Draw.draw_no == value['draw-no']).first()
+            draw_id = ret.id
+            db.session.add(row)
+            db.session.commit()
+            return_data = {'draw_id': draw_id}
+            return return_data
+            # return jsonify({'draw_id' : draw_id}) , 201
+        else:
+            # print("파일 저장 실패")
+            return('draw saved fail', 400)
+
 
 @ns.route("/results/player", methods=['POST'])
 class player(Resource):
@@ -181,10 +204,11 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-            if not task.status == "SUCCESS":
-                return "WAIT"
             if task.status == "FAILURE":
                 return "FAIL"
+            if not task.status == "SUCCESS":
+                return "WAIT"
+
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
