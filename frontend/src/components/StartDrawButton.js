@@ -1,14 +1,6 @@
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-// import useAsync from '../useAsync';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-// async function getWord() {
-//   const response = await axios.get('localhost:5000/randwords');
-//   console.log(response);
-//   return response.data;
-// }
-
-// const baseURL = 'http://localhost:5000/randwords';
 const baseURL = 'http://127.0.0.1:5000/randwords';
 function StartDrawButton({ image, word }) {
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
@@ -29,9 +21,11 @@ function StartDrawButton({ image, word }) {
   }
 
   return (
-    <button onClick={onClick}>
-      <img src={image} alt="" className="w-6.25 h-6.553" />
-    </button>
+    <Link to="/gamepage">
+      <button onClick={onClick}>
+        <img src={image} alt="" className="w-6.25 h-6.553" />
+      </button>
+    </Link>
   );
 }
 
