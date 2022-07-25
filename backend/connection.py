@@ -24,7 +24,7 @@ def s3_put_object(s3, bucket, filepath, filename):
         return False
     return True
 
-def s3_get_image_url(s3, filename : str) -> str:
+def s3_get_image_url(s3, filename : str):
     """
     s3 : 연결된 s3 객체(boto3 client)
     filename : s3에 저장된 파일 명
