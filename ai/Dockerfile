@@ -25,3 +25,4 @@ CMD [ "flask", "run", "--host=0.0.0.0"]
 # docker run --name backend-con -it -p 5000:5000 --rm backend-img
 
 #curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+#CMD ["python","-u","app.py"]

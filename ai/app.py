@@ -112,12 +112,9 @@ def get_status(task_id):
 #작업결과
 @app.route('/simple_task_result/<task_id>')
 def task_result(task_id):
-    # from ai.tasks import ai_predict
-    # result = ai_predict.delay(1, 'umbrella')
-    # if result.ready():
-    #     return result.get()
-    ret = celery_app.AsyncResult(task_id).get()
-    return ret
+    result = celery_app.AsyncResult(task_id).result
+    return "Result of the Task " + str(result)
+    #db에 저장?
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,76 @@
+version: "3"
+
+services:
+  frontend:
+    build: 
+      context: ./frontend 
+    ports:
+     - "3000:3000"
+    container_name: frontend-con
+    # volumes: 
+    #   - 'our-vol:/app'
+    # restart: always
+    image: run
+    stdin_open: true
+    tty: true
+
+  backend:
+    depends_on:
+      - "db"
+    build:
+      context: ./backend
+    ports:
+     - "5000:5000" 
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: ./app.py
+    container_name: backend-con
+    expose:
+      - 5000
+    # image: run
+    restart: always
+    command: flask run --host=0.0.0.0 --port=5000
+    volumes:
+      - ./backend:/usr/local/app/
+    tty: true
+    #gunicorn backend.wsgi --bind 0.0.0.0:5000
+    # python manage.py runserver 0.0.0.0:5000
+    #flask run --host=0.0.0.0 --port=5000
+    
+  db:
+    image: mysql
+    container_name: mysql-con
+    restart: always
+    ports:
+      - "3300:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    env_file:
+      - ./backend/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}" 
+    volumes:
+      - data_mysql:/var/lib/mysql
+    tty: true
+
+  # nginx:
+  #   image: nginx:1.21.5-alpine
+  #   ports:
+  #     - 80:80
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #   container_name: nginx-con
+  #   depends_on:
+  #     - frontend
+  #     - backend
+
+
+volumes:
+  data_mysql:
+     
+#docker-compose up --build
+#volume
+#docker volume prune
+# sudo curl -L “https://github.com/docker/compose/releases/download/2.2.3/docker-compose-$(uname -s)-$(uname -m)” -o /usr/local/bin/docker-compose
+# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password --name mysql-con -v /var/lib/docker/volumes/mysql/_data mysql:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci

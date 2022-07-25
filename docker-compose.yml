@@ -1,9 +1,12 @@
 version: "3.7"
 
+volumes:
+  mysql_data:
+
+
 services:
-  frontend:
-    build: 
-      context: ./frontend 
+  flask_app:
+    build: './ai'
     ports:
      - 3000:3000
     container_name: frontend-con
