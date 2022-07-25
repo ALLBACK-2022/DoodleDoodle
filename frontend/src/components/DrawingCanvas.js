@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 const maxNum = 9999; // min 좌표 기본값
 const minNum = -1; // max 좌표 기본값
@@ -9,14 +10,23 @@ let maxY = minNum; // 입력된 Y의 최대값
 
 function DrawingCanvas({ imgDataPost }, ref) {
   const [ctx, setCtx] = useState(); // 캔버스 context2d
-  const [isDrawing, setIsDrawing] = useState(false); // 현재 그림을 그리고 있는가?
+
+  const isDrawing = useRef(false);
 
   const canvasRef = useRef(); // 캔버스 참조용
   const canvasWidth = useRef(null); // 캔버스 넓이
   const canvasHeight = useRef(null); // 캔버스 높이
 
+  const isMobile = useMediaQuery({
+    query: '(max-width: 700px)',
+  });
+  const isPc = useMediaQuery({
+    query: '(min-width: 701px)',
+  });
+
   // x,y값 초기화
   function setXY() {
+    console.log(isMobile, isPc);
     minX = maxNum;
     minY = maxNum;
     maxX = minNum;
@@ -46,21 +56,19 @@ function DrawingCanvas({ imgDataPost }, ref) {
     window.addEventListener('resize', setCanvas);
   }, []);
 
-  // 그리기 시작하면 호출(마우스 누를때)
-  function startDrawing() {
-    setIsDrawing(true);
-  }
-
-  // 그리기가 끝나면 호출(마우스 떼거나 캔버스 밖으로 나갔을때)
-  function finishDrawing() {
-    setIsDrawing(false);
-  }
-
   // 그리는 동안 호출(마우스 누르고 움직이는 동안)
-  function drawing({ nativeEvent }) {
-    const { offsetX, offsetY } = nativeEvent;
+  function drawing(event) {
+    let offsetX;
+    let offsetY;
+    if (isMobile) {
+      offsetX = event.touches[0].clientX - event.target.offsetLeft;
+      offsetY = event.touches[0].clientY - event.target.offsetTop + document.documentElement.scrollTop;
+    } else {
+      offsetX = event.offsetX;
+      offsetY = event.offsetY;
+    }
     if (ctx) {
-      if (!isDrawing) {
+      if (!isDrawing.current) {
         // 그리는 중이아니면 시작점만 변경
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
@@ -76,6 +84,17 @@ function DrawingCanvas({ imgDataPost }, ref) {
         ctx.stroke();
       }
     }
+  }
+
+  // 그리기 시작하면 호출(마우스 누를때)
+  function startDrawing(event) {
+    drawing(event);
+    isDrawing.current = true;
+  }
+
+  // 그리기가 끝나면 호출(마우스 떼거나 캔버스 밖으로 나갔을때)
+  function finishDrawing() {
+    isDrawing.current = false;
   }
 
   // 이미지 URL을 받아 Blob객체로 변환해주는 함수
@@ -188,11 +207,14 @@ function DrawingCanvas({ imgDataPost }, ref) {
       id="drawingCanvas"
       ref={canvasRef}
       className="absolute deskTop:w-[80%] deskTop:h-[75%] deskTop:left-[10%] deskTop:top-[15%]
-        mobile:w-[100%] mobile:h-[72%] mobile:top-[20%]"
+        mobile:w-[100%] mobile:h-[72%] mobile:top-[20%] touch-none"
       onMouseDown={startDrawing}
       onMouseMove={drawing}
       onMouseLeave={finishDrawing}
       onMouseUp={finishDrawing}
+      onTouchStart={startDrawing}
+      onTouchMove={drawing}
+      onTouchEnd={finishDrawing}
     />
   );
 }
