@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // const baseURL = 'http://localhost:5000/randwords';
 const baseURL = 'http://127.0.0.1:5000/api/randwords';
@@ -29,10 +29,14 @@ function MobileRandomBtn({ setWord, start, word }) {
   }
   useEffect(() => {
 <<<<<<< develop
+<<<<<<< develop
     if (!start) {
 =======
     if (start) {
 >>>>>>> feat: start mobile randompage
+=======
+    if (!start) {
+>>>>>>> feat: add doodleicons, mobile random page
       getRandWord();
     }
     console.log('useEffect() here');
@@ -41,6 +45,7 @@ function MobileRandomBtn({ setWord, start, word }) {
 
   if (start) {
     return (
+<<<<<<< develop
       <button
         onClick={goNextPage}
         className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
@@ -54,6 +59,17 @@ function MobileRandomBtn({ setWord, start, word }) {
         다른 거 그리고 싶어요
 >>>>>>> feat: start mobile randompage
       </button>
+=======
+      <Link to="/gamepage">
+        <button
+          onClick={goNextPage}
+          className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
+    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+        >
+          네!
+        </button>
+      </Link>
+>>>>>>> feat: add doodleicons, mobile random page
     );
   }
   return (
@@ -68,6 +84,11 @@ function MobileRandomBtn({ setWord, start, word }) {
     >
       네!
 >>>>>>> feat: start mobile randompage
+=======
+      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+    >
+      다른 거 그리고 싶어요
+>>>>>>> feat: add doodleicons, mobile random page
     </button>
   );
 }
