@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // const baseURL = 'http://localhost:5000/randwords';
 const baseURL = 'http://127.0.0.1:5000/api/randwords';
