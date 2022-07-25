@@ -7,6 +7,19 @@ module.exports = {
       deskTop: { min: '701px' } /* PC 화면 */,
     },
     extend: {
+      keyframes: {
+        slider: {
+          '0%': {
+            transform: 'translateX(0vw)',
+          },
+          '100%': {
+            transform: 'translateX(-160vw)',
+          },
+        },
+      },
+      animation: {
+        slider: 'slider 7s linear infinite',
+      },
       colors: {
         primary: {
           DEFAULT: '#f8d359' /* 메인바탕 */,
