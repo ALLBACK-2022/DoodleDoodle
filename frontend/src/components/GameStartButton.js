@@ -39,7 +39,7 @@ function GameStartButton() {
       <div>
         <button
           type="button"
-          className="text-[5vw] text-primary-1 font-cookierun startshadow textborder"
+          className="deskTop:text-[5vw] mobile:text-[9vw] text-primary-1 font-cookierun startshadow textborder"
           onClick={start}
         >
           start
@@ -49,13 +49,13 @@ function GameStartButton() {
       <div className="">
         <div className="flex space-x-10">
           <button className="rounded-full" onClick={minusClicked}>
-            <img src={Minus} alt="" className="w-[5vw] h-[5vw]" />
+            <img src={Minus} alt="" className="deskTop:w-[5vw] mobile:w-[9vw]" />
           </button>
-          <div className="text-[5vw] text-primary-1 font-cookierun startshadow textborder">
+          <div className="deskTop:text-[5vw] mobile:text-[9vw] text-primary-1 font-cookierun startshadow textborder">
             <p>{count}</p>
           </div>
           <button className="rounded-full" onClick={plusClicked}>
-            <img src={Plus} alt="" className="w-[5vw] h-[5vw]" />
+            <img src={Plus} alt="" className="deskTop:w-[5vw] mobile:w-[9vw]" />
           </button>
         </div>
       </div>
