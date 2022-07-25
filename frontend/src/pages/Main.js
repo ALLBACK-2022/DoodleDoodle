@@ -10,27 +10,20 @@ import GameStartButton from '../components/GameStartButton';
 
 function Main() {
   return (
-    <div className="flex m-0 w-screen h-screen relative bg-primary">
-      <div className="flex flex-wrap">
-        <button className="absolute left-12 top-12 w-14 h-14">
-          <img src={AboutIcon} alt="" />
-        </button>
-
-        <img className=" absolute mt-[13vh] right-10  h-[35rem]  " src={MainIcon} alt="" />
-
-        <div className=" flex-col ml-[13vh] mt-[30vh] flex ">
-          <MainText text=" 두들, 두들! " />
-          <h2 className="className = mt-8 ml-52 text-5xl text-primary-1 font-cookierun doddleshadow textborder">
-            Doodle, Doodle
-          </h2>
-
-          <div className="flex-row flex left-0 mt-[14vh] ml-[6vw]">
-            <div className="flex ">
-              <GameStartButton />
-              {/* // history 부분 설정해서 뒤로 가도 숫자는 그대로인걸 구현해보기  */}
-            </div>
-          </div>
-        </div>
+    <div className="flex w-screen h-screen relative bg-primary">
+      <button className="absolute left-[1rem] top-[1rem] w-[3rem]">
+        <img src={AboutIcon} alt="" />
+      </button>
+      <div className="flex flex-col w-[40%] h-auto ml-[5%] justify-center">
+        <MainText text=" 두들, 두들! " />
+        <h2 className="ml-[15%] text-[3.5vw] text-primary-1 font-cookierun doddleshadow textborder  text-right">
+          Doodle, Doodle
+        </h2>
+        <GameStartButton />
+        {/* // history 부분 설정해서 뒤로 가도 숫자는 그대로인걸 구현해보기  */}
+      </div>
+      <div className="flex flex-col mr-[5%] justify-center">
+        <img className="max-h-[100vh] absolute right-[0] w-[45%]" src={MainIcon} alt="" />
       </div>
     </div>
   );
