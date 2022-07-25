@@ -5,13 +5,12 @@ services:
     build: 
       context: ./frontend 
     ports:
-     - "3000:3000"
+     - 3000:3000
     container_name: frontend-con
     volumes: 
       - build_folder:/frontend/build
       - ./frontend/node_modules/:/frontend/node_modules
-    #   - 'our-vol:/app'
-    # restart: always
+    restart: always
     image: run
     stdin_open: true
     tty: true
@@ -23,15 +22,15 @@ services:
     build:
       context: ./backend
     ports:
-     - "5000:5000" 
+     - 5000:5000
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: ./app.py
     container_name: backend-con
     expose:
       - 5000
-    # image: run
     restart: always
+    # command: flask run --host=0.0.0.0 --port=5000
     command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
       - rabbitmq
@@ -39,55 +38,49 @@ services:
     volumes:
       - ./backend:/usr/local/app/
     tty: true
-    #gunicorn backend.wsgi --bind 0.0.0.0:5000
-    # python manage.py runserver 0.0.0.0:5000
-    #flask run --host=0.0.0.0 --port=5000
 
   ai:
-      build:
-        context: ./ai
-      ports:
-      - "5001:5001" 
-      environment:
-        FLASK_DEBUG: 1
-        FLASK_APP: ./server.py
-      container_name: ai-con
-      expose:
-        - 5001
-      restart: always
-      command: flask run --host=0.0.0.0 --port=5001
-      volumes:
-        - ./ai:/usr/local/app/
-      depends_on:
-        - rabbitmq
-        - db
-      links:
-        - rabbitmq
-        - db
+    build:
+      context: ./ai
+    ports:
+    - 5001:5000
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: ./app.py
+    container_name: ai-con
+    expose:
+      - 5001
+    restart: always
+    # command: flask run --host=0.0.0.0 --port=5001
+    volumes:
+      - ./ai:/usr/local/app/
+    depends_on:
+      - rabbitmq
+      - db
+    links:
+      - rabbitmq
+      - db
 
   db:
     image: mysql
+    # platform: linux/amd64
     container_name: mysql-con
-    platform: linux/x86_64
-    restart: always
     ports:
-      - "3300:3306"
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-    env_file:
-      - ./backend/.env
-    environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}" 
+      - 3307:3306
     volumes:
       - data_mysql:/var/lib/mysql
+    env_file:
+      - /.env
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     tty: true
 
   nginx:
     image: nginx:1.21.5-alpine
     build: ./nginx
     ports:
-      - 80:8000
+      - 80:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - build_folder:/var/www/frontend
@@ -104,8 +97,8 @@ services:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
     ports:
-      - "5672:5672"  
-      - "15672:15672"
+      - 5672:5672 
+      - 15672:15672
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
     tty: true
@@ -117,31 +110,31 @@ services:
       container_name: worker-con
       user: nobody
       command: celery -A ai.tasks.celery_app worker --loglevel=info
-      volumes:
-        - ./ai:/ai
       depends_on:
-        - db
         - rabbitmq
         - ai
-      environment:
-        - USE_MYSQL=1
-        - IS_DOCKER=1
+      # links:
+      # - rabbitmq
+      # environment:
+      #   MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      #   MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       tty: true
 
-  flower:  
+  flower:
     image: mher/flower
     container_name: flower-con
     depends_on:
-      - worker
+      - rabbitmq
+    # command: celery -A tasks.celery_app flower --loglevel=info
     environment:
-      - CELERY_BROKER_URL=pyamqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq//
-      - FLOWER_PORT=7777
-    ports:  
-      - 7777:7777
+    - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+    - FLOWER_PORT=5555
+    expose:
+      - 5555
     tty: true
 
 volumes:
-  build_folder: null
+  build_folder:
   data_mysql:
   data_rabbitmq:
 

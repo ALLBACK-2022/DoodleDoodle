@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime, os
+import datetime, os, pymysql
 from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
+from sqlalchemy_utils import database_exists, create_database
 
 app = Flask(__name__)
 load_dotenv()
@@ -16,9 +17,9 @@ Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+if not database_exists(sqlurl):
+    create_database(sqlurl)
 db.init_app(app)
-
-
 class Game(Base):
     __tablename__ = 'game'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
