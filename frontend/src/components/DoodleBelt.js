@@ -8,6 +8,7 @@ import doodle7 from '../assets/icons/mobiledoodle_7.png';
 import doodle8 from '../assets/icons/mobiledoodle_8.png';
 
 function Doodle({ doodle }) {
+<<<<<<< develop
   return <img src={doodle.src} className="w-[10vw]" alt="" />;
 }
 
@@ -41,6 +42,12 @@ function DoodleBelt() {
 
   // 애니메이션 미적용 코드(prop으로 isTop추가)
   /*
+=======
+  return <img src={doodle.src} alt="" />;
+}
+
+function DoodleBelt({ isTop }) {
+>>>>>>> feat: add doodleicons, mobile random page
   const doodlesTop = [
     {
       id: 1,
@@ -50,7 +57,10 @@ function DoodleBelt() {
     { id: 3, src: doodle3 },
     { id: 4, src: doodle4 },
   ];
+<<<<<<< develop
 
+=======
+>>>>>>> feat: add doodleicons, mobile random page
   const doodlesBottom = [
     {
       id: 1,
@@ -61,6 +71,7 @@ function DoodleBelt() {
     { id: 4, src: doodle8 },
   ];
 
+<<<<<<< develop
   if(isTop){
     return (
     <div className="flex flex-row h-100% place-content-around mt-[3rem]">
@@ -68,6 +79,15 @@ function DoodleBelt() {
         <Doodle doodle={doodle} key={doodle.id} />
       ))}
     </div>
+=======
+  if (isTop) {
+    return (
+      <div className="flex flex-row h-100% place-content-around mt-[3rem]">
+        {doodlesTop.map(doodle => (
+          <Doodle doodle={doodle} key={doodle.id} />
+        ))}
+      </div>
+>>>>>>> feat: add doodleicons, mobile random page
     );
   }
   return (
@@ -77,7 +97,10 @@ function DoodleBelt() {
       ))}
     </div>
   );
+<<<<<<< develop
   */
+=======
+>>>>>>> feat: add doodleicons, mobile random page
 }
 
 export default DoodleBelt;

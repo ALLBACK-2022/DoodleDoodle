@@ -1,5 +1,9 @@
 import axios from 'axios';
+<<<<<<< develop
 import { useLocation, useNavigate } from 'react-router-dom';
+=======
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+>>>>>>> feat: add doodleicons, mobile random page
 
 const baseURL = 'http://127.0.0.1:5000/randwords';
 function StartDrawButton({ image, word }) {
@@ -21,9 +25,11 @@ function StartDrawButton({ image, word }) {
   }
 
   return (
-    <button onClick={onClick}>
-      <img src={image} alt="" className="w-6.25 h-6.553" />
-    </button>
+    <Link to="/gamepage">
+      <button onClick={onClick}>
+        <img src={image} alt="" className="w-6.25 h-6.553" />
+      </button>
+    </Link>
   );
 }
 
