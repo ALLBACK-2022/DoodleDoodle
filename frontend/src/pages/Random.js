@@ -4,6 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 import recreate from '../assets/icons/changeImg.png';
 import play from '../assets/icons/startImg.png';
 import ContentText from '../components/ContentText';
+import DoodleBelt from '../components/DoodleBelt';
 import MobileRandomBtn from '../components/MobileRandomBtn';
 import RandomTitle from '../components/RandomTitle';
 import RandomWordButton from '../components/RandomWordButton';
@@ -19,8 +20,9 @@ function Random() {
   });
 
   return (
-    <div className="m-0 w-screen h-screen bg-primary flex">
-      <div className="m-auto flex flex-col items-center">
+    <div className="m-0 w-screen h-screen bg-primary flex flex-col">
+      {isMobile && <DoodleBelt isTop />}
+      <div className="m-auto flex flex-col items-center justify-self-center">
         <div className="self-center">
           <RandomTitle word={word} isMobile={isMobile} />
         </div>
@@ -43,6 +45,7 @@ function Random() {
           </div>
         )}
       </div>
+      {isMobile && <DoodleBelt isTop={false} />}
     </div>
   );
 }
