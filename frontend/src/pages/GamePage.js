@@ -9,9 +9,6 @@ import WordText from '../components/WordText';
 import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
 
-// import gameBGImg from '../assets/icons/gameBGImg.png';
-// import mobileBGImg from '../assets/icons/mobileBGImg.png';
-
 const postImageURL = 'http://localhost:5000/save'; // 백엔드에 이미지 보내는 API주소
 // let taskIDArray = [];
 
