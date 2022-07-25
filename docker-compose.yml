@@ -99,36 +99,33 @@ services:
     ports:
       - 5672:5672 
       - 15672:15672
+    # command: rabbitmq-plugins enable rabbitmq_management
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
     tty: true
 
   worker:
-      build:
-        context: ./ai
-        dockerfile: Dockerfile.celery
-      container_name: worker-con
-      user: nobody
-      command: celery -A ai.tasks.celery_app worker --loglevel=info
-      depends_on:
-        - rabbitmq
-        - ai
-      # links:
-      # - rabbitmq
-      # environment:
-      #   MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      #   MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      tty: true
+    build:
+      context: './ai'
+      dockerfile: Dockerfile.celery
+    container_name: worker-con
+    user: nobody
+    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
+    command: celery -A ai.tasks.celery_app worker --loglevel=info
+    depends_on:
+      - rabbitmq
+      - ai
+      - db
+    tty: true
 
   flower:
     image: mher/flower
     container_name: flower-con
     depends_on:
       - rabbitmq
-    # command: celery -A tasks.celery_app flower --loglevel=info
     environment:
-    - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
-    - FLOWER_PORT=5555
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+      - FLOWER_PORT=5555
     expose:
       - 5555
     tty: true
