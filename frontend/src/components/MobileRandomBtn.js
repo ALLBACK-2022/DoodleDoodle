@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // const baseURL = 'http://localhost:5000/randwords';
 const baseURL = 'http://127.0.0.1:5000/randwords';
@@ -37,15 +37,13 @@ function MobileRandomBtn({ setWord, start, word }) {
 
   if (start) {
     return (
-      <Link to="/gamepage">
-        <button
-          onClick={goNextPage}
-          className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
+      <button
+        onClick={goNextPage}
+        className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
     font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-        >
-          네!
-        </button>
-      </Link>
+      >
+        네!
+      </button>
     );
   }
   return (
