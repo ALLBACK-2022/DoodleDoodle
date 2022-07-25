@@ -126,8 +126,8 @@ services:
     environment:
       - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
       - FLOWER_PORT=5555
-    expose:
-      - 5555
+    ports:
+      - 5555:5555
     tty: true
 
 volumes:
