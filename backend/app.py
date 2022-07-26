@@ -26,9 +26,6 @@ MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_USER=os.environ.get("MYSQL_USER")
 MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
 sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 
 app.config['MYSQL_DB'] = MYSQL_USER
@@ -46,47 +43,6 @@ result_parser = ns.parser()
 db = SQLAlchemy()
 db.init_app(app)
 s3 = s3_connection()
-
-
-def connect_rabbitmq():
-    time.sleep(3)
-    credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER,RABBITMQ_DEFAULT_PASS)
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
-    channel = connection.channel()
-    channel.queue_declare(queue='task_queue', durable=True)
-    channel.queue_declare(queue='result_queue', durable=True)
-
-
-class FibonacciRpcClient(object):
-    def __init__(self):
-        credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
-        self.channel = self.connection.channel()
-
-        result = self.channel.queue_declare(queue='', exclusive=True)
-        self.callback_queue = result.method.queue
-        self.channel.basic_consume(queue=self.callback_queue,on_message_callback=self.on_response,auto_ack=True)
-    
-    def on_response(self, ch, method, props, body):
-        if self.corr_id == props.correlation_id:
-            self.response = body
-
-    def call(self, n):
-        self.response = None
-        self.corr_id = str(uuid.uuid4())
-        self.channel.basic_publish(exchange='',routing_key='rpc_queue',properties=pika.BasicProperties(
-                    reply_to=self.callback_queue,correlation_id=self.corr_id,),body=str(n))
-        time.sleep(5)
-        while self.response is None:
-            self.connection.process_data_events()
-        return self.response
-
-
-def rabbit():
-    fibonacci_rpc = FibonacciRpcClient()
-    # print(" [x] Requesting fib(30)")
-    # response = fibonacci_rpc.call(30)
-    # print(" [.] Got %r" % response)
 
 
 def insert_word():
@@ -109,8 +65,6 @@ with app.app_context():
     if word is None:
         insert_word()
 
-
-s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -169,8 +123,6 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        if not os.path.exists('temp'):
-            os.mkdir('temp')
         f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
         
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
