@@ -63,7 +63,7 @@ services:
 
   db:
     image: mysql
-    # platform: linux/amd64
+    platform: linux/amd64
     container_name: mysql-con
     ports:
       - 3307:3306
@@ -109,7 +109,7 @@ services:
       context: './ai'
       dockerfile: Dockerfile.celery
     container_name: worker-con
-    user: nobody
+    user: root
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     depends_on:
