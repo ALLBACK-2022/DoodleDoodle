@@ -297,8 +297,11 @@ class result(Resource):
                 return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
+<<<<<<< develop
 
 >>>>>>> feat: start mobile randompage
+=======
+>>>>>>> feat: fix AI result API
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
