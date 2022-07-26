@@ -1,0 +1,14 @@
+.scrollSection::-webkit-scrollbar {
+    width: 6px;  /* 스크롤바의 너비 */
+}
+
+.scrollSection::-webkit-scrollbar-thumb {
+    height: 20%; /* 스크롤바의 길이 */
+    background: #f8d359; /* 스크롤바의 색상 */
+    
+    border-radius: 10px;
+}
+
+.scrollSection::-webkit-scrollbar-track {
+    background: #d9d9d9;  /*스크롤바 뒷 배경 색상*/
+}
