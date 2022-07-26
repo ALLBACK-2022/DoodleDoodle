@@ -1,0 +1,21 @@
+#gameBGImg{
+    -webkit-user-drag: none; /* 이미지 드래그 방지 */
+}
+
+@media(max-width: 700px){ /* 모바일 화면 */
+    #gameBGImg{
+        height: 80vh;
+        content: url(assets/icons/mobileBGImg.png);
+    }
+}
+
+@media(min-width: 701px){ /* PC 및 가로화면 */
+    #gameBGImg{
+        height: 100vh;
+        padding-right: 2vw;
+        padding-left: 2vw;
+        padding-top: 2vh;
+        padding-bottom: 2vh;
+        content: url(assets/icons/gameBGImg.png);
+    }
+}

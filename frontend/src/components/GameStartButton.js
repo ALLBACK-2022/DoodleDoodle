@@ -35,23 +35,27 @@ function GameStartButton() {
   }
 
   return (
-    <div className="flex-auto flex flex-row space-x-10">
+    <div className="flex deskTop:space-x-10 mobile:flex-col mt-[10vh] items-center">
       <div>
-        <button type="button" className="text-6xl text-primary-1 font-cookierun startshadow textborder" onClick={start}>
+        <button
+          type="button"
+          className="deskTop:text-[5vw] mobile:text-[9vw] text-primary-1 font-cookierun startshadow textborder"
+          onClick={start}
+        >
           start
         </button>
       </div>
 
-      <div className="ml-20 mr-20">
-        <div className="flex-auto flex flex-row space-x-10">
-          <button className="w-4.375 h-4.375 rounded-full " onClick={minusClicked}>
-            <img src={Minus} alt="" className="w-[4rem] h-[4rem]" />
+      <div className="">
+        <div className="flex space-x-10">
+          <button className="rounded-full" onClick={minusClicked}>
+            <img src={Minus} alt="" className="deskTop:w-[5vw] mobile:w-[9vw]" />
           </button>
-          <div className="flex space-x-4 text-6xl text-primary-1 font-cookierun startshadow textborder">
+          <div className="deskTop:text-[5vw] mobile:text-[9vw] text-primary-1 font-cookierun startshadow textborder">
             <p>{count}</p>
           </div>
-          <button className=" w-4.375 h-4.375 rounded-full" onClick={plusClicked}>
-            <img src={Plus} alt="" className="w-[4rem] h-[4rem]" />
+          <button className="rounded-full" onClick={plusClicked}>
+            <img src={Plus} alt="" className="deskTop:w-[5vw] mobile:w-[9vw]" />
           </button>
         </div>
       </div>
