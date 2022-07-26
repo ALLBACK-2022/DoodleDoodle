@@ -229,7 +229,6 @@ class result(Resource):
                 return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
-
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
@@ -241,7 +240,6 @@ class result(Resource):
             word['similarity'] = result.similarity
             if result.dictionary.name == randword:
                 res['randword'] = word
-            else:
                 topfive.append(word)
         res['topfive'] = topfive
         res['draw-id'] = results[0].draw_id
