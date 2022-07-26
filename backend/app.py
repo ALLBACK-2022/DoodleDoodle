@@ -135,10 +135,11 @@ class main_page(Resource):
         return 'Doodle, Doodle!'
 
 
-@ns.route("/user-num", methods=['POST'])
+@ns.route("/api/user-num", methods=['POST'])
 class user_num(Resource):
 
     def post(self):
+        '''사용자의 수를 저장한다'''
         value = request.get_json()
         # print(value)
         if value['user-num'] > 6:
@@ -152,10 +153,11 @@ class user_num(Resource):
         return ((row.id), 201)         # 숫자값만 반환 -> 성공
 
 
-@ns.route("/randwords", methods=['GET', 'POST'])
+@ns.route("/api/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
 
     def get(self):
+        '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
             models.Dictionary.id == random.randint(1, 345))
         if randword.first() is None:
@@ -163,6 +165,7 @@ class randwords(Resource):
         return (randword[0].name, 200)
 
     def post(self):
+        '''최종결정한 단어를 저장한다'''
         value = request.get_json()
         if not value:
             return('no word found', 400)
@@ -172,121 +175,83 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
-<<<<<<< HEAD
-<<<<<<< develop
-=======
-=======
->>>>>>> backend-khl
 
-@ns.route("/save", methods=['POST'])
+@ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
->>>>>>> feat: fix get AI result API
 
-@ns.route("/save", methods=['POST'])
-class save(Resource):
     def post(self):
+        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
-        row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
+        row = models.Draw(draw_no=value['draw-no'],
+                          doodle="", game_id=value['game-id'])
         db.session.add(row)
         db.session.commit()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
-        drawid=ret.id
+        drawid = ret.id
+        if not os.path.exists('temp'):
+            os.mkdir('temp')
         f = request.files['filename']
-<<<<<<< HEAD
-<<<<<<< develop
-        f.save('temp/'+ str(drawid) + '.png')
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
-        os.remove('temp/' + str(drawid) +'.png')
+        f.save('temp/' + str(drawid) + '.png')
+        retPut = s3_put_object(
+            s3, BUCKET_NAME, 'temp/' + str(drawid) + '.png', 'drawimage/' + str(drawid) + '.png')
+        os.remove('temp/' + str(drawid) + '.png')
         gameid = value['game-id']
         game = db.session.query(models.Game).get(gameid)
         if game is None:
             return ('Can not access data', 400)
         ranword = game.random_word
         if retPut is None:
-            return('Draw saved fail',400)
+            return('Draw saved fail', 400)
+
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
+
         try:
-            return_data = {'ranword':ranword,'draw_id':drawid}
+            return_data = {'ranword': ranword, 'draw_id': drawid}
             return return_data, 200
         except:
             return('Requset to AI fail', 400)
-=======
-        f.save('temp/' + str(value['game-id'][0]) +
-               '_' + str(value['draw-no'][0])+'.png')
->>>>>>> feat: fix get AI result API
-=======
-        f.save('temp/' + str(value['game-id'][0]) +
-               '_' + str(value['draw-no'][0])+'.png')
->>>>>>> backend-khl
-
-        print(value)
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
-                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-        # os.remove('temp/' + filepath)
-=======
-        #os.remove('temp/' + filepath)
->>>>>>> feat: fix get AI result API
-=======
-        # os.remove('temp/' + filepath)
->>>>>>> feat: start mobile randompage
-=======
-        # os.remove('temp/' + filepath)
->>>>>>> backend-khl
-
-        if retPut:
-
-            retGet = s3_get_image_url(
-                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(
-                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
-            ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-                .filter(models.Draw.draw_no == value['draw-no']).first()
-            draw_id = ret.id
-            db.session.add(row)
-            db.session.commit()
-            return_data = {'draw_id': draw_id}
-            return return_data
-            # return jsonify({'draw_id' : draw_id}) , 201
-        else:
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-            # print("파일 저장 실패")
-            return('draw saved fail', 400)
 
 
-=======
-            #print("파일 저장 실패")
-=======
-            # print("파일 저장 실패")
->>>>>>> feat: start mobile randompage
-            return('draw saved fail', 400)
+@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+class draw(Resource):
 
-
->>>>>>> feat: fix get AI result API
-=======
-            # print("파일 저장 실패")
-            return('draw saved fail', 400)
-
-
->>>>>>> backend-khl
-@ns.route("/results/player", methods=['POST'])
-class player(Resource):
-
-    def post(self):
-        value = request.get_json()
-        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
-            .filter(models.Draw.draw_no == value['draw-no']).first()
-        selecturl = ret.doodle
+    def get(self, drawid):
+        '''사용자가 그렸던 그림을 불러온다'''
+        ret = db.session.query(models.Draw).filter(
+            models.Draw.id == drawid).first()
+        retimage = ret.doodle
+        if ret is None:
+            return('NO image in database', 400)
         db.session.commit()
-        # print(selecturl)
-        return(selecturl, 201)
+        return(retimage, 200)
+
+
+@ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
+class game(Resource):
+    def get(self, gameid):
+        '''게임id가 같은 사용자 전체의 그림을 불러온다'''
+        ret = db.session.query(models.Game).filter(
+            models.Game.id == gameid).first()
+        retusernum = int(ret.player_num)
+        if ret is None:
+            return('Can not access data', 400)
+        db.session.commit()
+        print(retusernum)
+        ret1 = []
+        ret2 = []
+        for i in range(1, retusernum+1):
+            row = db.session.query(models.Draw).filter(
+                models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
+            returl = row.doodle
+            db.session.commit()
+            ret1.append(i)
+            ret2.append(returl)
+        retdict = {name: value for name, value in zip(ret1, ret2)}
+        # print(retdict)
+        return (retdict, 200)
 
 
 @ns.route("/api/v1/draws/results", methods=['POST'])
@@ -295,35 +260,10 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-=======
->>>>>>> backend-khl
             if task.status == "FAILURE":
                 return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
-<<<<<<< HEAD
-
-=======
-            if not task.status == "SUCCESS":
-                return "WAIT"
-            if task.status == "FAILURE":
-                return "FAIL"
->>>>>>> feat: fix get AI result API
-=======
-            if task.status == "FAILURE":
-                return "FAIL"
-            if not task.status == "SUCCESS":
-                return "WAIT"
-<<<<<<< develop
-
->>>>>>> feat: start mobile randompage
-=======
->>>>>>> feat: fix AI result API
-=======
->>>>>>> backend-khl
         return "SUCCESS"
 
     def _organize_result(self, results, randword):
