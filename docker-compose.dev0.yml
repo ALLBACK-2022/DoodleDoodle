@@ -1,0 +1,54 @@
+version: "3.7"
+
+volumes:
+  mysql_data:
+
+
+services:
+  flask_app:
+    build: './ai'
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./ai:/ai
+    depends_on:
+      - rabbit
+      - db
+
+  db:
+    image: mysql:8.0.29-oracle
+    platform: linux/amd64
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    env_file:
+      - /.env
+    environment:
+      
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: ="${MYSQL_ROOT_PASSWORD}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+
+  rabbit:
+    hostname: rabbit
+    image: "rabbitmq:3-management"
+    environment:
+      - RABBITMQ_DEFAULT_USER=DoodleDoodle
+      - RABBITMQ_DEFAULT_PASS=DoodleDoodle
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  celery_worker:
+    build:
+      context: './ai'
+      dockerfile: Dockerfile.celery
+    user: nobody
+    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
+    command: celery -A ai.tasks.celery_app worker --loglevel=info
+    depends_on:
+      - rabbit
+      - flask_app
+      - db

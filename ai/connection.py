@@ -30,6 +30,7 @@ def s3_get_object(s3, bucket, object_name, file_name):
     '''
     try:
         s3.download_file(bucket, object_name, file_name)
+        return True
     except Exception as e:
         print(e)
         return False
