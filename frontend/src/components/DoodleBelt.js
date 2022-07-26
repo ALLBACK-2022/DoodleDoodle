@@ -8,8 +8,6 @@ import doodle7 from '../assets/icons/mobiledoodle_7.png';
 import doodle8 from '../assets/icons/mobiledoodle_8.png';
 
 function Doodle({ doodle }) {
-<<<<<<< HEAD
-<<<<<<< develop
   return <img src={doodle.src} className="w-[10vw]" alt="" />;
 }
 
@@ -115,10 +113,6 @@ function DoodleBelt({ isTop }) {
 <<<<<<< HEAD
 <<<<<<< develop
   */
-=======
->>>>>>> feat: add doodleicons, mobile random page
-=======
->>>>>>> backend-khl
 }
 
 export default DoodleBelt;
