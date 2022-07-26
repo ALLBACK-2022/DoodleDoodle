@@ -28,15 +28,7 @@ function MobileRandomBtn({ setWord, start, word }) {
     console.log(response.data);
   }
   useEffect(() => {
-<<<<<<< develop
-<<<<<<< develop
     if (!start) {
-=======
-    if (start) {
->>>>>>> feat: start mobile randompage
-=======
-    if (!start) {
->>>>>>> feat: add doodleicons, mobile random page
       getRandWord();
     }
     console.log('useEffect() here');
@@ -45,33 +37,6 @@ function MobileRandomBtn({ setWord, start, word }) {
 
   if (start) {
     return (
-<<<<<<< develop
-<<<<<<< develop
-      <button
-        onClick={goNextPage}
-        className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
-<<<<<<< develop
-    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-      >
-        네!
-=======
-      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-      >
-        다른 거 그리고 싶어요
->>>>>>> feat: start mobile randompage
-      </button>
-=======
-      <Link to="/gamepage">
-        <button
-          onClick={goNextPage}
-          className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
-    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-        >
-          네!
-        </button>
-      </Link>
->>>>>>> feat: add doodleicons, mobile random page
-=======
       <button
         onClick={goNextPage}
         className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
@@ -79,7 +44,6 @@ function MobileRandomBtn({ setWord, start, word }) {
       >
         네!
       </button>
->>>>>>> feat: delete link tag
     );
   }
   return (
@@ -89,16 +53,6 @@ function MobileRandomBtn({ setWord, start, word }) {
       font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
     >
       다른 거 그리고 싶어요
-=======
-    font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-    >
-      네!
->>>>>>> feat: start mobile randompage
-=======
-      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
-    >
-      다른 거 그리고 싶어요
->>>>>>> feat: add doodleicons, mobile random page
     </button>
   );
 }
