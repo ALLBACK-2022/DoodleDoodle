@@ -172,8 +172,11 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
+<<<<<<< HEAD
 <<<<<<< develop
 =======
+=======
+>>>>>>> backend-khl
 
 @ns.route("/save", methods=['POST'])
 class save(Resource):
@@ -190,6 +193,7 @@ class save(Resource):
             .filter(models.Draw.draw_no == value['draw-no']).first()
         drawid=ret.id
         f = request.files['filename']
+<<<<<<< HEAD
 <<<<<<< develop
         f.save('temp/'+ str(drawid) + '.png')
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
@@ -213,10 +217,15 @@ class save(Resource):
         f.save('temp/' + str(value['game-id'][0]) +
                '_' + str(value['draw-no'][0])+'.png')
 >>>>>>> feat: fix get AI result API
+=======
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
+>>>>>>> backend-khl
 
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
                                'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
         # os.remove('temp/' + filepath)
@@ -226,6 +235,9 @@ class save(Resource):
 =======
         # os.remove('temp/' + filepath)
 >>>>>>> feat: start mobile randompage
+=======
+        # os.remove('temp/' + filepath)
+>>>>>>> backend-khl
 
         if retPut:
 
@@ -242,6 +254,7 @@ class save(Resource):
             return return_data
             # return jsonify({'draw_id' : draw_id}) , 201
         else:
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
             # print("파일 저장 실패")
@@ -257,6 +270,12 @@ class save(Resource):
 
 
 >>>>>>> feat: fix get AI result API
+=======
+            # print("파일 저장 실패")
+            return('draw saved fail', 400)
+
+
+>>>>>>> backend-khl
 @ns.route("/results/player", methods=['POST'])
 class player(Resource):
 
@@ -276,12 +295,16 @@ class result(Resource):
         # task_id 로 status가 성공인지 아닌지
         for task_id in task_ids:
             task = db.session.query(models.Task).get(task_id)
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
+=======
+>>>>>>> backend-khl
             if task.status == "FAILURE":
                 return "FAIL"
             if not task.status == "SUCCESS":
                 return "WAIT"
+<<<<<<< HEAD
 
 =======
             if not task.status == "SUCCESS":
@@ -299,6 +322,8 @@ class result(Resource):
 >>>>>>> feat: start mobile randompage
 =======
 >>>>>>> feat: fix AI result API
+=======
+>>>>>>> backend-khl
         return "SUCCESS"
 
     def _organize_result(self, results, randword):

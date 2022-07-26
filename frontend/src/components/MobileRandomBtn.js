@@ -28,6 +28,7 @@ function MobileRandomBtn({ setWord, start, word }) {
     console.log(response.data);
   }
   useEffect(() => {
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
     if (!start) {
@@ -37,6 +38,9 @@ function MobileRandomBtn({ setWord, start, word }) {
 =======
     if (!start) {
 >>>>>>> feat: add doodleicons, mobile random page
+=======
+    if (!start) {
+>>>>>>> backend-khl
       getRandWord();
     }
     console.log('useEffect() here');
@@ -45,6 +49,7 @@ function MobileRandomBtn({ setWord, start, word }) {
 
   if (start) {
     return (
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
       <button
@@ -72,6 +77,8 @@ function MobileRandomBtn({ setWord, start, word }) {
       </Link>
 >>>>>>> feat: add doodleicons, mobile random page
 =======
+=======
+>>>>>>> backend-khl
       <button
         onClick={goNextPage}
         className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
@@ -79,13 +86,17 @@ function MobileRandomBtn({ setWord, start, word }) {
       >
         네!
       </button>
+<<<<<<< HEAD
 >>>>>>> feat: delete link tag
+=======
+>>>>>>> backend-khl
     );
   }
   return (
     <button
       onClick={getRandWord}
       className="btnshadow mb-[1.6rem] text-[1.75rem] font-black 
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
       font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
@@ -101,6 +112,11 @@ function MobileRandomBtn({ setWord, start, word }) {
     >
       다른 거 그리고 싶어요
 >>>>>>> feat: add doodleicons, mobile random page
+=======
+      font-cookierun_m bg-primary-4 rounded-[30px] w-[18.75rem] h-[3.5rem]"
+    >
+      다른 거 그리고 싶어요
+>>>>>>> backend-khl
     </button>
   );
 }

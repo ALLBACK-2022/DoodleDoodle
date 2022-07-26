@@ -4,6 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 import recreate from '../assets/icons/changeImg.png';
 import play from '../assets/icons/startImg.png';
 import ContentText from '../components/ContentText';
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 import DoodleBelt from '../components/DoodleBelt';
@@ -12,6 +13,9 @@ import DoodleBelt from '../components/DoodleBelt';
 =======
 import DoodleBelt from '../components/DoodleBelt';
 >>>>>>> feat: add doodleicons, mobile random page
+=======
+import DoodleBelt from '../components/DoodleBelt';
+>>>>>>> backend-khl
 import MobileRandomBtn from '../components/MobileRandomBtn';
 import RandomTitle from '../components/RandomTitle';
 import RandomWordButton from '../components/RandomWordButton';
