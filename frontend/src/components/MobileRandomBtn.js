@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // const baseURL = 'http://localhost:5000/randwords';
-const baseURL = 'http://127.0.0.1:5000/randwords';
+const baseURL = 'http://127.0.0.1:5000/api/randwords';
 function MobileRandomBtn({ setWord, start, word }) {
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
   const navigate = useNavigate(); // 페이지 이동 시 사용
