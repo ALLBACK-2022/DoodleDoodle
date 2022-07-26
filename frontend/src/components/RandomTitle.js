@@ -4,20 +4,9 @@ function RandomTitle({ word, isMobile }) {
     return (
       <h1
         className="randomshadow textborder text-[3.125rem] text-primary-1 
-<<<<<<< develop
-<<<<<<< develop
   font-cookierun_m whitespace-pre text-center leading-relaxed"
       >{`'${word}' 를
 그려보세요!`}</h1>
-=======
-  font-cookierun_m whitespace-normal text-center leading-relaxed"
-      >{`'${word}' 를 그려보세요!`}</h1>
->>>>>>> feat: start mobile randompage
-=======
-  font-cookierun_m whitespace-pre text-center leading-relaxed"
-      >{`'${word}' 를
-그려보세요!`}</h1>
->>>>>>> feat: add doodleicons, mobile random page
     );
   }
   return (
