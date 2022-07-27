@@ -1,6 +1,5 @@
 // import React, { useState } from 'react';
 import sketchbook from '../assets/icons/sketchbook.png';
-// import example from '../assets/icons/plus.png';
 
 function ResultRank() {
   // 여기서 GET API 불러오기(각 데이터 넣어주기)
@@ -16,7 +15,6 @@ function ResultRank() {
         </div>
         <div>
           <img id="sketchbook" src={sketchbook} className=" mt-5  h-[18rem] relative " alt="" />
-          {/* <img id="example-pic" src={example} className="  absolute w-[10]  " alt="" /> */}
         </div>
       </div>
     </div>
