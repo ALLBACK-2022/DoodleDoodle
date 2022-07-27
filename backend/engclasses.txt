@@ -306,7 +306,7 @@ telephone
 television
 tennis_racquet
 tent
-The-Eiffel_Tower
+The_Eiffel_Tower
 The_Great_Wall_of_China
 The_Mona_Lisa
 tiger
