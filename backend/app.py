@@ -186,8 +186,6 @@ class save(Resource):
         except:                  
             return('Requset to AI fail', 400) 
 
-@ns.route("/results/player",methods=['POST'])
-class player(Resource):
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
 class draw(Resource):
@@ -222,6 +220,67 @@ class game(Resource):
         #print(retdict)
         return (retdict, 200)
 
+@ns.route("/api/v1/draws/results", methods=['POST'])
+class result(Resource):
+    def _is_complete(self, task_ids):
+        # task_id 로 status가 성공인지 아닌지
+        for task_id in task_ids:
+            task = db.session.query(models.Task).get(task_id)
+            if task.status == "FAILURE":
+                return "FAIL"
+            if not task.status == "SUCCESS":
+                return "WAIT"
+        return "SUCCESS"
+
+    def _organize_result(self, results, randword):
+        res = {}
+        topfive = []
+        for result in results:
+            word = {}
+            word['dictionary'] = result.dictionary.serialize()
+            word['similarity'] = result.similarity
+            if result.dictionary.name == randword:
+                res['randword'] = word
+                topfive.append(word)
+        res['topfive'] = topfive
+        res['draw-id'] = results[0].draw_id
+        return res
+
+    def post(self):
+        '''AI가 분석한 결과를 가져온다'''
+        value = request.get_json()
+        # task_id(list 형태) game_id 받기
+        task_ids = value['task-id']
+        user_num = len(task_ids)
+        game = db.session.query(models.Game).get(value['game-id'])
+        randword = game.random_word
+        # task_id들로 task가 완료되었는지 while문을 돌며 check
+        while (self._is_complete(task_ids) == "WAIT"):
+            time.sleep(1.0)
+        if self._is_complete(task_ids) == "FAIL":
+            return ("Get result fail", 200)
+        # task가 다 완료되었다면 result 받아오기
+        results = db.session.query(models.Result).filter(
+            models.Result.game_id == game.id).all()
+
+        # for문을 돌면서 results로 가져온 결과들을 정리
+        res = {}
+        if user_num == 1:
+            res = self._organize_result(results, randword)
+        else:
+            res_list = []
+            # draw-id가 같은 result끼리 분류
+            result_list = [[] for _ in range(user_num)]
+            for result in results:
+                result_list[result.draw_id - 1].append(result)
+            # 이제 result 조회해서 가져오기
+            for results in result_list:
+                user_res = self._organize_result(results, randword)
+                user_res['draw-no'] = results[0].draw.draw_no
+                res_list.append(user_res)
+            res['res'] = res_list
+        # 반환
+        return (res, 200)
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
