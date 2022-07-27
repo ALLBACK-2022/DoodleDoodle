@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { Link } from 'react-router-dom';
 import MainText from '../components/MainText';
 import AboutIcon from '../assets/icons/aboutIcon.png';
 import MainIcon from '../assets/icons/mainIcon.png';
@@ -25,9 +26,11 @@ function Main() {
         </div>
       )}
       {isPc && (
-        <button className="absolute m-[2rem] w-[3rem]">
-          <img src={AboutIcon} alt="" />
-        </button>
+        <Link to="/about">
+          <button className="absolute m-[2rem] w-[3rem]">
+            <img src={AboutIcon} alt="" />
+          </button>
+        </Link>
       )}
       <div
         className="absolute flex flex-col justify-center top-[50%] translate-y-[-50%]
