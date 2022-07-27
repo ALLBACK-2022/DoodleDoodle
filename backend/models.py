@@ -12,13 +12,11 @@ load_dotenv()
 db = SQLAlchemy()
 MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/doodledoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-if not database_exists(sqlurl):
-    create_database(sqlurl)
 db.init_app(app)
 class Game(Base):
     __tablename__ = 'game'
