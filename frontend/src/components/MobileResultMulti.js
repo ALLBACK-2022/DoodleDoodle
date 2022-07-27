@@ -1,5 +1,4 @@
 // import ProgressBar from '@ramonak/react-progress-bar';
-import sketchbook from '../assets/icons/sketchbook.png';
 
 function MobileResultMulti({ percentage, rank, doodle, player }) {
   const containerStyles = {
@@ -23,13 +22,12 @@ function MobileResultMulti({ percentage, rank, doodle, player }) {
 
   return (
     <div
-      className="inline-flex relative items-center px-[3rem] mb-[2rem] 
-    w-[90%] h-[7rem] space-x-[1.5rem] place-content-center"
+      className="flex items-center mb-[2rem] 
+    w-[100%] h-[7rem] place-content-center"
     >
-      <div className="text-primary-3 font-cookierun_m text-[1.25rem] w-[2.5rem] h-[2.5rem]">{rank}</div>
-      <div className="flex relative items-center">
-        <div className="w-[8.75rem] h-[7rem] absolute">
-          <img src={sketchbook} alt="" className="w-[100%] h-[100%] absolute" />
+      <div className="flex items-center">
+        <div className="text-primary-3 font-cookierun_m text-[1.25rem] mr-[1rem]">{rank}</div>
+        <div className="sketchbook w-[6rem] h-[6rem] relative left-[0.2rem]">
           <img
             src={doodle}
             alt=""
@@ -38,12 +36,12 @@ function MobileResultMulti({ percentage, rank, doodle, player }) {
           />
         </div>
 
-        <div className="flex flex-col">
-          <div className="flex w-[55%] place-content-end self-end place-content-between">
+        <div className="flex flex-col h-[50%] justify-self-start">
+          <div className="flex w-[100%] place-content-between ml-[0.3rem]">
             <div className="font-cookierun_m text-[1rem] mb-[0.25rem]">{`player${player}`}</div>
             <div className="text-primary-3 font-cookierun_m text-[1rem] mb-[0.25rem]">{percentage}%</div>
           </div>
-          <div className="h-[1.6rem] w-[12rem] ml-[8.5rem]">
+          <div className="h-[1.0rem] w-[8rem]">
             <div style={containerStyles}>
               <div style={fillerStyles} />
             </div>
