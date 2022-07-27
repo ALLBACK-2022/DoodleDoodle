@@ -13,7 +13,6 @@ from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
 
 
-
 app = Flask(__name__)
 load_dotenv()
 CORS(app)
@@ -51,14 +50,6 @@ db = SQLAlchemy()
 db.init_app(app)
 s3 = s3_connection()
 
-
-def connect_rabbitmq():
-    time.sleep(3)
-    credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER,RABBITMQ_DEFAULT_PASS)
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
-    channel = connection.channel()
-    channel.queue_declare(queue='task_queue', durable=True)
-    channel.queue_declare(queue='result_queue', durable=True)
 def insert_word():
     f1 = open("classes.txt", "r", encoding="utf-8")
     f2 = open("engclasses.txt", "r", encoding="utf-8")
@@ -73,7 +64,6 @@ def insert_word():
     f2.close()
 
 
-    
 with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
@@ -135,22 +125,18 @@ class randwords(Resource):
 class save(Resource):
 
     def post(self):
-        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
-        f = request.files['filename']
+        row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
+        db.session.add(row)
+        db.session.commit()
+        ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
+            .filter(models.Draw.draw_no == value['draw-no']).first()
+        drawid=ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
-        f.save('temp/'+ str(drawid) + '.png')
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
-        os.remove('temp/' + str(drawid) +'.png')
-        gameid = value['game-id']
-        game = db.session.query(models.Game).get(gameid)
-        if game is None:
-            return ('Can not access data', 400)
+        f = request.files['filename']
+        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
         ranword = game.random_word
-        if retPut is None:
-            return('Draw saved fail',400)
-        
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
@@ -159,7 +145,7 @@ class save(Resource):
             return_data = {'ranword':ranword,'draw_id':drawid}
             return return_data, 200
         except:                  
-            return('Requset to AI fail', 400) 
+            return('Requset to AI fail', 400)
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
@@ -256,43 +242,6 @@ class result(Resource):
             res['res'] = res_list
         # 반환
         return (res, 200)
-
-    def post(self):
-        '''AI가 분석한 결과를 가져온다'''
-        value = request.get_json()
-        # task_id(list 형태) game_id 받기
-        task_ids = value['task-id']
-        user_num = len(task_ids)
-        game = db.session.query(models.Game).get(value['game-id'])
-        randword = game.random_word
-        # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (self._is_complete(task_ids) == "WAIT"):
-            time.sleep(1.0)
-        if self._is_complete(task_ids) == "FAIL":
-            return ("Get result fail", 200)
-        # task가 다 완료되었다면 result 받아오기
-        results = db.session.query(models.Result).filter(
-            models.Result.game_id == game.id).all()
-
-        # for문을 돌면서 results로 가져온 결과들을 정리
-        res = {}
-        if user_num == 1:
-            res = self._organize_result(results, randword)
-        else:
-            res_list = []
-            # draw-id가 같은 result끼리 분류
-            result_list = [[] for _ in range(user_num)]
-            for result in results:
-                result_list[result.draw_id - 1].append(result)
-            # 이제 result 조회해서 가져오기
-            for results in result_list:
-                user_res = self._organize_result(results, randword)
-                user_res['draw-no'] = results[0].draw.draw_no
-                res_list.append(user_res)
-            res['res'] = res_list
-        # 반환
-        return (res, 200)
-
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
