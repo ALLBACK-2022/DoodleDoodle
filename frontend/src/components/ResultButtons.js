@@ -3,10 +3,13 @@ import ShareResult from './ShareResult';
 
 function ResultButtons({ isforOne }) {
   return (
+<<<<<<< HEAD
 <<<<<<< develop
     <div className="flex flex-row justify-center">
       <ShareResult isforOne={isforOne}/>
 =======
+=======
+>>>>>>> backend-khl
     <div className="inline-flex flex-row justify-center">
       <button
         className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] 
