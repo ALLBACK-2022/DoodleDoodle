@@ -81,6 +81,7 @@ with app.app_context():
     if word is None:
         insert_word()
 
+
 s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
@@ -255,6 +256,43 @@ class result(Resource):
             res['res'] = res_list
         # 반환
         return (res, 200)
+
+    def post(self):
+        '''AI가 분석한 결과를 가져온다'''
+        value = request.get_json()
+        # task_id(list 형태) game_id 받기
+        task_ids = value['task-id']
+        user_num = len(task_ids)
+        game = db.session.query(models.Game).get(value['game-id'])
+        randword = game.random_word
+        # task_id들로 task가 완료되었는지 while문을 돌며 check
+        while (self._is_complete(task_ids) == "WAIT"):
+            time.sleep(1.0)
+        if self._is_complete(task_ids) == "FAIL":
+            return ("Get result fail", 200)
+        # task가 다 완료되었다면 result 받아오기
+        results = db.session.query(models.Result).filter(
+            models.Result.game_id == game.id).all()
+
+        # for문을 돌면서 results로 가져온 결과들을 정리
+        res = {}
+        if user_num == 1:
+            res = self._organize_result(results, randword)
+        else:
+            res_list = []
+            # draw-id가 같은 result끼리 분류
+            result_list = [[] for _ in range(user_num)]
+            for result in results:
+                result_list[result.draw_id - 1].append(result)
+            # 이제 result 조회해서 가져오기
+            for results in result_list:
+                user_res = self._organize_result(results, randword)
+                user_res['draw-no'] = results[0].draw.draw_no
+                res_list.append(user_res)
+            res['res'] = res_list
+        # 반환
+        return (res, 200)
+
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
