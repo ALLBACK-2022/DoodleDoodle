@@ -6,12 +6,14 @@ import Main from './pages/Main';
 import GamePage from './pages/GamePage';
 import ResultforOne from './pages/ResultforOne';
 import ResultMany from './pages/ResultMany';
+import About from './pages/About';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/about" element={<About />} />
         <Route path="random" element={<Random />} />
         <Route path="gamepage" element={<GamePage />} />
         <Route path="resultone" element={<ResultforOne />} />
