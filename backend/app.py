@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, requests, json
+import os, models, random, json
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -62,9 +62,8 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
-
-
-with app.app_context():
+    
+def make_word():
     if not database_exists(sqlurl):
         create_database(sqlurl)
     word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
@@ -245,3 +244,4 @@ class result(Resource):
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
+    make_word()
