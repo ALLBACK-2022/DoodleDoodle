@@ -10,6 +10,7 @@ from config import BUCKET_NAME, BUCKET_REGION
 import os, models, random, requests, json
 from models import db
 from flask_migrate import Migrate
+from sqlalchemy_utils import database_exists, create_database
 
 
 
@@ -30,6 +31,8 @@ RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
 RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
 RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
 sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+engine = create_engine(sqlurl)
+
 
 
 app.config['MYSQL_DB'] = MYSQL_USER
@@ -57,16 +60,6 @@ def connect_rabbitmq():
     channel.queue_declare(queue='task_queue', durable=True)
     channel.queue_declare(queue='result_queue', durable=True)
 def insert_word():
-    f = open("classes.txt", "r", encoding="utf-8")
-    lines = f.readlines()
-    for line in lines:
-        row = models.Word(name=line)
-        db.session.add(row)
-    db.session.commit()
-    f.close()
-
-
-def insert_word():
     f1 = open("classes.txt", "r", encoding="utf-8")
     f2 = open("engclasses.txt", "r", encoding="utf-8")
     lines1 = f1.readlines()
@@ -80,12 +73,13 @@ def insert_word():
     f2.close()
 
 
+    
 with app.app_context():
-    word = db.session.query(models.Dictionary).filter(
-        models.Dictionary.id == 1).first()
+    if not database_exists(sqlurl):
+        create_database(sqlurl)
+    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
-
 
 s3 = s3_connection()
 
