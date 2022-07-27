@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router';
 
-const baseURL = 'http://localhost:5000/api/draws/results';
+const baseURL = 'http://localhost:5000/api/v1/draws/results';
 function ResultSimilarity({setChartData, setRandomWordData, setImageUrl}){
     const location = useLocation();
     const array = []

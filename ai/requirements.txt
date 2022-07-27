@@ -35,5 +35,4 @@ scikit-image
 matplotlib
 boto3
 config
-celery
 pymysql
