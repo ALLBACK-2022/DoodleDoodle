@@ -1,9 +1,13 @@
-import pika
+import pika, os
+from dotenv import load_dotenv
+load_dotenv()
+RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
  
 queue = 'heo_queue'
  
 # RabbitMQ Server Connection 생성
-connection  = pika.BlockingConnection(pika.URLParameters('amqp://jiwon:jiwon@localhost:5672/'))
+connection  = pika.BlockingConnection(pika.URLParameters('amqp://doodledoodle:doodledoodle@rabbitmq:5672/'))
  
 # RabbitMQ Server와 통신하기 위한 channel 생성
 channel = connection.channel()
