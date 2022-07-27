@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime, os
+import datetime, os, pymysql
 from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -17,8 +17,6 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-
-
 class Game(Base):
     __tablename__ = 'game'
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}

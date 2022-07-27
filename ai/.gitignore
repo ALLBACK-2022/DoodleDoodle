@@ -8,6 +8,7 @@ instance/*
 .env
 #s3 bucket access key
 config.py
+conf.py
 #s3 bucket에 사진 올리기전 로컬 파일 
 temp    
 ai-model

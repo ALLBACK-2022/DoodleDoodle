@@ -1,0 +1,23 @@
+FROM python:3.8
+# This prevents Python from writing out pyc files
+ENV PYTHONDONTWRITEBYTECODE 1
+# This keeps Python from buffering stdin/stdout
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /ai
+
+RUN apt-get update \
+  && apt-get install -y gcc libc-dev python3-dev default-libmysqlclient-dev
+
+RUN pip install --upgrade pip
+
+COPY requirements.txt /ai/
+RUN pip install -r requirements.txt
+RUN pip freeze > requirements.txt
+
+COPY . .
+
+# Different here
+WORKDIR /
+
+CMD [ "flask", "run", "--host=0.0.0.0"]
