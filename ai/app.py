@@ -53,7 +53,7 @@ app = Flask(__name__)
 app.config.update(
     #broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbit:5672/',
     broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbitmq:5672/',
-    result_backend='db+mysql://'+'doodledoodle'+':'+'doodledoodle'+'@db/doodledoodle'
+    result_backend='db+mysql://'+ MYSQL_USER +':'+ MYSQL_PASSWORD +'@db/DoodleDoodle'
    
     #result_backend='db+mysql://'+MYSQL_USER+':'+MYSQL_ROOT_PASSWORD+'@db/DoodleDoodle'
 
@@ -116,7 +116,7 @@ def task_result(task_id):
     # result = ai_predict.delay(1, 'umbrella')
     # if result.ready():
     #     return result.get()
-    ret = celery_app.AsyncResult(task_id).get(timeout=15)
+    ret = celery_app.AsyncResult(task_id).get()
     return ret
 
 if __name__ == '__main__':
