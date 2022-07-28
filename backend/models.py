@@ -17,11 +17,11 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-Base.metadata.reflect(engine)
+# Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     random_word = db.Column(db.String(20))
     player_num = db.Column(db.Integer)
@@ -44,7 +44,7 @@ class Game(Base):
 
 class Draw(Base):
     __tablename__ = 'draw'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     draw_no = db.Column(db.Integer)
     doodle = db.Column(db.Text)
@@ -64,7 +64,7 @@ class Draw(Base):
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
@@ -90,7 +90,7 @@ class Dictionary(Base):
 
 class Result(Base):
     __tablename__ = 'result'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)

@@ -61,16 +61,13 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
-    
-def make_word():
+
+with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
     word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
-
-
-s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -243,4 +240,3 @@ class result(Resource):
 
 if __name__=="__main__":
     app.run(port="5000", debug=True)
-    make_word()

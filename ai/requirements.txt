@@ -24,9 +24,9 @@ wcwidth==0.2.5
 Werkzeug==2.1.2
 zipp==3.8.1
 mysqlclient==2.1.1
+flask-sqlalchemy==2.5.1
 opencv-python
 runway
-gunicorn
 requests
 numpy
 Keras
