@@ -1,13 +1,17 @@
+# from crypt import methods
 from fileinput import filename
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, true
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, json
+import os
+import models
+import random
+import json
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -19,17 +23,18 @@ CORS(app)
 api = Api(app)
 migrate = Migrate(app, db)
 
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD=os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER=os.environ.get("MYSQL_USER")
-MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-MYSQL_PORT=os.environ.get("MYSQL_PORT")
-RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
-RABBITMQ_DEFAULT_HOST=os.environ.get("RABBITMQ_DEFAULT_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_USER = os.environ.get("MYSQL_USER")
+MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+MYSQL_PORT = os.environ.get("MYSQL_PORT")
+RABBITMQ_DEFAULT_USER = os.environ.get("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.environ.get("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_HOST = os.environ.get("RABBITMQ_DEFAULT_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 engine = create_engine(sqlurl)
 
 
@@ -50,28 +55,60 @@ db = SQLAlchemy()
 db.init_app(app)
 s3 = s3_connection()
 
+
 def insert_word():
     f1 = open("classes.txt", "r", encoding="utf-8")
     f2 = open("engclasses.txt", "r", encoding="utf-8")
     lines1 = f1.readlines()
     lines2 = f2.readlines()
     for idx, line in enumerate(lines1):
-        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),\
-            img_url=str(s3_get_image_url(s3, 'image/' + lines2[idx].rstrip() + '.png')))
+        row = models.Dictionary(name=line.rstrip(), eng_name=lines2[idx].rstrip(),
+                                img_url=str(s3_get_image_url(s3, 'image/' + lines2[idx].rstrip() + '.png')))
         db.session.add(row)
     db.session.commit()
     f1.close()
     f2.close()
-    
+
+
 def make_word():
     if not database_exists(sqlurl):
         create_database(sqlurl)
-    word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
+    word = db.session.query(models.Dictionary).filter(
+        models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
 
+def _is_complete(task_ids):
+    # task_id 로 status가 성공인지 아닌지
+    for task_id in task_ids:
+        task = db.session.query(models.Task).get(task_id)
+        if task.status == "FAILURE":
+            return "FAIL"
+        if not task.status == "SUCCESS":
+            return "WAIT"
+    return "SUCCESS"
+
+
+def _organize_result(results, randword):
+    res = {}
+    topfive = []
+    for result in results:
+        word = {}
+        word['dictionary'] = result.dictionary.serialize()
+        word['similarity'] = result.similarity
+        if result.dictionary.name == randword:
+            res['randword'] = word
+        topfive.append(word)
+    res['topfive'] = topfive
+    res['draw-id'] = results[0].draw_id
+    res['topfive'] = sorted(
+        res['topfive'], key=lambda d: d['similarity'], reverse=True)
+    return res
+
+
 s3 = s3_connection()
+
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -120,30 +157,33 @@ class randwords(Resource):
         db.session.commit()
         return ('random word saved', 201)
 
-@ns.route("/api/v1/draws",methods=['POST'])
+
+@ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
 
     def post(self):
         value = request.form.to_dict(flat=False)
-        row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
+        row = models.Draw(draw_no=value['draw-no'],
+                          doodle="", game_id=value['game-id'])
         db.session.add(row)
         db.session.commit()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
-        drawid=ret.id
+        drawid = ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        f.save('temp/' + str(value['game-id'][0]) +
+               '_' + str(value['draw-no'][0])+'.png')
         ranword = game.random_word
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-  
+
         try:
-            return_data = {'ranword':ranword,'draw_id':drawid}
+            return_data = {'ranword': ranword, 'draw_id': drawid}
             return return_data, 200
-        except:                  
+        except:
             return('Requset to AI fail', 400)
 
 
@@ -151,18 +191,20 @@ class save(Resource):
 class draw(Resource):
 
     def get(self, drawid):
-        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
+        ret = db.session.query(models.Draw).filter(
+            models.Draw.id == drawid).first()
         retimage = ret.doodle
         if ret is None:
             return('NO image in database', 400)
         db.session.commit()
         return(retimage, 200)
 
-@ns.route("/api/v1/results/game/<int:gameid>",methods=['GET'])
-class game(Resource):
 
+@ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
+class game(Resource):
     def get(self, gameid):
-        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
+        ret = db.session.query(models.Game).filter(
+            models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
         if ret is None:
             return('Can not access data', 400)
@@ -170,41 +212,45 @@ class game(Resource):
         print(retusernum)
         ret1 = []
         ret2 = []
-        for i in range(1,retusernum+1):
-            row = db.session.query(models.Draw).filter(models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()            
+        for i in range(1, retusernum+1):
+            row = db.session.query(models.Draw).filter(
+                models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
             returl = row.doodle
             db.session.commit()
             ret1.append(i)
             ret2.append(returl)
-        retdict = { name:value for name, value in zip(ret1, ret2)}
-        #print(retdict)
+        retdict = {name: value for name, value in zip(ret1, ret2)}
+        # print(retdict)
         return (retdict, 200)
 
-@ns.route("/api/v1/draws/results", methods=['POST'])
-class result(Resource):
-    def _is_complete(self, task_ids):
-        # task_id 로 status가 성공인지 아닌지
-        for task_id in task_ids:
-            task = db.session.query(models.Task).get(task_id)
-            if task.status == "FAILURE":
-                return "FAIL"
-            if not task.status == "SUCCESS":
-                return "WAIT"
-        return "SUCCESS"
 
-    def _organize_result(self, results, randword):
-        res = {}
-        topfive = []
-        for result in results:
-            word = {}
-            word['dictionary'] = result.dictionary.serialize()
-            word['similarity'] = result.similarity
-            if result.dictionary.name == randword:
-                res['randword'] = word
-                topfive.append(word)
-        res['topfive'] = topfive
-        res['draw-id'] = results[0].draw_id
-        return res
+@ns.route("/api/v1/draws/results/single", methods=['POST'])
+class singleresult(Resource):
+    def post(self):
+        '''AI가 분석한 결과를 가져온다'''
+        value = request.get_json()
+        # task_id(list 형태) game_id 받기
+        task_id = value['task-id']
+        draw_id = value['draw-id']
+        game = db.session.query(models.Game).get(value['game-id'])
+        randword = game.random_word
+        # task_id들로 task가 완료되었는지 while문을 돌며 check
+        while (_is_complete(task_id) == "WAIT"):
+            time.sleep(1.0)
+        if self._is_complete(task_id) == "FAIL":
+            return ("Get result fail", 200)
+        # task가 다 완료되었다면 result 받아오기
+        results = db.session.query(models.Result).filter(
+            models.Result.draw_id == draw_id).all()
+
+        # for문을 돌면서 results로 가져온 결과들을 정리
+        res = _organize_result(results=results, randword=randword)
+        # 반환
+        return (res, 200)
+
+
+@ns.route("/api/v1/draws/results/multi", methods=['POST'])
+class multiresults(Resource):
 
     def post(self):
         '''AI가 분석한 결과를 가져온다'''
@@ -215,7 +261,7 @@ class result(Resource):
         game = db.session.query(models.Game).get(value['game-id'])
         randword = game.random_word
         # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (self._is_complete(task_ids) == "WAIT"):
+        while (_is_complete(task_ids) == "WAIT"):
             time.sleep(1.0)
         if self._is_complete(task_ids) == "FAIL":
             return ("Get result fail", 200)
@@ -225,23 +271,26 @@ class result(Resource):
 
         # for문을 돌면서 results로 가져온 결과들을 정리
         res = {}
-        if user_num == 1:
-            res = self._organize_result(results, randword)
-        else:
-            res_list = []
-            # draw-id가 같은 result끼리 분류
-            result_list = [[] for _ in range(user_num)]
-            for result in results:
-                result_list[result.draw_id - 1].append(result)
-            # 이제 result 조회해서 가져오기
-            for results in result_list:
-                user_res = self._organize_result(results, randword)
-                user_res['draw-no'] = results[0].draw.draw_no
-                res_list.append(user_res)
-            res['res'] = res_list
+        res_list = []
+        # draw-id가 같은 result끼리 분류
+        result_list = [[] for _ in range(user_num)]
+        print(user_num)
+        for result in results:
+            result_list[result.draw.draw_no - 1].append(result)
+        # 이제 result 조회해서 가져오기
+        for results in result_list:
+            user_res = _organize_result(results=results, randword=randword)
+            user_res['draw-no'] = results[0].draw.draw_no
+            user_res['task-id'] = task_ids[user_res['draw-no'] - 1]
+            res_list.append(user_res)
+
+        res_list = sorted(
+            res_list, key=lambda d: d['randword']['similarity'], reverse=True)
+        res['res'] = res_list
         # 반환
         return (res, 200)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     app.run(port="5000", debug=True)
     make_word()
