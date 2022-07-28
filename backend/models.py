@@ -20,7 +20,7 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-
+Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'
@@ -99,27 +99,38 @@ class Result(Base):
     dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
 
+     
     def __init__(self, similarity):
         self.similarity = similarity
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id 
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+        
 
 
-class Task(Base):
-    __tablename__ = 'task'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
+# class Celery_taskmeta(Base):
+#     __tablename__ = Base.metadata.tables['Celery_taskmeta']
+#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
 
-    def __init__(self, status):
-        self.status = status
-        self.created_at = datetime.datetime.now().replace(microsecond=0)
-        self.updated_at = self.created_at
+# class Task(Base):
+#     __tablename__ = 'task'
+#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
+#     id = db.Column(db.Integer, primary_key=True)
+#     status = db.Column(db.String(20))
+#     created_at = db.Column(db.DateTime)
+#     updated_at = db.Column(db.DateTime)
 
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+
+#     def __init__(self,status):
+#         self.status = status
+#         self.created_at = datetime.datetime.now().replace(microsecond=0)
+#         self.updated_at = self.created_at
+
+
+#     def set_updated_at(self):
+#         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 Base.metadata.create_all(engine)
