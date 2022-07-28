@@ -8,6 +8,7 @@ import ResultButtons from '../components/ResultButtons';
 import ResultImage from '../components/ResultImage';
 import GameBGImg from '../components/GameBGImg';
 
+// AI API연결 안될때 1인용 결과페이지 미리보기용
 function Temp() {
   const charData = [
     { name: '오리', value: 61 },
@@ -167,7 +168,7 @@ function Temp() {
             {isPC && <ResultButtons isforOne />}
           </div>
         </div>
-        <div className="absolute bottom-[9vh]">{isMobile && <ResultButtons isforOne />}</div>
+        <div className="absolute bottom-[9vh] items-center w-[92vw]">{isMobile && <ResultButtons isforOne />}</div>
       </div>
     </div>
   );

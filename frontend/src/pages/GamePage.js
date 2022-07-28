@@ -9,7 +9,7 @@ import WordText from '../components/WordText';
 import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
 
-const postImageURL = 'http://localhost:5000/save'; // 백엔드에 이미지 보내는 API주소
+const postImageURL = 'http://localhost:5000/api/v1/draws'; // 백엔드에 이미지 보내는 API주소
 // let taskIDArray = [];
 
 // 게임 페이지

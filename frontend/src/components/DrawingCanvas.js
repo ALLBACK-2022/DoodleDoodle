@@ -44,7 +44,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
 
     const context = canvas.getContext('2d'); // ctx할당
     context.strokeStyle = 'black'; // 붓 색깔 검은색
-    context.lineWidth = isMobile ? 10 : 14; // 붓 굵이
+    context.lineWidth = isMobile ? 10 : 16; // 붓 굵이
     setCtx(context); // 함수 밖 ctx 할당
     setXY(); // min max
   }
@@ -127,7 +127,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
   // 이미지에 배경을 넣은뒤 file객체로 변환 후 GamePage의 imgDataPost 실행
   function finishImageLoading(image) {
     drawImageWithBG(image);
-    console.log(canvasRef.current.toDataURL());
+    // console.log(canvasRef.current.toDataURL()); // 그린 이미지 URL, 테스트할때만 사용 ㄱㄱ
     const data = imgURItoBlob(canvasRef.current.toDataURL()); // 이미지 URL을 Blob객체로 변환
     setCanvas();
     imgDataPost(data);

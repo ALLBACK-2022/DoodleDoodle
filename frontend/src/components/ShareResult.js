@@ -22,7 +22,7 @@ function ShareResult({ isforOne }) {
       onClick={share}
       className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
       deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
-      mobile:w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
+      mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
       ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
     >
       결과저장
@@ -32,6 +32,7 @@ function ShareResult({ isforOne }) {
 
 export default ShareResult;
 
+/*
 import React, {useRef} from 'react';
 import html2canvas from 'html2canvas';
 
@@ -63,4 +64,4 @@ function ShareResult({isforOne}){
     );
 }
 
-export default ShareResult;
+export default ShareResult; */
