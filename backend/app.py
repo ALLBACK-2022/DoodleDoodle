@@ -141,14 +141,16 @@ class save(Resource):
         f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
         
         print(value)
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
-         'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-        #os.remove('temp/' + filepath)
-        
-        if retPut :
-            
-            retGet = s3_get_image_url(s3,'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
-            row = models.Draw(draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
+                               'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        # os.remove('temp/' + filepath)
+
+        if retPut:
+
+            retGet = s3_get_image_url(
+                s3, 'drawimage/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+            row = models.Draw(
+                draw_no=value['draw-no'], doodle=retGet, game_id=value['game-id'])
             ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
                 .filter(models.Draw.draw_no == value['draw-no']).first()
             draw_id = ret.id
@@ -156,10 +158,10 @@ class save(Resource):
             db.session.commit()
             return_data = {'draw_id': draw_id}
             return return_data
-            #return jsonify({'draw_id' : draw_id}) , 201
+            # return jsonify({'draw_id' : draw_id}) , 201
         else:
-            #print("파일 저장 실패")
-            return('draw saved fail',400)
+            # print("파일 저장 실패")
+            return('draw saved fail', 400)
 
         print(value)
         retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png',
