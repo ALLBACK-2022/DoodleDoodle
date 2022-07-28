@@ -51,11 +51,12 @@ function ResultMany() {
   const isPc = useMediaQuery({
     query: '(min-width: 701px)',
   });
+
   return (
     <div className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <div
         id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`}
-        className="px-[3rem] py-[2rem] w-full h-[100vh] overflow-y-auto"
+        className="px-[3rem] py-[2rem] w-full h-[100vh] overflow-y-auto scrollSection"
       >
         <h1
           className="text-black font-cookierun text-left
@@ -89,6 +90,8 @@ function ResultMany() {
                 player={player['draw-no']}
                 key={player['draw-id']}
                 number={playersInfo.length}
+                taskId={player['task-id']}
+                drawId={player['draw-id']}
               />
             ))}
           </div>
