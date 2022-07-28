@@ -9,10 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os
-import models
-import random
-import json
+import os, models, random, logging
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -113,6 +110,7 @@ s3 = s3_connection()
 class main_page(Resource):
 
     def get(self):
+        app.logger.error("Doodle, Doodle!")
         return 'Doodle, Doodle!'
 
 
@@ -289,6 +287,6 @@ class multiresults(Resource):
         # 반환
         return (res, 200)
 
-
-if __name__ == "__main__":
+if __name__=="__main__":
     app.run(port="5000", debug=True)
+    make_word()
