@@ -127,8 +127,8 @@ services:
     #user: root
     user: nobody
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
-    #command: celery -A ai.tasks.celery_app worker --loglevel=info
-    command: celery -A ai.tasks.celery_app worker --loglevel=info -p gevent
+    command: celery -A ai.tasks.celery_app worker --loglevel=info
+    #command: celery -A ai.tasks.celery_app worker --loglevel=info gevent
     depends_on:
       - rabbitmq
       - ai
