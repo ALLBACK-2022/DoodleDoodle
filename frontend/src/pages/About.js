@@ -2,10 +2,14 @@
 import quickdraw from '../assets/icons/quickdraw.png';
 import AboutNeeds from '../components/AboutNeeds';
 import Profile from '../components/Profile';
+import '../scrollbar.css';
 
 function About() {
   return (
-    <div className="flex flex-col w-screen h-screen bg-white text-center border-primary border-[2rem] items-center">
+    <div
+      className="flex flex-col w-screen h-screen bg-white text-center border-primary 
+    border-[1rem] items-center overflow-y-auto scrollSection p-[1rem]"
+    >
       <h1 className="font-cookierun text-3xl my-[2rem]">Information</h1>
       <div className="w-[25rem] h-1/3 flex items-center">
         <img className="deskTop:w-[15rem] mobile:w-[8rem]" src={quickdraw} alt="" />

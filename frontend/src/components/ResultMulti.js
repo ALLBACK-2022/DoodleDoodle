@@ -1,6 +1,8 @@
-// import React, { useState } from 'react';
-function ResultMulti({ percentage, rank, doodle, player, number }) {
-  // 여기서 GET API 불러오기(각 데이터 넣어주기)
+import { useNavigate } from 'react-router';
+
+function ResultMulti({ percentage, rank, doodle, player, number, taskId, drawId, gameId }) {
+  const navigate = useNavigate();
+
   function chagneRank2String(ranknum) {
     switch (ranknum) {
       case 1:
@@ -18,7 +20,6 @@ function ResultMulti({ percentage, rank, doodle, player, number }) {
     }
   }
   const resultConfig = {
-    1: 'flex flex-col w-[34rem] h-[30rem]',
     2: 'flex flex-col w-[32rem] h-[28rem]',
     3: 'flex flex-col w-[30rem] h-[26rem]',
     4: 'flex flex-col w-[32rem] h-[28rem]',
@@ -26,13 +27,19 @@ function ResultMulti({ percentage, rank, doodle, player, number }) {
     6: 'flex flex-col w-[26rem] h-[22rem]',
   };
   const sketchConfig = {
-    1: 'w-[32rem] h-[28rem] items-center',
     2: 'w-[30rem] h-[26rem] items-center',
     3: 'w-[28rem] h-[24rem] items-center',
     4: 'w-[28rem] h-[24rem] items-center',
     5: 'w-[24rem] h-[20rem] items-center',
     6: 'w-[24rem] h-[20rem] items-center',
   };
+
+  function onClick() {
+    navigate('../resultone', {
+      replace: true,
+      state: { task: taskId, draw: drawId, game: gameId },
+    });
+  }
 
   return (
     <div className={`${resultConfig[number]}`}>
@@ -41,7 +48,13 @@ function ResultMulti({ percentage, rank, doodle, player, number }) {
         <div className="font-cookierun text-2xl text-black "> {`player${player}`} </div>
         <div className="font-cookierun text-2xl text-white "> {percentage}% </div>
       </div>
-      <div className={`${sketchConfig[number]} self-center text-center relative sketchbook`}>
+      <div
+        tabIndex={0}
+        role="button"
+        onClick={onClick}
+        onKeyDown={onClick}
+        className={`${sketchConfig[number]} self-center text-center relative sketchbook`}
+      >
         <img
           src={doodle}
           alt=""
