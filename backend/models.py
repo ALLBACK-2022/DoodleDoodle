@@ -20,7 +20,7 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-Base.metadata.reflect(engine)
+# Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'

@@ -64,7 +64,7 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
-    
+
 with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
