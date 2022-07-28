@@ -19,8 +19,13 @@ Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+<<<<<<< develop
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
+=======
+db.init_app(app)
+# Base.metadata.reflect(engine)
+>>>>>>> feat: ai predict api for test
 
 class Game(Base):
     __tablename__ = 'game'
