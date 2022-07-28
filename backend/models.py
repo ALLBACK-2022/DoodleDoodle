@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime, os
+import datetime, os, pymysql
 from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -17,17 +17,17 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-
+# Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     random_word = db.Column(db.String(20))
     player_num = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
-    draws = db.relationship('Draw', backref='game', lazy='dynamic')
+    draw = db.relationship('Draw', backref='game')
     
     def __init__(self, random_word, player_num):
         self.random_word = random_word
@@ -44,14 +44,14 @@ class Game(Base):
 
 class Draw(Base):
     __tablename__ = 'draw'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     draw_no = db.Column(db.Integer)
     doodle = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    draw_id = db.relationship('Result', backref='draw', lazy='dynamic')
+    
 
 
     def __init__(self, draw_no, doodle,game_id):
@@ -64,13 +64,12 @@ class Draw(Base):
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
-    #dictionary_id = db.relationship('Result', backref='dictionary', lazy='dynamic')
-    
+    result = db.relationship('Result', backref='dictionary')
     
     def __init__(self, name, eng_name, img_url):
         self.name = name
@@ -91,7 +90,7 @@ class Dictionary(Base):
 
 class Result(Base):
     __tablename__ = 'result'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
@@ -99,35 +98,39 @@ class Result(Base):
     draw_id = db.Column(db.Integer, db.ForeignKey(Draw.id))
     dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    #result_id = db.relationship('Result', backref='result', lazy='dynamic')
-    
-    
-    def __init__(self, similarity):
+
+     
+    def __init__(self, similarity, draw_id, dictionary_id, game_id):
         self.similarity = similarity
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id 
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+        
 
 
+# class Celery_taskmeta(Base):
+#     __tablename__ = Base.metadata.tables['Celery_taskmeta']
+#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
 
-class Task(Base):
-    __tablename__ = 'task'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
-    result_id = db.Column(db.Integer, db.ForeignKey(Result.id))
-    #task_id = db.relationship('Result', backref='task', lazy='dynamic')
-
-
-    def __init__(self,status):
-        self.status = status
-        self.created_at = datetime.datetime.now().replace(microsecond=0)
-        self.updated_at = self.created_at
+# class Task(Base):
+#     __tablename__ = 'task'
+#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
+#     id = db.Column(db.Integer, primary_key=True)
+#     status = db.Column(db.String(20))
+#     created_at = db.Column(db.DateTime)
+#     updated_at = db.Column(db.DateTime)
 
 
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+#     def __init__(self,status):
+#         self.status = status
+#         self.created_at = datetime.datetime.now().replace(microsecond=0)
+#         self.updated_at = self.created_at
+
+
+#     def set_updated_at(self):
+#         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 

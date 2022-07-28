@@ -24,11 +24,10 @@ def s3_put_object(s3, bucket, filepath, filename):
         return False
     return True
 
-def s3_get_image_url(s3, filename : str) -> str:
+def s3_get_image_url(s3, filename : str):
     """
     s3 : 연결된 s3 객체(boto3 client)
     filename : s3에 저장된 파일 명
     """
-    #location = s3.get_bucket_location(Bucket={BUCKET_NAME})["LocationConstraint"]
-    return 'https://' + BUCKET_NAME + '.s3.ap-northeast-2.amazonaws.com/' + filename 
+    return f'https://{BUCKET_NAME}.s3.{BUCKET_REGION}.amazonaws.com/{filename}' 
     
