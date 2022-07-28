@@ -18,7 +18,16 @@ RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
 COPY . ./
 
+RUN mkdir -p temp
+RUN chown 777 temp
+
+COPY . .
 CMD [ "flask", "run", "--host=0.0.0.0"]
+
+#CMD [ "sudo chmod 777 -R /var/lib/docker/containers/*" ]
+
+#CMD [ "flask", "run", "--host=0.0.0.0"]
+CMD [ "flask", "run", "--host=0.0.0.0"] &&['chmod', '-R', '777' ,'temp']
 
 # COPY . /app
 # docker build -t backend-img .

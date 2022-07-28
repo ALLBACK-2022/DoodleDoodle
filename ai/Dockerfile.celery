@@ -12,6 +12,11 @@ RUN apt-get update \
 RUN pip install --upgrade pip
 
 COPY requirements.txt /ai/
+
+RUN mkdir -p temp
+RUN chmod -R 777 ./
+
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN pip freeze > requirements.txt
 
@@ -20,4 +25,4 @@ COPY . .
 # Different here
 WORKDIR /
 
-CMD [ "flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run", "--host=0.0.0.0"]

@@ -1,8 +1,9 @@
+import os
+from faulthandler import cancel_dump_traceback_later
 from flask import Flask, request, jsonify
 from celery.utils.log import get_task_logger
 
 from celery import Celery
-import os
 
 import sys
 import time
@@ -19,8 +20,8 @@ MYSQL_HOST=os.environ.get("MYSQL_HOST")
 RABBITMQ_DEFAULT_USER=os.environ.get("RABBITMQ_DEFAULT_USER")
 RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
 
-#print('os.environ.get("RABBITMQ_DEFAULT_USER")>>',os.environ.get("RABBITMQ_DEFAULT_USER"))
-#print('os.environ.get("RABBITMQ_DEFAULT_PASS")>>',os.environ.get("RABBITMQ_DEFAULT_PASS"))
+# print('os.environ.get("RABBITMQ_DEFAULT_USER")>>',os.environ.get("RABBITMQ_DEFAULT_USER"))
+# print('os.environ.get("RABBITMQ_DEFAULT_PASS")>>',os.environ.get("RABBITMQ_DEFAULT_PASS"))
 
 #logger.info('os.getcwd()',os.getcwd())
 # print('현재 실행 중인 작업 경로는 in app.py os.getcwd()',os.getcwd())
@@ -57,11 +58,14 @@ app.config.update(
    
     #result_backend='db+mysql://'+MYSQL_USER+':'+MYSQL_ROOT_PASSWORD+'@db/DoodleDoodle'
 
+    # result_backend='db+mysql://'+MYSQL_USER+':'+MYSQL_ROOT_PASSWORD+'@db/DoodleDoodle'
+
 )
 
 celery_app = make_celery(app)
 
-@app.route('/api/v1/start_predict' ,methods=['GET'])
+
+@app.route('/api/v1/start_predict', methods=['GET'])
 def call_method():
     #app.logger.info("Invoking Method ")
     draw_id=1
@@ -71,17 +75,17 @@ def call_method():
     # draw_id = value['draw_id']
     # ranword = value['ranword']
 
-    #get으로 ranword 받는 부분
+    # get으로 ranword 받는 부분
     # if request.method =='GET':
     #     parameter_dict = request.args.to_dict()
 
     #     if len(parameter_dict) == 0:
     #          return 'No parameter'
-        
+
     #     for key in parameter_dict.keys():
     #         ranword += request.args[key]
     #         draw_id += request.args[key]
-        
+
     #     print(ranword,'/',draw_id)
 
     task = celery_app.send_task('ai_predict', kwargs={
@@ -91,7 +95,7 @@ def call_method():
     # app.logger.info(r.backend)
     return task_id
 
-#-----------원래 코드    
+# -----------원래 코드
 # @app.route('/simple_start_task')
 # def call_method():
 #     #app.logger.info("Invoking Method ")
@@ -109,12 +113,22 @@ def get_status(task_id):
     print("Invoking Method ")
     return "Status of the Task " + str(status.state)
 
-#작업결과
+# 작업결과
+
+
 @app.route('/simple_task_result/<task_id>')
 def task_result(task_id):
     result = celery_app.AsyncResult(task_id).result
     return "Result of the Task " + str(result)
-    #db에 저장?
+    # db에 저장?
+
+
+# S3 버킷 test
+s3 = s3_connection()
+url = str(s3_get_object(s3, BUCKET_NAME, 'drawimage/1.png', './temp/1.png'))
+print('s3test:',url)
 
 if __name__ == '__main__':
     app.run()
+# cancel_dump_traceback_later
+#     app.run()
