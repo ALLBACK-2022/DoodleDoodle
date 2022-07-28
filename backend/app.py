@@ -61,15 +61,13 @@ def insert_word():
     f1.close()
     f2.close()
     
-def make_word():
+with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
     word = db.session.query(models.Dictionary).filter(models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
 
-
-s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -247,15 +245,7 @@ def random_status():
     return Response("random status", status=status_code)
 
 if __name__=="__main__":
-    app.run(port="5000", debug=True)
-    make_word()
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)   
-
-
-# if __name__ != '__main__':
-#     # Use gunicorn's logger to replace flask's default logger
-#     gunicorn_logger = logging.getLogger('gunicorn.error')
-#     app.logger.handlers = gunicorn_logger.handlers
-#     app.logger.setLevel(gunicorn_logger.level)   
+    app.run(port="5000", debug=True)
