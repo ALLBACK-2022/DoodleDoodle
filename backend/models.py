@@ -31,6 +31,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 =======
 db.init_app(app)
+<<<<<<< develop
 >>>>>>> chore: add ai models file
 Base.metadata.reflect(engine)
 =======
@@ -41,6 +42,9 @@ db.init_app(app)
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
 >>>>>>> fix: error in docker and wait for it
+=======
+# Base.metadata.reflect(engine)
+>>>>>>> feat: ai predict api for test
 
 class Game(Base):
     __tablename__ = 'game'
