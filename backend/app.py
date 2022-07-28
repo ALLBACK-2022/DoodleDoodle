@@ -104,7 +104,8 @@ def _organize_result(results, randword):
     res['draw-id'] = results[0].draw_id
     res['topfive'] = sorted(
         res['topfive'], key=lambda d: d['similarity'], reverse=True)
-    res['topfive'] = res['topfive'].pop
+    if len(res['topfive']) > 5:
+        res['topfive'].pop()
     return res
 
 
@@ -216,6 +217,7 @@ class game(Resource):
         for i in range(1, retusernum+1):
             row = db.session.query(models.Draw).filter(
                 models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
+            print(row)
             returl = row.doodle
             db.session.commit()
             ret1.append(i)
@@ -228,7 +230,7 @@ class game(Resource):
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
 class singleresult(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다'''
+        '''AI가 분석한 결과를 가져온다(다인)'''
         value = request.get_json()
         # task_id(list 형태) game_id 받기
         task_id = value['task-id']
@@ -253,7 +255,7 @@ class singleresult(Resource):
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
 class multiresults(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다'''
+        '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()
         # task_id(list 형태) game_id 받기
         task_ids = value['task-id']
@@ -261,10 +263,10 @@ class multiresults(Resource):
         game = db.session.query(models.Game).get(value['game-id'])
         randword = game.random_word
         # task_id들로 task가 완료되었는지 while문을 돌며 check
-        # while (_is_complete(task_ids) == "WAIT"):
-        #     time.sleep(1.0)
-        # if self._is_complete(task_ids) == "FAIL":
-        #     return ("Get result fail", 200)
+        while (_is_complete(task_ids) == "WAIT"):
+            time.sleep(1.0)
+        if self._is_complete(task_ids) == "FAIL":
+            return ("Get result fail", 200)
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.game_id == game.id).all()

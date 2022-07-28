@@ -1,14 +1,21 @@
 import React from 'react';
 import html2canvas from 'html2canvas';
 
-function ShareResult({isforOne}){
+function ShareResult({ isforOne }) {
+  function download(dataurl, filename) {
+    const link = document.createElement('a');
+    link.href = dataurl;
+    link.download = filename;
+    link.click();
+  }
 
-    function download(dataurl, filename) {
-        const link = document.createElement("a");
-        link.href = dataurl;
-        link.download = filename;
-        link.click();
-    }
+  async function share() {
+    await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
+      await canvas.toBlob(function (blob) {
+        download(URL.createObjectURL(blob), 'result.png');
+      }, 'image/png');
+    });
+  }
 
     async function share() {
 
