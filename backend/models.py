@@ -20,8 +20,7 @@ engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-# Base.metadata.reflect(engine)
-
+Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'
@@ -128,6 +127,10 @@ class Result(Base):
 #         self.created_at = datetime.datetime.now().replace(microsecond=0)
 #         self.updated_at = self.created_at
 
+#     def __init__(self,status):
+#         self.status = status
+#         self.created_at = datetime.datetime.now().replace(microsecond=0)
+#         self.updated_at = self.created_at
 
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
