@@ -64,7 +64,9 @@ function GamePage() {
     const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
     postImage(file);
     if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
-    else navigate('../resultone', { replace: true, state: { gameId: gameID } });
+    else {
+      navigate('../resultone', { replace: true, state: { gameId: gameID } });
+    }
   };
 
   // NextButton을 클릭했을때 실행
@@ -79,7 +81,7 @@ function GamePage() {
 
   return (
     <div className="w-screen h-screen bg-primary relative select-none">
-      <GameBGImg />
+      <GameBGImg isGamePage />
       <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} />
       <PlayerText currentPlayer={currentPlayer} maxPlayer={maxPlayer} />
       <WordText randWord={randWord} />
