@@ -103,6 +103,7 @@ def _organize_result(results, randword):
     res['draw-id'] = results[0].draw_id
     res['topfive'] = sorted(
         res['topfive'], key=lambda d: d['similarity'], reverse=True)
+    res['topfive'] = res['topfive'].pop
     return res
 
 
@@ -250,7 +251,6 @@ class singleresult(Resource):
 
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
 class multiresults(Resource):
-
     def post(self):
         '''AI가 분석한 결과를 가져온다'''
         value = request.get_json()
@@ -260,10 +260,10 @@ class multiresults(Resource):
         game = db.session.query(models.Game).get(value['game-id'])
         randword = game.random_word
         # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (_is_complete(task_ids) == "WAIT"):
-            time.sleep(1.0)
-        if self._is_complete(task_ids) == "FAIL":
-            return ("Get result fail", 200)
+        # while (_is_complete(task_ids) == "WAIT"):
+        #     time.sleep(1.0)
+        # if self._is_complete(task_ids) == "FAIL":
+        #     return ("Get result fail", 200)
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.game_id == game.id).all()
