@@ -18,7 +18,7 @@ services:
   backend:
     depends_on:
       - db
-      - rabbitmq
+      # - rabbitmq
     build:
       context: ./backend
     ports:
@@ -36,7 +36,7 @@ services:
     # command: flask run --host=0.0.0.0 --port=5000
     # command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
-      - rabbitmq
+      # - rabbitmq
       - db
     volumes:
       - ./backend:/usr/local/app/
@@ -49,7 +49,7 @@ services:
     - 5001:5000
     environment:
       FLASK_DEBUG: 1
-      FLASK_APP: ./app.py
+      FLASK_APP: ./server.py
     container_name: ai-con
     expose:
       - 5001
@@ -58,11 +58,11 @@ services:
     volumes:
       - ./ai:/usr/local/app/
     depends_on:
-      - rabbitmq
+      # - rabbitmq
       - db
       - backend
     links:
-      - rabbitmq
+      # - rabbitmq
       - db
 
   db:
@@ -94,45 +94,45 @@ services:
       - backend
     tty: true
 
-  rabbitmq:
-    image : rabbitmq:3-management
-    container_name: rabbitmq-con
-    environment:
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
-      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
-    ports:
-      - 5672:5672 
-      - 15672:15672
-    # command: rabbitmq-plugins enable rabbitmq_management
-    volumes:
-      - data_rabbitmq:/var/lib/rabbitmq
-    tty: true
+  # rabbitmq:
+  #   image : rabbitmq:3-management
+  #   container_name: rabbitmq-con
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+  #     RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+  #   ports:
+  #     - 5672:5672 
+  #     - 15672:15672
+  #   # command: rabbitmq-plugins enable rabbitmq_management
+  #   volumes:
+  #     - data_rabbitmq:/var/lib/rabbitmq
+  #   tty: true
 
-  worker:
-    build:
-      context: './ai'
-      dockerfile: Dockerfile.celery
-    container_name: worker-con
-    user: root
-    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
-    command: celery -A ai.tasks.celery_app worker --loglevel=info
-    depends_on:
-      - rabbitmq
-      - ai
-      - db
-    tty: true
+  # worker:
+  #   build:
+  #     context: './ai'
+  #     dockerfile: Dockerfile.celery
+  #   container_name: worker-con
+  #   user: root
+  #   # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
+  #   command: celery -A ai.tasks.celery_app worker --loglevel=info
+  #   depends_on:
+  #     - rabbitmq
+  #     - ai
+  #     - db
+  #   tty: true
 
-  flower:
-    image: mher/flower
-    container_name: flower-con
-    depends_on:
-      - rabbitmq
-    environment:
-      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
-      - FLOWER_PORT=5555
-    ports:
-      - 5555:5555
-    tty: true
+  # flower:
+  #   image: mher/flower
+  #   container_name: flower-con
+  #   depends_on:
+  #     - rabbitmq
+  #   environment:
+  #     - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+  #     - FLOWER_PORT=5555
+  #   ports:
+  #     - 5555:5555
+  #   tty: true
 
   statsd-exporter:
     image: prom/statsd-exporter:v0.22.4
@@ -171,7 +171,7 @@ services:
 volumes:
   build_folder:
   data_mysql:
-  data_rabbitmq:
+  # data_rabbitmq:
 
 #docker-compose up --build
 #volume
