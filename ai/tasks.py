@@ -1,11 +1,11 @@
 from celery.utils.log import get_task_logger
 
-from ai.app import celery_app
+from app import celery_app
 #from ai.connection import conn
-from .connection import s3_connection, s3_get_object
+from connection import s3_connection, s3_get_object
 #from conf import BUCKET_NAME
 #from . import conf as BUCKET_NAME
-from .config import BUCKET_NAME
+from config import BUCKET_NAME
 #from connection import s3_connection, s3_get_object
 
 #import keras
@@ -42,7 +42,7 @@ with open("./ai-model/classes.txt", "r", encoding="utf8") as ins:
         class_names.append(line.rstrip('\n'))
 
 # Load the model
-model = keras.models.load_model('./ai-model/keras.h5')
+model = keras.models.load_model('./ai-model/6000_30_128.h5')
 # model.summary()
 
 

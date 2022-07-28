@@ -69,8 +69,7 @@ def insert_word():
     f1.close()
     f2.close()
 
-
-def make_word():
+with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
     word = db.session.query(models.Dictionary).filter(
