@@ -5,11 +5,11 @@ services:
     build: 
       context: ./frontend 
     ports:
-     - 3000:3000
+     - 3030:3000
     container_name: frontend-con
     volumes: 
       - build_folder:/frontend/build
-      - ./frontend/node_modules/:/frontend/node_modules
+      # - ./frontend/node_modules/:/frontend/node_modules
     restart: always
     image: run
     stdin_open: true
@@ -26,12 +26,15 @@ services:
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: ./app.py
+      APP_NAME: "backend"
+      STATSD_HOST: "statsd-exporter"
+      STATSD_PORT: "9125"
     container_name: backend-con
-    expose:
-      - 5000
+    # expose:
+    #   - 5000
     restart: always
     # command: flask run --host=0.0.0.0 --port=5000
-    command: gunicorn --bind 0.0.0.0:5000 app:app
+    # command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
       - rabbitmq
       - db
@@ -129,6 +132,40 @@ services:
     ports:
       - 5555:5555
     tty: true
+
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.22.4
+    ports:
+      - "9125:9125"
+      - "9102:9102"
+    volumes:
+      - ./etc/statsd-exporter/statsd.conf:/statsd/statsd.conf
+    command:
+      - --statsd.mapping-config=/statsd/statsd.conf
+
+  prometheus:
+    image: prom/prometheus:v2.33.5
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./etc/prometheus:/workspace
+    command:
+      - '--config.file=/workspace/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:8.4.3
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./etc/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - prometheus
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
 
 volumes:
   build_folder:
