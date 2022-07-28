@@ -27,7 +27,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
 db = SQLAlchemy(app)
+=======
+db.init_app(app)
+>>>>>>> chore: add ai models file
 Base.metadata.reflect(engine)
 =======
 db.init_app(app)
