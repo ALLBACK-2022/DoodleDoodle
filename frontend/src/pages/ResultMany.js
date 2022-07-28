@@ -1,5 +1,8 @@
 // import ResultText from '../components/ResultText';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+// import { useLocation } from 'react-router';
 import MobileBottomBtn from '../components/MobileBottomBtn';
 import MobileResultMulti from '../components/MobileResultMulti';
 import ResultButtons from '../components/ResultButtons';
@@ -7,13 +10,40 @@ import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
 function ResultMany() {
-  // 이게 백엔드에서 받아오는 값
-  const players = [
-    { id: 1, url: 'https://cdn.icon-icons.com/icons2/1919/PNG/512/lightbulbon_121975.png', percentage: 80 },
-    { id: 2, url: 'https://cdn.icon-icons.com/icons2/1919/PNG/512/lightbulbon_121975.png', percentage: 60 },
-    { id: 3, url: 'https://cdn.icon-icons.com/icons2/1919/PNG/512/lightbulbon_121975.png', percentage: 60 },
-    { id: 4, url: 'https://cdn.icon-icons.com/icons2/1919/PNG/512/lightbulbon_121975.png', percentage: 60 },
-  ];
+  // const [gameData, setGameData] = useState({ game_id: 0, task_ids: [] });
+  const [playersInfo, setPlayersInfo] = useState([]);
+  const [playersPics, setPlayersPics] = useState([]);
+  // const location = useLocation(); // 이전 페이지에서 받아온 데이터
+  // const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수
+  async function getData() {
+    console.log('getData() here');
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    // setGameData(prevGameData => ({ ...gameData, game_id: location.state.gameId, task_ids: location.state.task_ids }));
+    try {
+      const response = await axios.post('http://localhost:5000/api/v1/draws/results/multi', {
+        'game-id': 9,
+        'task-id': [4, 5, 1, 3, 10],
+      });
+      setPlayersInfo(response.data.res);
+      console.log('playersInfo');
+      console.log(playersInfo);
+    } catch (err) {
+      console.log('Error >>', err);
+    }
+    try {
+      const response = await axios.get(`http://localhost:5000/api/v1/results/game/9`);
+      setPlayersPics(response.data);
+      console.log('playersPics');
+      console.log(playersPics);
+    } catch (err) {
+      console.log('Error >>', err);
+    }
+  }
+  useEffect(() => {
+    getData();
+    console.log('useEffect() here');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -38,27 +68,27 @@ function ResultMany() {
             className="scrollSection h-[25rem] 
       py-[2rem] px-[0.8rem] overflow-y-auto text-center m-auto mb-[1.5rem]"
           >
-            {players.map(player => (
+            {playersInfo.map((player, index) => (
               <MobileResultMulti
-                rank={player.id}
-                percentage={player.percentage}
-                doodle={player.url}
-                player={player.id}
-                key={player.id}
+                rank={index + 1}
+                percentage={player.randword.similarity}
+                doodle={playersPics[player['draw-no']]}
+                player={player['draw-no']}
+                key={player['draw-id']}
               />
             ))}
           </div>
         )}
         {isPc && (
           <div className="flex flex-wrap place-content-around w-[85%] justify-center m-auto">
-            {players.map(player => (
+            {playersInfo.map((player, index) => (
               <ResultMulti
-                rank={player.id}
-                percentage={player.percentage}
-                doodle={player.url}
-                player={player.id}
-                key={player.id}
-                number={players.length}
+                rank={index + 1}
+                percentage={player.randword.similarity}
+                doodle={playersPics[player['draw-no']]}
+                player={player['draw-no']}
+                key={player['draw-id']}
+                number={playersInfo.length}
               />
             ))}
           </div>
