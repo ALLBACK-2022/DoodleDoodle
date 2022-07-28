@@ -22,7 +22,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
 
-
 class Game(Base):
     __tablename__ = 'game'
     __table_args__ = {'extend_existing': True,
