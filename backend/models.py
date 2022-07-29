@@ -113,11 +113,18 @@ class Result(Base):
 <<<<<<< develop
         self.similarity = similarity
 <<<<<<< develop
+<<<<<<< develop
         # self.draw_id = draw_id
         # self.dictionary_id = dictionary_id
         # self.game_id = game_id 
+=======
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id
+>>>>>>> feat: fix models.py, change variables name
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+<<<<<<< develop
         
 # class Celery_taskmeta(Base):
 #     __table__ = Base.metadata.tables['celery_taskmeta']
@@ -136,6 +143,7 @@ class Result(Base):
 #     updated_at = db.Column(db.DateTime)
 
 =======
+<<<<<<< develop
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
         self.game_id = game_id
@@ -150,6 +158,13 @@ class Result(Base):
 #         self.created_at = datetime.datetime.now().replace(microsecond=0)
 #         self.updated_at = self.created_at
 
+=======
+>>>>>>> feat: fix models.py, change variables name
+
+
+<<<<<<< develop
+
+>>>>>>> feat: fix models.py, change variables name
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 =======
@@ -161,12 +176,18 @@ class Celery_taskmeta(Base):
     task_id = db.Column(db.String(155))
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 <<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> feat: fix models.py, change variables name
 =======
 class Celery_taskmeta(Base):
     __table__ = Base.metadata.tables['celery_taskmeta']
 >>>>>>> feat: fix models.py, change variables name
+<<<<<<< develop
 =======
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+=======
+>>>>>>> feat: fix models.py, change variables name
 
 
 Base.metadata.create_all(engine)
