@@ -10,17 +10,25 @@ function ShareResult({ isforOne }) {
   }
 
   async function share() {
-    await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
-      await canvas.toBlob(function (blob) {
-        download(URL.createObjectURL(blob), 'result.png');
-      }, 'image/png');
-    });
+    if (isforOne) {
+      await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
+        await canvas.toBlob(function (blob) {
+          download(URL.createObjectURL(blob), 'result.png');
+        }, 'image/png');
+      });
+    } else {
+      await html2canvas(document.getElementById('resultmanypage')).then(async canvas => {
+        await canvas.toBlob(function (blob) {
+          download(URL.createObjectURL(blob), 'result.png');
+        }, 'image/png');
+      });
+    }
   }
 
   return (
     <button
       onClick={share}
-      className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] py-[0.3rem] rounded-full 
+      className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] py-[0.3rem] rounded-full 
                 whitespace-nowrap ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
     >
       결과저장
