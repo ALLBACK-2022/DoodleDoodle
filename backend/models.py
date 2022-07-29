@@ -28,6 +28,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
 db = SQLAlchemy(app)
 =======
 db.init_app(app)
@@ -45,6 +46,10 @@ Base.metadata.reflect(engine)
 =======
 # Base.metadata.reflect(engine)
 >>>>>>> feat: ai predict api for test
+=======
+db = SQLAlchemy(app)
+Base.metadata.reflect(engine)
+>>>>>>> fix: error in docker and wait for it
 
 class Game(Base):
     __tablename__ = 'game'
@@ -154,12 +159,20 @@ class Result(Base):
 >>>>>>> fix: error in docker and wait for it
 =======
 <<<<<<< feature/hunhui
+<<<<<<< feature/hunhui
 # class Celery_taskmeta(Base):
 #     __table__ = Base.metadata.tables['celery_taskmeta']
 =======
         
 >>>>>>> feat: add wait-for-it files and setting on docker
+<<<<<<< develop
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+=======
+# class Celery_taskmeta(Base):
+#     __table__ = Base.metadata.tables['celery_taskmeta']
+>>>>>>> fix: error in docker and wait for it
+>>>>>>> fix: error in docker and wait for it
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']

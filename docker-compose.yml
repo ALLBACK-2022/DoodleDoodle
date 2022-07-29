@@ -44,7 +44,11 @@ services:
 <<<<<<< develop
 =======
 <<<<<<< feature/hunhui
+<<<<<<< develop
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+<<<<<<< feature/hunhui
+>>>>>>> fix: error in docker and wait for it
       - ./backend:/backend/
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 =======
@@ -52,12 +56,18 @@ services:
       - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 >>>>>>> feat: add wait-for-it files and setting on docker
 <<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: error in docker and wait for it
 =======
       - ./backend:/backend/
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 >>>>>>> fix: error in docker and wait for it
+<<<<<<< develop
 =======
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+>>>>>>> fix: error in docker and wait for it
     tty: true
 
   ai:
@@ -89,13 +99,21 @@ services:
 >>>>>>> fix: error in docker and wait for it
 =======
 <<<<<<< feature/hunhui
+<<<<<<< feature/hunhui
       - ./ai:/ai/
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 =======
       - ./ai:/usr/local/app/
       - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 >>>>>>> feat: add wait-for-it files and setting on docker
+<<<<<<< develop
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+=======
+      - ./ai:/ai/
+      # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+>>>>>>> fix: error in docker and wait for it
+>>>>>>> fix: error in docker and wait for it
     depends_on:
       - rabbitmq
       - db
@@ -152,6 +170,7 @@ services:
       - 15672:15672
     # command: rabbitmq-plugins enable rabbitmq_management
     volumes:
+<<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
@@ -248,6 +267,9 @@ services:
 >>>>>>> feat: ai predict api for test
 =======
       - data_rabbitmq:/var/lib/rabbitmq
+=======
+      - data_rabbitmq:/rabbitmq
+>>>>>>> fix: error in docker and wait for it
     tty: true
 
   worker:
@@ -258,8 +280,9 @@ services:
     user: root
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
-    volumes:
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+    # volumes:
+      # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+    restart: always
     depends_on:
       - rabbitmq
       - ai
