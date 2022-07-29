@@ -7,7 +7,7 @@ from flask_cors import CORS
 from .connection import s3_connection, s3_get_object
 #from conf import BUCKET_NAME
 #from . import conf as BUCKET_NAME
-from .config import BUCKET_NAME
+from .conf import BUCKET_NAME
 #from connection import s3_connection, s3_get_object
 # ----------AI------------------
 #import keras

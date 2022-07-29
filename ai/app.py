@@ -124,9 +124,9 @@ def task_result(task_id):
 
 
 # S3 버킷 test
-s3 = s3_connection()
-url = str(s3_get_object(s3, BUCKET_NAME, 'drawimage/1.png', './temp/1.png'))
-print('s3test:',url)
+# s3 = s3_connection()
+# url = str(s3_get_object(s3, BUCKET_NAME, 'drawimage/1.png', './temp/1.png'))
+# print('s3test:',url)
 
 if __name__ == '__main__':
     app.run()

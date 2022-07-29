@@ -22,7 +22,7 @@ RUN mkdir -p temp
 RUN chown 777 temp
 
 COPY . .
-CMD [ "flask", "run", "--host=0.0.0.0"]
+#CMD [ "flask", "run", "--host=0.0.0.0"]
 
 #CMD [ "sudo chmod 777 -R /var/lib/docker/containers/*" ]
 
