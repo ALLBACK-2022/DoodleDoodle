@@ -160,10 +160,13 @@ class Celery_taskmeta(Base):
     status = db.Column(db.String(50))
     task_id = db.Column(db.String(155))
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+<<<<<<< develop
 =======
 class Celery_taskmeta(Base):
     __table__ = Base.metadata.tables['celery_taskmeta']
 >>>>>>> feat: fix models.py, change variables name
+=======
+>>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 
 
 Base.metadata.create_all(engine)

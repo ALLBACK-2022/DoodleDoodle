@@ -1,8 +1,11 @@
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
 import home from '../assets/icons/home2.png';
 import share from '../assets/icons/share2.png';
 =======
+=======
+>>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 =======
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 import { useNavigate } from 'react-router';
