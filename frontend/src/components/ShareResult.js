@@ -20,10 +20,12 @@ function ShareResult({ isforOne }) {
   return (
     <button
       onClick={share}
-      className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] py-[0.3rem] rounded-full 
-                whitespace-nowrap ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
+      className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] py-[0.3rem] rounded-full  w-[9rem]
+                whitespace-nowrap ${
+                  isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'
+                }`}
     >
-      결과저장
+      저장하기
     </button>
   );
 }
