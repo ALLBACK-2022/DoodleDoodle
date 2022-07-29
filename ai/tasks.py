@@ -100,8 +100,20 @@ def ai_predict(draw_id, ranword):
         pred = model.predict(np.expand_dims(img, axis=0))[0]
         # all sequence with similarity sorted by highest.
         ind = (-pred).argsort()[:]
-        otherResults = {}
-        result = {}
+        # otherResults = {}
+        # result = {}
+        # for x in range(0, len(ind)):
+        #     if(class_names[ind[x]] == ranword):
+        #         result[class_names[ind[x]]] = str(
+        #             round(pred[ind[x]]*100, 2))+'%'
+        #     if x < 5:
+        #         otherResults[class_names[ind[x]]] = str(
+        #             round(pred[ind[x]]*100, 2)) + '%'
+
+        # 결과 DB에 저장
+        otherResults, result, flag, now = {}, {
+        }, True, datetime.datetime.now().replace(microsecond=0)
+
         for x in range(0, len(ind)):
             if(class_names[ind[x]] == ranword):
                 result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
