@@ -108,6 +108,7 @@ class Result(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
+        
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
