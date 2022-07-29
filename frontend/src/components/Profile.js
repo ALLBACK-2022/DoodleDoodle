@@ -8,7 +8,7 @@ function Profile({ name, profile, url }) {
       </a>
       <div
         className="font-cookierun_s ml-[0.5rem] w-[3rem] h-[3rem] text-center 
-      deskTop:text-xl mobile:text-lg"
+      deskTop:text-base mobile:text-lg"
       >
         {name}
       </div>
