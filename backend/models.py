@@ -115,6 +115,7 @@ class Result(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
 #     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
 
+<<<<<<< develop
 # class Task(Base):
 #     __tablename__ = 'task'
 #     __table_args__ = {'mysql_collate': 'utf8_general_ci'}    

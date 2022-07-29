@@ -6,7 +6,10 @@ import Plus from '../assets/icons/plus.png';
 
 // 인원수 설정 후 Main페이지에서 랜덤단어생성 페이지로 이동
 <<<<<<< develop
+<<<<<<< develop
 
+=======
+>>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 =======
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 const NumURL = 'http://localhost:5000/api/v1/games';
