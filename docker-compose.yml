@@ -9,7 +9,7 @@ services:
     container_name: frontend-con
     volumes: 
       - build_folder:/frontend/build
-      - ./frontend/node_modules/:/frontend/node_modules
+      # - ./frontend/node_modules/:/frontend/node_modules
     restart: always
     image: run
     stdin_open: true
@@ -57,6 +57,7 @@ services:
     depends_on:
       - rabbitmq
       - db
+      - backend
     links:
       - rabbitmq
       - db
@@ -71,9 +72,9 @@ services:
       - data_mysql:/var/lib/mysql
     env_file:
       - /.env
-    environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    # environment:
+    #   MYSQL_DATABASE: "${MYSQL_DATABASE}"
+    #   MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     tty: true
 
   nginx:

@@ -20,7 +20,7 @@ from sqlalchemy_utils import database_exists, create_database
 
 app = Flask(__name__)
 load_dotenv()
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 api = Api(app)
 migrate = Migrate(app, db)
 
@@ -51,8 +51,7 @@ parser = ns.parser()
 file_parser = ns.parser()
 result_parser = ns.parser()
 
-db = SQLAlchemy()
-db.init_app(app)
+db = SQLAlchemy(app)
 s3 = s3_connection()
 
 
@@ -69,8 +68,7 @@ def insert_word():
     f1.close()
     f2.close()
 
-
-def make_word():
+with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
     word = db.session.query(models.Dictionary).filter(
@@ -110,7 +108,6 @@ def _organize_result(results, randword):
 
 
 s3 = s3_connection()
-
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -295,4 +292,3 @@ class multiresults(Resource):
 
 if __name__ == "__main__":
     app.run(port="5000", debug=True)
-    make_word()
