@@ -7,20 +7,20 @@ function ResultButtons({ isforOne }) {
       <ShareResult isforOne={isforOne} />
       <Link to="/">
         <button
-          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
-          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
           mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
-          ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
+          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
+          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
+      ${isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'}`}
         >
           다시하기
         </button>
       </Link>
       <Link to="/">
         <button
-          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
-          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
           mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
-          ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
+          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
+          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
+      ${isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'}`}
         >
           홈으로
         </button>

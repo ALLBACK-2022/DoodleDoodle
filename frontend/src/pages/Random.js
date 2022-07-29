@@ -27,7 +27,7 @@ function Random() {
           <RandomTitle word={word} isMobile={isMobile} />
         </div>
         {isPc && (
-          <div className="flex mt-80">
+          <div className="flex mt-[18rem]">
             <div className="mr-64 flex flex-col items-center">
               <ContentText text="다른 거 그리고 싶어요" />
               <RandomWordButton image={recreate} setWord={setWord} />
