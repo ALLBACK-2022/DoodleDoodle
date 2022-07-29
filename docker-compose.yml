@@ -39,8 +39,13 @@ services:
       - rabbitmq
       - db
     volumes:
+<<<<<<< develop
       - ./backend:/backend/
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+=======
+      - ./backend:/usr/local/app/
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+>>>>>>> feat: add wait-for-it files and setting on docker
     tty: true
 
   ai:
@@ -57,8 +62,13 @@ services:
     restart: always
     # command: flask run --host=0.0.0.0 --port=5001
     volumes:
+<<<<<<< develop
       - ./ai:/ai/
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+=======
+      - ./ai:/usr/local/app/
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+>>>>>>> feat: add wait-for-it files and setting on docker
     depends_on:
       - rabbitmq
       - db
@@ -172,6 +182,8 @@ services:
     user: root
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
+    volumes:
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     depends_on:
       - rabbitmq
       - ai

@@ -21,7 +21,13 @@ COPY . ./
 
 # CMD ["bash", "-c", "python manage.py db migrate"]
 
+<<<<<<< develop
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
 # CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+=======
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+>>>>>>> feat: add wait-for-it files and setting on docker
