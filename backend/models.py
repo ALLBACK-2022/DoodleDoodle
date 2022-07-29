@@ -112,6 +112,7 @@ class Result(Base):
         self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+<<<<<<< HEAD
 <<<<<<< develop
         
 
@@ -131,9 +132,12 @@ class Result(Base):
 =======
 >>>>>>> feat: fix models.py, change variables name
 
+=======
+>>>>>>> backend-khl
 
 <<<<<<< develop
 
+<<<<<<< HEAD
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 =======
@@ -148,6 +152,10 @@ class Celery_taskmeta(Base):
 class Celery_taskmeta(Base):
     __table__ = Base.metadata.tables['celery_taskmeta']
 >>>>>>> feat: fix models.py, change variables name
+=======
+class Celery_taskmeta(Base):
+    __table__ = Base.metadata.tables['celery_taskmeta']
+>>>>>>> backend-khl
 
 
 Base.metadata.create_all(engine)
