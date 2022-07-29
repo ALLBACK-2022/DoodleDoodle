@@ -16,9 +16,9 @@ function MobileBottomBtn({ goback }) {
         </div>
         <div className="flex flex-col items-center  space-y-[0.3rem]">
           <button className="h-[2.4rem] w-[2.4rem]">
-            <img className="h-[2rem] w-[2rem]" src={changeImg} alt="" />
+            <img className="h-[2rem] w-[2rem]" src={back} alt="" />
           </button>
-          <div className="font-cookierun_m text-[0.8rem]">다시하기</div>
+          <div className="font-cookierun_m text-[0.8rem]">뒤로가기</div>
         </div>
         <div className="flex flex-col items-center  space-y-[0.3rem]">
           <button className="h-[2.4rem] w-[2.4rem]">
@@ -30,7 +30,7 @@ function MobileBottomBtn({ goback }) {
     );
   }
   return (
-    <div className="flex w-[70%] items-center self-center place-content-center place-content-between">
+    <div className="inline-flex w-[70%] items-center self-center place-content-center place-content-between">
       <div className="flex flex-col items-center  space-y-[0.3rem]">
         <button className="h-[2.4rem] w-[2.4rem] ">
           <img className="h-[2.4rem] w-[2.4rem]" src={share} alt="" />
@@ -40,9 +40,9 @@ function MobileBottomBtn({ goback }) {
       </div>
       <div className="flex flex-col items-center  space-y-[0.3rem]">
         <button className="h-[2.4rem] w-[2.4rem]">
-          <img className="h-[2.4rem] w-[2.4rem]" src={back} alt="" />
+          <img className="h-[2.4rem] w-[2.4rem]" src={changeImg} alt="" />
         </button>
-        <div className="font-cookierun_m text-[0.8rem]">뒤로가기</div>
+        <div className="font-cookierun_m text-[0.8rem]">다시하기</div>
       </div>
       <div className="flex flex-col items-center space-y-[0.3rem]">
         <button className="h-[2.4rem] w-[2.4rem]">

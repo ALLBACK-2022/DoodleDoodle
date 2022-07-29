@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime, os, pymysql
+import datetime
+import os
+import pymysql
 from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -9,15 +11,17 @@ from dotenv import load_dotenv
 app = Flask(__name__)
 load_dotenv()
 db = SQLAlchemy()
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 # Base.metadata.reflect(engine)
+
 
 class Game(Base):
     __tablename__ = 'game'
@@ -28,18 +32,17 @@ class Game(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     draw = db.relationship('Draw', backref='game')
-    
+
     def __init__(self, random_word, player_num):
         self.random_word = random_word
         self.player_num = player_num
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-    
+
     def serialize(self):
         return {
-        "id" : self.id
-    }
+            "id": self.id
+        }
 
 
 class Draw(Base):
@@ -51,16 +54,15 @@ class Draw(Base):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
-    
+    result = db.relationship('Result', backref='draw')
 
-
-    def __init__(self, draw_no, doodle,game_id):
+    def __init__(self, draw_no, doodle, game_id):
         self.draw_no = draw_no
         self.doodle = doodle
         self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-            
+
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
@@ -70,21 +72,20 @@ class Dictionary(Base):
     eng_name = db.Column(db.String(50))
     img_url = db.Column(db.Text)
     result = db.relationship('Result', backref='dictionary')
-    
+
     def __init__(self, name, eng_name, img_url):
         self.name = name
         self.eng_name = eng_name
         self.img_url = img_url
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
- 
+
     def serialize(self):
         return {
-            "id" : self.id,
-            "name" : self.name,
-            "eng_name" : self.eng_name,
-            "img_url" : self.img_url
+            "id": self.id,
+            "name": self.name,
+            "eng_name": self.eng_name,
+            "img_url": self.img_url
         }
 
 
@@ -99,8 +100,8 @@ class Result(Base):
     dictionary_id = db.Column(db.Integer, db.ForeignKey(Dictionary.id))
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
 
-     
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
+
         self.similarity = similarity
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
@@ -108,7 +109,6 @@ class Result(Base):
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
@@ -131,7 +131,6 @@ class Result(Base):
 
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
-
 
 
 Base.metadata.create_all(engine)
