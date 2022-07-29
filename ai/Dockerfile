@@ -24,7 +24,11 @@ COPY . ./
 <<<<<<< develop
 =======
 <<<<<<< feature/hunhui
+<<<<<<< develop
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+<<<<<<< feature/hunhui
+>>>>>>> fix: error in docker and wait for it
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
@@ -37,10 +41,14 @@ CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
 
 >>>>>>> feat: add wait-for-it files and setting on docker
 <<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: error in docker and wait for it
 =======
 COPY wait-for-it.sh ./wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh
 CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+<<<<<<< develop
 =======
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
@@ -51,6 +59,11 @@ CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
 >>>>>>> fix: error in docker and wait for it
 =======
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+# CMD [ "flask", "run", "--host=0.0.0.0"]
+# CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+>>>>>>> fix: error in docker and wait for it
+>>>>>>> fix: error in docker and wait for it
 # COPY . /app
 # docker build -t backend-img .
 # docker run --name backend-con -it -p 5000:5000 --rm backend-img
