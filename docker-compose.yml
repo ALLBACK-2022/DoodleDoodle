@@ -18,7 +18,7 @@ services:
   backend:
     depends_on:
       - db
-      # - rabbitmq
+      - rabbitmq
     build:
       context: ./backend
     ports:
@@ -36,7 +36,7 @@ services:
     # command: flask run --host=0.0.0.0 --port=5000
     # command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
-      # - rabbitmq
+      - rabbitmq
       - db
     volumes:
 <<<<<<< develop
@@ -60,7 +60,7 @@ services:
     - 5001:5000
     environment:
       FLASK_DEBUG: 1
-      FLASK_APP: ./server.py
+      FLASK_APP: ./app.py
     container_name: ai-con
     expose:
       - 5001
@@ -80,11 +80,11 @@ services:
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
 >>>>>>> fix: error in docker and wait for it
     depends_on:
-      # - rabbitmq
+      - rabbitmq
       - db
       - backend
     links:
-      # - rabbitmq
+      - rabbitmq
       - db
 
   db:
@@ -119,6 +119,9 @@ services:
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> feat: connect celery and rabbitmq
 =======
 >>>>>>> feat: connect celery and rabbitmq
   rabbitmq:
@@ -132,6 +135,7 @@ services:
       - 15672:15672
     # command: rabbitmq-plugins enable rabbitmq_management
     volumes:
+<<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
       - data_rabbitmq:/rabbitmq
@@ -225,18 +229,36 @@ services:
   #     - db
   #   tty: true
 >>>>>>> feat: ai predict api for test
+=======
+      - data_rabbitmq:/var/lib/rabbitmq
+    tty: true
 
-  # flower:
-  #   image: mher/flower
-  #   container_name: flower-con
-  #   depends_on:
-  #     - rabbitmq
-  #   environment:
-  #     - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
-  #     - FLOWER_PORT=5555
-  #   ports:
-  #     - 5555:5555
-  #   tty: true
+  worker:
+    build:
+      context: './ai'
+      dockerfile: Dockerfile.celery
+    container_name: worker-con
+    user: root
+    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
+    command: celery -A ai.tasks.celery_app worker --loglevel=info
+    depends_on:
+      - rabbitmq
+      - ai
+      - db
+    tty: true
+>>>>>>> feat: connect celery and rabbitmq
+
+  flower:
+    image: mher/flower
+    container_name: flower-con
+    depends_on:
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+      - FLOWER_PORT=5555
+    ports:
+      - 5555:5555
+    tty: true
 
   statsd-exporter:
     container_name: exporter-con
@@ -278,7 +300,7 @@ services:
 volumes:
   data_frontend:
   data_mysql:
-  # data_rabbitmq:
+  data_rabbitmq:
 
 #docker-compose up --build
 #volume
