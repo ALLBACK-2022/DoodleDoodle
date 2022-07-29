@@ -1,26 +1,26 @@
 import doodle1 from '../assets/icons/mobiledoodle_1.png';
-import doodle2 from '../assets/icons/mobiledoodle_2.png';
-import doodle3 from '../assets/icons/mobiledoodle_3.png';
-import doodle4 from '../assets/icons/mobiledoodle_4.png';
-import doodle5 from '../assets/icons/mobiledoodle_5.png';
 import doodle6 from '../assets/icons/mobiledoodle_6.png';
 import doodle7 from '../assets/icons/mobiledoodle_7.png';
 import doodle8 from '../assets/icons/mobiledoodle_8.png';
+import doodle9 from '../assets/icons/mobiledoodle_9.png';
+import doodle10 from '../assets/icons/mobiledoodle_10.png';
+import doodle11 from '../assets/icons/mobiledoodle_11.png';
+import doodle12 from '../assets/icons/mobiledoodle_12.png';
 
 function Doodle({ doodle }) {
-  return <img src={doodle.src} className="w-[10vw]" alt="" />;
+  return <img src={doodle.src} className="w-[12vw]" alt="" />;
 }
 
 function DoodleBelt() {
   const doodles = [
     { id: 1, src: doodle1 },
-    { id: 2, src: doodle2 },
-    { id: 3, src: doodle3 },
-    { id: 4, src: doodle4 },
-    { id: 5, src: doodle5 },
-    { id: 6, src: doodle6 },
-    { id: 7, src: doodle7 },
-    { id: 8, src: doodle8 },
+    { id: 2, src: doodle6 },
+    { id: 3, src: doodle7 },
+    { id: 4, src: doodle8 },
+    { id: 5, src: doodle9 },
+    { id: 6, src: doodle10 },
+    { id: 7, src: doodle11 },
+    { id: 8, src: doodle12 },
   ];
 
   return (
