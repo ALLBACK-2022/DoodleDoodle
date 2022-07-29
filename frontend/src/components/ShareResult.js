@@ -23,6 +23,7 @@ function ShareResult({ isforOne }) {
       className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
       deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
       mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
+                whitespace-nowrap ${
                   isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'
                 }`}
     >

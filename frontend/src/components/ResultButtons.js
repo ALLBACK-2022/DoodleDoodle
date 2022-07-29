@@ -3,24 +3,23 @@ import ShareResult from './ShareResult';
 
 function ResultButtons({ isforOne }) {
   return (
-    <div className="flex flex-row space-x-[5%] justify-center deskTop:mt-[4vh]">
-      <ShareResult isforOne={isforOne} />
-      <Link to="/">
+    <div className="flex flex-row justify-center">
+      <ShareResult isforOne={isforOne}/>
+
+      <Link to="/" className="mx-[5%]">
         <button
-          mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
-          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
-          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
-      ${isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'}`}
+          className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] 
+          py-[0.3rem] rounded-full whitespace-nowrap
+      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
         >
           다시하기
         </button>
       </Link>
       <Link to="/">
         <button
-          mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
-          deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
-          className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
-      ${isforOne ? 'bg-primary-3 text-primary-1 hover:text-black' : 'bg-black text-primary hover:bg-primary-2'}`}
+          className={`font-cookierun deskTop:text-2xl mobile:text-lg px-[1.5rem] 
+          py-[0.3rem] rounded-full whitespace-nowrap
+      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
         >
           홈으로
         </button>
