@@ -1,6 +1,6 @@
-import profile from '../assets/icons/user.png';
+// import profile from '../assets/icons/user.png';
 
-function Profile({ name, url }) {
+function Profile({ name, profile, url }) {
   return (
     <div className="flex flex h-[100%] w-1/3 items-center justify-center">
       <a href={url} target="_blank" rel="noreferrer">
@@ -8,7 +8,7 @@ function Profile({ name, url }) {
       </a>
       <div
         className="font-cookierun_s ml-[0.5rem] w-[3rem] h-[3rem] text-center 
-      deskTop:text-lg mobile:text-sm"
+      deskTop:text-base mobile:text-lg"
       >
         {name}
       </div>

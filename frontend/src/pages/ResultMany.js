@@ -60,7 +60,7 @@ function ResultMany() {
       >
         <h1
           className="text-black font-cookierun text-left
-        deskTop:text-5xl mobile:text-2xl my-[4rem] deskTop:ml-[5rem] mobile:text-center mobile:my-[2rem]"
+        deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
         >
           누가 더 똑같이 그렸을까요?
         </h1>
