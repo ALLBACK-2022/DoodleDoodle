@@ -23,6 +23,10 @@ WORKDIR /
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
+=======
+<<<<<<< feature/hunhui
+>>>>>>> feat: add wait-for-it files and setting on docker
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 # CMD [ "flask", "run", "--host=0.0.0.0"]
@@ -30,6 +34,7 @@ CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
 =======
 COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
+<<<<<<< develop
 =======
 COPY wait-for-it.sh ./wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh
@@ -43,3 +48,7 @@ RUN chmod +x wait-for-it.sh
 # CMD [ "flask", "run", "--host=0.0.0.0"]
 CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
 >>>>>>> fix: fix docker errors
+=======
+CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+>>>>>>> feat: add wait-for-it files and setting on docker
+>>>>>>> feat: add wait-for-it files and setting on docker

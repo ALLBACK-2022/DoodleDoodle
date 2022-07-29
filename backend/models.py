@@ -146,11 +146,20 @@ class Result(Base):
         
 <<<<<<< develop
         
+<<<<<<< develop
 >>>>>>> feat: add wait-for-it files and setting on docker
 =======
 # class Celery_taskmeta(Base):
 #     __table__ = Base.metadata.tables['celery_taskmeta']
 >>>>>>> fix: error in docker and wait for it
+=======
+<<<<<<< feature/hunhui
+# class Celery_taskmeta(Base):
+#     __table__ = Base.metadata.tables['celery_taskmeta']
+=======
+        
+>>>>>>> feat: add wait-for-it files and setting on docker
+>>>>>>> feat: add wait-for-it files and setting on docker
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
