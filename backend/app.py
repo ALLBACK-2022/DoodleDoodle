@@ -1,4 +1,4 @@
-# from crypt import methods
+from flask import Flask, request, Response
 from fileinput import filename
 import time
 from flask import Flask, jsonify, request
@@ -64,6 +64,8 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
+    
+with app.app_context():
 
 with app.app_context():
     if not database_exists(sqlurl):
@@ -314,5 +316,7 @@ class multiresults(Resource):
 
 
 if __name__=="__main__":
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)   
     app.run(port="5000", debug=True)
-    make_word()
