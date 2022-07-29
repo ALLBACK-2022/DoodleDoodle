@@ -11,7 +11,7 @@ import '../scrollbar.css';
 
 function ResultMany() {
   // const [gameData, setGameData] = useState({ game_id: 0, task_ids: [] });
-  const [playersInfo, setPlayersInfo] = useState([]);
+  const [playersInfo, setPlayersInfo] = useState([{}]);
   const [playersPics, setPlayersPics] = useState([]);
   // const location = useLocation(); // 이전 페이지에서 받아온 데이터
   // const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수

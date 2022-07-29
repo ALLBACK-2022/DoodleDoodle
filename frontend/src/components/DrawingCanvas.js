@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { useMediaQuery } from 'react-responsive';
 
 const maxNum = 9999; // min 좌표 기본값
 const minNum = -1; // max 좌표 기본값
@@ -17,16 +16,8 @@ function DrawingCanvas({ imgDataPost }, ref) {
   const canvasWidth = useRef(null); // 캔버스 넓이
   const canvasHeight = useRef(null); // 캔버스 높이
 
-  const isMobile = useMediaQuery({
-    query: '(max-width: 700px)',
-  });
-  const isPc = useMediaQuery({
-    query: '(min-width: 701px)',
-  });
-
   // x,y값 초기화
   function setXY() {
-    console.log(isMobile, isPc);
     minX = maxNum;
     minY = maxNum;
     maxX = minNum;
@@ -35,6 +26,10 @@ function DrawingCanvas({ imgDataPost }, ref) {
 
   // 캔버스 초기 설정
   function setCanvas() {
+    if (canvasRef.current === null) {
+      window.removeEventListener('resize', setCanvas);
+      return;
+    }
     const canvas = canvasRef.current; // 캔버스 가져오기
     const { width, height } = canvas.getBoundingClientRect(); // 캔버스 넓이, 높이 가져와서 할당
     canvasWidth.current = width;
@@ -44,7 +39,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
 
     const context = canvas.getContext('2d'); // ctx할당
     context.strokeStyle = 'black'; // 붓 색깔 검은색
-    context.lineWidth = 14; // 붓 굵이
+    context.lineWidth = window.innerWidth <= 700 ? 10 : 16; // 붓 굵이
     setCtx(context); // 함수 밖 ctx 할당
     setXY(); // min max
   }
@@ -60,12 +55,12 @@ function DrawingCanvas({ imgDataPost }, ref) {
   function drawing(event) {
     let offsetX;
     let offsetY;
-    if (isMobile) {
+    if (event.type === 'touchstart' || event.type === 'touchmove') {
       offsetX = event.touches[0].clientX - event.target.offsetLeft;
       offsetY = event.touches[0].clientY - event.target.offsetTop + document.documentElement.scrollTop;
     } else {
-      offsetX = event.offsetX;
-      offsetY = event.offsetY;
+      offsetX = event.clientX - ctx.canvas.offsetLeft;
+      offsetY = event.clientY - ctx.canvas.offsetTop;
     }
     if (ctx) {
       if (!isDrawing.current) {
@@ -127,6 +122,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
   // 이미지에 배경을 넣은뒤 file객체로 변환 후 GamePage의 imgDataPost 실행
   function finishImageLoading(image) {
     drawImageWithBG(image);
+    // console.log(canvasRef.current.toDataURL()); // 그린 이미지 URL, 테스트할때만 사용 ㄱㄱ
     const data = imgURItoBlob(canvasRef.current.toDataURL()); // 이미지 URL을 Blob객체로 변환
     setCanvas();
     imgDataPost(data);
