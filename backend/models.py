@@ -108,6 +108,7 @@ class Result(Base):
         self.game_id = game_id 
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+<<<<<<< HEAD
         
 
 # class Celery_taskmeta(Base):
@@ -133,13 +134,20 @@ class Result(Base):
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 =======
+=======
+
+
+>>>>>>> backend-khl
 class Celery_taskmeta(Base):
     __tablename__ = 'celery_taskmeta'
     __table_args__ = {'mysql_collate': 'utf8mb4_0900_ai_ci'}
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(50))
     task_id = db.Column(db.String(155))
+<<<<<<< HEAD
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+=======
+>>>>>>> backend-khl
 
 
 Base.metadata.create_all(engine)
