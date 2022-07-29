@@ -11,14 +11,21 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
+<<<<<<< develop
 MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
 MYSQL_HOST = os.environ.get("MYSQL_HOST")
 sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
     '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+=======
+MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST=os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+>>>>>>> fix: error in docker and wait for it
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+<<<<<<< develop
 <<<<<<< develop
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
@@ -26,6 +33,10 @@ Base.metadata.reflect(engine)
 db.init_app(app)
 # Base.metadata.reflect(engine)
 >>>>>>> feat: ai predict api for test
+=======
+db = SQLAlchemy(app)
+Base.metadata.reflect(engine)
+>>>>>>> fix: error in docker and wait for it
 
 class Game(Base):
     __tablename__ = 'game'
@@ -110,17 +121,28 @@ class Result(Base):
 
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
         self.similarity = similarity
+<<<<<<< develop
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
         self.game_id = game_id
+=======
+        # self.draw_id = draw_id
+        # self.dictionary_id = dictionary_id
+        # self.game_id = game_id 
+>>>>>>> fix: error in docker and wait for it
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
 <<<<<<< develop
 
 =======
         
+<<<<<<< develop
         
 >>>>>>> feat: add wait-for-it files and setting on docker
+=======
+# class Celery_taskmeta(Base):
+#     __table__ = Base.metadata.tables['celery_taskmeta']
+>>>>>>> fix: error in docker and wait for it
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
