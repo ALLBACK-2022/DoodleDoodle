@@ -15,7 +15,7 @@ from sqlalchemy_utils import database_exists, create_database
 
 app = Flask(__name__)
 load_dotenv()
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 api = Api(app)
 migrate = Migrate(app, db)
 
@@ -45,8 +45,7 @@ parser = ns.parser()
 file_parser = ns.parser()
 result_parser = ns.parser()
 
-db = SQLAlchemy()
-db.init_app(app)
+db = SQLAlchemy(app)
 s3 = s3_connection()
 
 def insert_word():
