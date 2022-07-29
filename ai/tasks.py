@@ -125,8 +125,7 @@ def ai_predict(draw_id, ranword):
                 if flag:
                     flag = False
                 # return 할 result에 저장
-                result[class_names[ind[x]]] = str(
-                    round(pred[ind[x]]*100, 2))+'%'
+                result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
             if x < 5:
                 otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 1)
                 selectByWord = db.session.query(models.Dictionary).filter(
@@ -139,8 +138,7 @@ def ai_predict(draw_id, ranword):
                                     created_at=now, updated_at=now)
                 db.session.add(row)
                 # return 할 result에 저장
-                otherResults[class_names[ind[x]]] = str(
-                    round(pred[ind[x]]*100, 2)) + '%'
+                otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
         otherResults['result'] = result
         if flag:
             result[ranword] = 0.0
