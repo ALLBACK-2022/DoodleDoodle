@@ -157,6 +157,12 @@ class randwords(Resource):
 
 @ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
+    def _translate_word(self, aranword):
+        '''한글단어를 영어로 변환한다'''
+        row = db.session.query(models.Dictionary).filter(models.Dictionary.name==aranword).first()
+        englishword = row.eng_name
+        db.session.commit()
+        return englishword
 
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
@@ -179,12 +185,13 @@ class save(Resource):
         if game is None:
             return ('Can not access data', 400)
         ranword = game.random_word
+        englishranword = self._translate_word(ranword)
         if retPut is None:
             return('Draw saved fail',400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-        return_data={"draw_id":drawid,"ranword":ranword}
+        return_data={"draw_id":drawid,"ranword":englishranword}
         session = requests.Session()
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
