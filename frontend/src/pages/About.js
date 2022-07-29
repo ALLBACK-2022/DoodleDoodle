@@ -25,7 +25,7 @@ function About() {
       <Link to="/">
         <button>
           <img
-            className=" absolute w-[3rem] h-[3rem] mt-[2rem] deskTop:ml-[40%] mobile:ml-[35%]"
+            className=" absolute w-[3rem] h-[3rem] deskTop:mt-[2rem] mobile:mt-[1rem] deskTop:ml-[40%] mobile:ml-[35%]"
             src={yellowback}
             alt=""
           />
@@ -33,7 +33,7 @@ function About() {
       </Link>
 
       <div className="flex flex-row">
-        <h1 className=" font-cookierun text-center mobile:text-4xl deskTop:text-5xl my-[2rem]">Information</h1>
+        <h1 className=" font-cookierun text-center mobile:text-4xl deskTop:text-5xl my-[1rem]">Information</h1>
       </div>
 
       <div className="w-[25rem] h-1/3 flex items-center">
