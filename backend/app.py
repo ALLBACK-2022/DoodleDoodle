@@ -121,6 +121,7 @@ class randwords(Resource):
 class save(Resource):
 
     def post(self):
+        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
         db.session.add(row)
@@ -131,8 +132,16 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/'+ str(value['game-id'][0]) + '_' + str(value['draw-no'][0])+'.png')
+        f.save('temp/'+ str(drawid) + '.png')
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
+        os.remove('temp/' + str(drawid) +'.png')
+        gameid = value['game-id']
+        game = db.session.query(models.Game).get(gameid)
+        if game is None:
+            return ('Can not access data', 400)
         ranword = game.random_word
+        if retPut is None:
+            return('Draw saved fail',400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
@@ -146,8 +155,9 @@ class save(Resource):
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
 class draw(Resource):
-
+    
     def get(self, drawid):
+        '''게임id가 같은 사용자 전체의 그림을 불러온다'''
         ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
         retimage = ret.doodle
         if ret is None:
@@ -159,6 +169,7 @@ class draw(Resource):
 class game(Resource):
 
     def get(self, gameid):
+        '''사용자가 그렸던 그림을 불러온다'''
         ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
         if ret is None:
@@ -239,10 +250,6 @@ class result(Resource):
         # 반환
         return (res, 200)
 
-@app.route("/random_status")
-def random_status():
-    status_code = random.choice([200] * 6 + [300, 400, 400, 500])
-    return Response("random status", status=status_code)
 
 if __name__=="__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
