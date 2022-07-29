@@ -1,19 +1,19 @@
 version: "3.7"
 
 services:
-  frontend:
-    build: 
-      context: ./frontend 
-    ports:
-     - 3000:3000
-    container_name: frontend-con
-    volumes: 
-      - build_folder:/frontend/build
-      # - ./frontend/node_modules/:/frontend/node_modules
-    restart: always
-    image: run
-    stdin_open: true
-    tty: true
+  # frontend:
+  #   build: 
+  #     context: ./frontend 
+  #   ports:
+  #    - 3000:3000
+  #   container_name: frontend-con
+  #   volumes: 
+  #     - build_folder:/frontend/build
+  #     # - ./frontend/node_modules/:/frontend/node_modules
+  #   restart: always
+  #   image: run
+  #   stdin_open: true
+  #   tty: true
 
   backend:
     depends_on:
@@ -36,8 +36,12 @@ services:
       - rabbitmq
       - db
     volumes:
-      - ./backend:/usr/local/app/
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+      - ./backend:/backend
+      #- ./backend:/usr/local/app/
+      #- ./wait-for-it.sh:/usr/local/app/wait-for-it.sh
+      - ./wait-for-it.sh:/backend/wait-for-it.sh
+      #- ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+      #- ./wait-for-it.sh:/usr/local/bin/wait-for-it.Unix.sh
     tty: true
 
   ai:
@@ -54,8 +58,8 @@ services:
     restart: always
     # command: flask run --host=0.0.0.0 --port=5001
     volumes:
-      - ./ai:/usr/local/app/
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+      - ./ai:/ai
+      - ./wait-for-it.sh:/ai/wait-for-it.sh
     depends_on:
       - rabbitmq
       - db
@@ -116,7 +120,7 @@ services:
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     volumes:
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+      - ./wait-for-it.sh:/wait-for-it.sh
     depends_on:
       - rabbitmq
       - ai

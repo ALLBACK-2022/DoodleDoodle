@@ -18,9 +18,9 @@ RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
 COPY . ./
 
-COPY wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+COPY wait-for-it.sh /ai/wait-for-it.sh
+RUN chmod +x /ai/wait-for-it.sh
+CMD [ "wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
 
 # COPY . /app
 # docker build -t backend-img .

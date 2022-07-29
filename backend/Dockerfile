@@ -16,6 +16,8 @@ COPY . ./
 
 # CMD ["bash", "-c", "python manage.py db migrate"]
 
-COPY wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+COPY wait-for-it.sh /backend/wait-for-it.sh
+RUN chmod +x /backend/wait-for-it.sh
+RUN sed $'s/\r$//' ./wait-for-it.sh > ./wait-for-it.Unix.sh
+#CMD [ "sed", "$'s/\r$//'", "./install.sh", ">", "./install.Unix.sh"]
+CMD [ "wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
