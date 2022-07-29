@@ -1,4 +1,4 @@
-# from crypt import methods
+from flask import Flask, request, Response
 from fileinput import filename
 import time
 from flask import Flask, jsonify, request
@@ -9,14 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os
-import models
-import random
-import json
+import os, models, random, logging, requests
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
-
+from requests.adapters import HTTPAdapter, Retry
 
 app = Flask(__name__)
 load_dotenv()
@@ -67,6 +64,8 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
+    
+with app.app_context():
 
 with app.app_context():
     if not database_exists(sqlurl):
@@ -113,6 +112,7 @@ s3 = s3_connection()
 class main_page(Resource):
 
     def get(self):
+        app.logger.error("Doodle, Doodle!")
         return 'Doodle, Doodle!'
 
 
@@ -159,8 +159,15 @@ class randwords(Resource):
 
 @ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
+    def _translate_word(self, aranword):
+        '''한글단어를 영어로 변환한다'''
+        row = db.session.query(models.Dictionary).filter(models.Dictionary.name==aranword).first()
+        englishword = row.eng_name
+        db.session.commit()
+        return englishword
 
     def post(self):
+        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'],
                           doodle="", game_id=value['game-id'])
@@ -172,26 +179,44 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/' + str(value['game-id'][0]) +
-               '_' + str(value['draw-no'][0])+'.png')
+        f.save('temp/'+ str(drawid) + '.png')
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
+        os.remove('temp/' + str(drawid) +'.png')
+        gameid = value['game-id']
+        game = db.session.query(models.Game).get(gameid)
+        if game is None:
+            return ('Can not access data', 400)
         ranword = game.random_word
+        englishranword = self._translate_word(ranword)
+        if retPut is None:
+            return('Draw saved fail',400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-
-        try:
-            return_data = {'ranword': ranword, 'draw_id': drawid}
-            return return_data, 200
-        except:
+        return_data={"draw_id":drawid,"ranword":englishranword}
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        url = 'http://ai:5000/api/v1/start_predict'
+        response = session.post(url,json=return_data)
+        response_data = response.json()
+        aiResult = response_data["task_id"]
+        retdata = {"draw_id":drawid,"task_id":aiResult}
+        
+        try:           
+            return retdata, 200
+        except:                  
             return('Requset to AI fail', 400)
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
 class draw(Resource):
-
+    
     def get(self, drawid):
-        ret = db.session.query(models.Draw).filter(
-            models.Draw.id == drawid).first()
+        '''게임id가 같은 사용자 전체의 그림을 불러온다'''
+        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
         retimage = ret.doodle
         if ret is None:
             return('NO image in database', 400)
@@ -202,8 +227,8 @@ class draw(Resource):
 @ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
 class game(Resource):
     def get(self, gameid):
-        ret = db.session.query(models.Game).filter(
-            models.Game.id == gameid).first()
+        '''사용자가 그렸던 그림을 불러온다'''
+        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
         if ret is None:
             return('Can not access data', 400)
@@ -290,5 +315,8 @@ class multiresults(Resource):
         return (res, 200)
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)   
     app.run(port="5000", debug=True)
