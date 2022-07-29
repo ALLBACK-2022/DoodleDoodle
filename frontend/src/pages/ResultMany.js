@@ -76,6 +76,8 @@ function ResultMany() {
                 doodle={playersPics[player['draw-no']]}
                 player={player['draw-no']}
                 key={player['draw-id']}
+                taskid={player['task-id']}
+                drawid={player['draw-id']}
               />
             ))}
           </div>
@@ -90,8 +92,8 @@ function ResultMany() {
                 player={player['draw-no']}
                 key={player['draw-id']}
                 number={playersInfo.length}
-                taskId={player['task-id']}
-                drawId={player['draw-id']}
+                taskid={player['task-id']}
+                drawid={player['draw-id']}
               />
             ))}
           </div>
