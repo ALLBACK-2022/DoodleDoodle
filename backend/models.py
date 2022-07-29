@@ -115,7 +115,12 @@ class Result(Base):
         self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+<<<<<<< develop
 
+=======
+        
+        
+>>>>>>> feat: add wait-for-it files and setting on docker
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
