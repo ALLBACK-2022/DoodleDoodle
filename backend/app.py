@@ -82,7 +82,8 @@ def make_word():
 def _is_complete(task_ids):
     # task_id 로 status가 성공인지 아닌지
     for task_id in task_ids:
-        task = db.session.query(models.Task).get(task_id)
+        task = db.session.query(models.Celery_taskmeta).filter(
+            models.Celery_taskmeta.task_id == task_id).first()
         if task.status == "FAILURE":
             return "FAIL"
         if not task.status == "SUCCESS":
@@ -236,6 +237,8 @@ class singleresult(Resource):
         task_id = value['task-id']
         draw_id = value['draw-id']
         game = db.session.query(models.Game).get(value['game-id'])
+        if game is None:
+            return('Can not access data', 400)
         randword = game.random_word
         # task_id들로 task가 완료되었는지 while문을 돌며 check
         while (_is_complete(task_id) == "WAIT"):
@@ -261,6 +264,8 @@ class multiresults(Resource):
         task_ids = value['task-id']
         user_num = len(task_ids)
         game = db.session.query(models.Game).get(value['game-id'])
+        if game is None:
+            return('Can not access data', 400)
         randword = game.random_word
         # task_id들로 task가 완료되었는지 while문을 돌며 check
         while (_is_complete(task_ids) == "WAIT"):
@@ -270,13 +275,13 @@ class multiresults(Resource):
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.game_id == game.id).all()
-
+        if results is None:
+            return('Can not access data', 400)
         # for문을 돌면서 results로 가져온 결과들을 정리
         res = {}
         res_list = []
         # draw-id가 같은 result끼리 분류
         result_list = [[] for _ in range(user_num)]
-        print(user_num)
         for result in results:
             result_list[result.draw.draw_no - 1].append(result)
         # 이제 result 조회해서 가져오기

@@ -105,21 +105,12 @@ class Result(Base):
         self.updated_at = self.created_at
 
 
-class Task(Base):
-    __tablename__ = 'task'
-    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+class Celery_taskmeta(Base):
+    __tablename__ = 'celery_taskmeta'
+    __table_args__ = {'mysql_collate': 'utf8mb4_0900_ai_ci'}
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
-
-    def __init__(self, status):
-        self.status = status
-        self.created_at = datetime.datetime.now().replace(microsecond=0)
-        self.updated_at = self.created_at
-
-    def set_updated_at(self):
-        self.updated_at = datetime.datetime.now().replace(microsecond=0)
+    status = db.Column(db.String(50))
+    task_id = db.Column(db.String(155))
 
 
 Base.metadata.create_all(engine)

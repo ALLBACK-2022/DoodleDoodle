@@ -1,9 +1,18 @@
+import { useNavigate } from 'react-router';
 import home from '../assets/icons/home.png';
 import share from '../assets/icons/share.png';
 import back from '../assets/icons/back.png';
 import changeImg from '../assets/icons/changeImg.png';
 
-function MobileBottomBtn({ goback }) {
+function MobileBottomBtn({ goback, playerNumber, gameId }) {
+  const navigate = useNavigate();
+  function onClick() {
+    navigate('../random', {
+      replace: true,
+      state: { playerNum: playerNumber, gameID: gameId },
+    });
+  }
+
   if (goback) {
     return (
       <div className="flex w-[70%] items-center self-center place-content-center place-content-between">
@@ -39,7 +48,7 @@ function MobileBottomBtn({ goback }) {
         <div className="font-cookierun_m text-[0.8rem]">자랑하기</div>
       </div>
       <div className="flex flex-col items-center  space-y-[0.3rem]">
-        <button className="h-[2.4rem] w-[2.4rem]">
+        <button onClick={onClick} className="h-[2.4rem] w-[2.4rem]">
           <img className="h-[2.4rem] w-[2.4rem]" src={changeImg} alt="" />
         </button>
         <div className="font-cookierun_m text-[0.8rem]">다시하기</div>
