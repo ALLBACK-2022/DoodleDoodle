@@ -53,7 +53,7 @@ function ResultMany() {
   });
 
   return (
-    <div className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
+    <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <div
         id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`}
         className="px-[3rem] py-[2rem] w-full h-[100vh] overflow-y-auto scrollSection"
@@ -98,12 +98,12 @@ function ResultMany() {
         )}
         {isMobile && (
           <div className="text-center mt-[5%]">
-            <MobileBottomBtn goback={false} />
+            <MobileBottomBtn goback={false} playerNumber={playersInfo.length} gameId={9} />
           </div>
         )}
         {isPc && (
           <div className="fixed bottom-[4rem] right-[5rem]">
-            <ResultButtons isforOne={false} />
+            <ResultButtons isforOne={false} playerNumber={playersInfo.length} gameId={9} />
           </div>
         )}
       </div>

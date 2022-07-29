@@ -100,6 +100,7 @@ class Result(Base):
 
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
 
+<<<<<<< develop
         self.similarity = similarity
         # self.draw_id = draw_id
         # self.dictionary_id = dictionary_id
@@ -135,6 +136,14 @@ class Result(Base):
 
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
+=======
+class Celery_taskmeta(Base):
+    __tablename__ = 'celery_taskmeta'
+    __table_args__ = {'mysql_collate': 'utf8mb4_0900_ai_ci'}
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(50))
+    task_id = db.Column(db.String(155))
+>>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 
 
 Base.metadata.create_all(engine)
