@@ -13,12 +13,12 @@ module.exports = {
             transform: 'translateX(0vw)',
           },
           '100%': {
-            transform: 'translateX(-160vw)',
+            transform: 'translateX(-207vw)' /* 위에 w- + space-x * 개수 */,
           },
         },
       },
       animation: {
-        slider: 'slider 7s linear infinite',
+        slider: 'slider 10s linear infinite' /* 이미지 속도 올리기 */,
       },
       colors: {
         primary: {
