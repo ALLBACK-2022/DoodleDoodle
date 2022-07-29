@@ -13,12 +13,12 @@ module.exports = {
             transform: 'translateX(0vw)',
           },
           '100%': {
-            transform: 'translateX(-160vw)',
+            transform: 'translateX(-110vw)',
           },
         },
       },
       animation: {
-        slider: 'slider 7s linear infinite',
+        slider: 'slider 5s linear infinite',
       },
       colors: {
         primary: {

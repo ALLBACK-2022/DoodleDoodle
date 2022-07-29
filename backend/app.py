@@ -161,32 +161,39 @@ class randwords(Resource):
         return ('random word saved', 201)
 
 
-@ns.route("/api/v1/draws", methods=['POST'])
+@ns.route("/api/v1/draws",methods=['POST'])
 class save(Resource):
 
     def post(self):
+        '''사용자가 그린 그림을 저장한다'''
         value = request.form.to_dict(flat=False)
-        row = models.Draw(draw_no=value['draw-no'],
-                          doodle="", game_id=value['game-id'])
+        row = models.Draw(draw_no=value['draw-no'], doodle="", game_id=value['game-id'])
         db.session.add(row)
         db.session.commit()
         ret = db.session.query(models.Draw).filter(models.Draw.game_id == value['game-id'])\
             .filter(models.Draw.draw_no == value['draw-no']).first()
-        drawid = ret.id
+        drawid=ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/' + str(value['game-id'][0]) +
-               '_' + str(value['draw-no'][0])+'.png')
+        f.save('temp/'+ str(drawid) + '.png')
+        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
+        os.remove('temp/' + str(drawid) +'.png')
+        gameid = value['game-id']
+        game = db.session.query(models.Game).get(gameid)
+        if game is None:
+            return ('Can not access data', 400)
         ranword = game.random_word
+        if retPut is None:
+            return('Draw saved fail',400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-
+  
         try:
-            return_data = {'ranword': ranword, 'draw_id': drawid}
+            return_data = {'ranword':ranword,'draw_id':drawid}
             return return_data, 200
-        except:
+        except:                  
             return('Requset to AI fail', 400)
 
 

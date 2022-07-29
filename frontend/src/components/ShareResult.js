@@ -17,25 +17,17 @@ function ShareResult({ isforOne }) {
     });
   }
 
-    async function share() {
-
-        await html2canvas(document.getElementById("resultonepage")).then(async (canvas) => {
-            await canvas.toBlob(function(blob) {
-                download(URL.createObjectURL(blob),"result.png")
-            }, 'image/png');
-        });
-    }
-
-    return (
-            <button onClick={share}
-                >
-                결과저장
-            </button>
-    );
-}
-
-export default ShareResult;
+  return (
+    <button
+      onClick={share}
       className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
       deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
       mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
       ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
+    >
+      결과저장
+    </button>
+  );
+}
+
+export default ShareResult;

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { useMediaQuery } from 'react-responsive';
 
 const maxNum = 9999; // min 좌표 기본값
 const minNum = -1; // max 좌표 기본값
@@ -16,10 +15,6 @@ function DrawingCanvas({ imgDataPost }, ref) {
   const canvasRef = useRef(); // 캔버스 참조용
   const canvasWidth = useRef(null); // 캔버스 넓이
   const canvasHeight = useRef(null); // 캔버스 높이
-
-  const isMobile = useMediaQuery({
-    query: '(max-width: 700px)',
-  });
 
   // x,y값 초기화
   function setXY() {
@@ -44,7 +39,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
 
     const context = canvas.getContext('2d'); // ctx할당
     context.strokeStyle = 'black'; // 붓 색깔 검은색
-    context.lineWidth = isMobile ? 10 : 16; // 붓 굵이
+    context.lineWidth = window.innerWidth <= 700 ? 10 : 16; // 붓 굵이
     setCtx(context); // 함수 밖 ctx 할당
     setXY(); // min max
   }
