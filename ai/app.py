@@ -61,15 +61,15 @@ app.config.update(
 
 celery_app = make_celery(app)
 
-@app.route('/api/v1/start_predict' ,methods=['GET'])
+@app.route('/api/v1/start_predict' ,methods=['POST'])
 def call_method():
     #app.logger.info("Invoking Method ")
-    draw_id=1
-    ranword='umbrella'
+    # draw_id=1
+    # ranword='umbrella'
     #post로 json data 받는 부분, postMan test를 위해선 지워야함.
-    # value = request.get_json()
-    # draw_id = value['draw_id']
-    # ranword = value['ranword']
+    value = request.get_json()
+    draw_id = value['draw_id']
+    ranword = value['ranword']
 
     #get으로 ranword 받는 부분
     # if request.method =='GET':

@@ -3,10 +3,10 @@ FROM python:3.8
 ENV PYTHONDONTWRITEBYTECODE 1
 # This keeps Python from buffering stdin/stdout
 ENV PYTHONUNBUFFERED 1
+
 WORKDIR /backend
 RUN pip install --upgrade pip
-# RUN pip install CMake
-# RUN pip install dlib
+
 RUN FLASK_ENV=development
 ENV FLASK_APP=app:app
 COPY requirements.txt /backend/
@@ -16,3 +16,6 @@ COPY . ./
 
 # CMD ["bash", "-c", "python manage.py db migrate"]
 
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]

@@ -31,12 +31,13 @@ services:
       - 5000
     restart: always
     # command: flask run --host=0.0.0.0 --port=5000
-    command: gunicorn --bind 0.0.0.0:5000 app:app
+    # command: ../wait-for-it.sh db:3306 gunicorn --bind 0.0.0.0:5000 app:app
     links:
       - rabbitmq
       - db
     volumes:
       - ./backend:/usr/local/app/
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     tty: true
 
   ai:
@@ -54,6 +55,7 @@ services:
     # command: flask run --host=0.0.0.0 --port=5001
     volumes:
       - ./ai:/usr/local/app/
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     depends_on:
       - rabbitmq
       - db
@@ -113,6 +115,8 @@ services:
     user: root
     # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
+    volumes:
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     depends_on:
       - rabbitmq
       - ai
