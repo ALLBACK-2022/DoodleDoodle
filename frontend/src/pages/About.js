@@ -33,7 +33,7 @@ function About() {
       </Link>
 
       <div className="flex flex-row">
-        <h1 className=" font-cookierun text-center mobile:text-3xl deskTop:text-5xl mt-[2rem]">Information</h1>
+        <h1 className=" font-cookierun text-center mobile:text-4xl deskTop:text-5xl my-[2rem]">Information</h1>
       </div>
 
       <div className="w-[25rem] h-1/3 flex items-center">
@@ -54,23 +54,23 @@ function About() {
       </div>
       <div className="bg-gray-1 opacity-50 font-black my-[2rem] font-cookierun w-[100%]">About our Service</div>
       <div
-        className="flex h-1/3 items-center space-around mobile:w-[100%] deskTop:w-[55%] 
+        className="flex h-1/3 items-center space-around mobile:w-[100%] deskTop:w-[60%] 
       place-content-between px-[0.3rem]"
       >
-        <AboutNeeds text="혼자 또는 친구들과 함께 두들두들! 을 즐겨봐요." />
-        <AboutNeeds text="랜덤으로 주어진 단어에 대해 그림을 그려봐요" />
-        <AboutNeeds text="AI가 여러분이 그린 그림이 무엇을 그렸는지 예측해줄꺼에요" />
+        <AboutNeeds text=" 혼자서 또는 친구와 함께 두들두들!을 즐겨봐요 " />
+        <AboutNeeds text=" 랜덤으로 주어지는 단어를 보고, 그림을 그려봐요" />
+        <AboutNeeds text=" 학습된 AI모델은  여러분의 그림을 보고, 무엇을 그렸는지 예측해줍니다" />
       </div>
       <div className="bg-gray-1 opacity-50 font-black my-[1rem] font-cookierun w-[100%]">Contributors</div>
       <div className="flex flex-col mobile:w-[100%] deskTop:w-[70%] h-1/3 px-[0.5rem]">
         <div className="font-cookierun_m text-lg">Click on the profile!</div>
         <div className="flex w-[100%] h-[50%] justify-center space-x-[2rem] place-content-between">
-          <Profile name="Dayeon Hong" profile={woman3} url="https://github.com/Dayeon-Hong" />
+          <Profile name="Dayon Hong" profile={woman3} url="https://github.com/Dayeon-Hong" />
           <Profile name="Seungjin Kim" profile={man2} url="https://github.com/ohksj77" />
           <Profile name="Halin Kim" profile={woman2} url="https://github.com/kimhalin" />
         </div>
         <div className="flex w-[100%] h-[50%] justify-center space-x-[2rem] place-content-between">
-          <Profile name="Yunho Jeong" profile={man1} url="https://github.com/yunhobb" />
+          <Profile name="Yunho Jung" profile={man1} url="https://github.com/yunhobb" />
           <Profile name="Hunhui Jeong" profile={man3} url="https://github.com/JeongHunHui" />
           <Profile name="Jiwon Han" profile={woman1} url="https://github.com/jiwon83" />
         </div>
