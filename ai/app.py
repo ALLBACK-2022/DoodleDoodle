@@ -54,9 +54,7 @@ app.config.update(
     #broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbit:5672/',
     broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbitmq:5672/',
     result_backend='db+mysql://'+ MYSQL_USER +':'+ MYSQL_PASSWORD +'@db/DoodleDoodle'
-   
     #result_backend='db+mysql://'+MYSQL_USER+':'+MYSQL_ROOT_PASSWORD+'@db/DoodleDoodle'
-
 )
 
 celery_app = make_celery(app)

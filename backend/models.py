@@ -6,21 +6,20 @@ from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.automap import automap_base
 from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
-db = SQLAlchemy()
-MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_HOST = os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
-    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST=os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-# Base.metadata.reflect(engine)
+db = SQLAlchemy(app)
+Base.metadata.reflect(engine)
 
 class Game(Base):
     __tablename__ = 'game'
@@ -102,13 +101,14 @@ class Result(Base):
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
 
         self.similarity = similarity
-        self.draw_id = draw_id
-        self.dictionary_id = dictionary_id
-        self.game_id = game_id 
+        # self.draw_id = draw_id
+        # self.dictionary_id = dictionary_id
+        # self.game_id = game_id 
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
-        
+# class Celery_taskmeta(Base):
+#     __table__ = Base.metadata.tables['celery_taskmeta']
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
