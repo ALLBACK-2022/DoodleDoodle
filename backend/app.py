@@ -9,11 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging
+import os, models, random, logging, requests
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
-
+from requests.adapters import HTTPAdapter, Retry
 
 app = Flask(__name__)
 load_dotenv()
@@ -184,11 +184,21 @@ class save(Resource):
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-
-        try:
-            return_data = {'ranword': ranword, 'draw_id': drawid}
-            return return_data, 200
-        except:
+        return_data={"draw_id":drawid,"ranword":ranword}
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        url = 'http://ai:5000/api/v1/start_predict'
+        response = session.post(url,json=return_data)
+        response_data = response.json()
+        aiResult = response_data["task_id"]
+        retdata = {"draw_id":drawid,"task_id":aiResult}
+        
+        try:           
+            return retdata, 200
+        except:                  
             return('Requset to AI fail', 400)
 
 
