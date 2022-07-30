@@ -94,6 +94,8 @@ function ResultforOne() {
 
   return (
     <div id="temp" className="relative w-screen h-screen bg-primary select-none">
+      {' '}
+      // temp=getelementbyid에 들어가야하는 값
       <GameBGImg isGamePage={false} />
       <div
         className="flex absolute deskTop:px-[8vw] mobile:px-[4vw]
