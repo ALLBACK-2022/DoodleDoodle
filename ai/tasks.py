@@ -106,7 +106,7 @@ def ai_predict(draw_id, ranword):
                 selectDictionary = db.session.query(models.Dictionary).filter(
                     models.Dictionary.id == selectByWord).first().id
                 selectDraw = db.session.query(models.Draw).filter(
-                    models.Draw.game_id == draw_id).first().game_id
+                    models.Draw.id == draw_id).first().game_id
                 row = models.Result(similarity=result[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
                                     created_at=now, updated_at=now)
                 db.session.add(row)
@@ -121,7 +121,7 @@ def ai_predict(draw_id, ranword):
                 selectDictionary = db.session.query(models.Dictionary).filter(
                     models.Dictionary.id == selectByWord).first().id
                 selectDraw = db.session.query(models.Draw).filter(
-                    models.Draw.game_id == draw_id).first().game_id
+                    models.Draw.id == draw_id).first().game_id
                 row = models.Result(similarity=otherResults[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
                                     created_at=now, updated_at=now)
                 db.session.add(row)
@@ -135,7 +135,7 @@ def ai_predict(draw_id, ranword):
             selectDictionary = db.session.query(models.Dictionary).filter(
                 models.Dictionary.id == selectByWord).first().id
             selectDraw = db.session.query(models.Draw).filter(
-                models.Draw.game_id == draw_id).first().game_id
+                models.Draw.id == draw_id).first().game_id
             row = models.Result(similarity=0.0, draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
                                 created_at=now, updated_at=now)
             db.session.add(row)

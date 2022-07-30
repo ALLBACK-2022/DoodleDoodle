@@ -62,11 +62,28 @@ def call_method():
     return rettaskid
 
 
-@app.route('/simple_task_status/<task_id>')
-def get_status(task_id):
-    status = celery_app.AsyncResult(task_id, app=celery_app)
-    print("Invoking Method ")
-    return "Status of the Task " + str(status.state)
+@app.route('/api/v1/task_status')
+def get_status():
+    status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
+    response_data = request.get_json()
+    task_ids = response_data["task-id"]
+    res, temp_str = 1, ""
+    while (res):
+        temp_str = _is_complete(task_ids)
+        res = status[str(temp_str)]
+        time.sleep(1.0)
+    return temp_str
+
+def _is_complete(task_ids):
+    for task_id in task_ids:
+        status = celery_app.AsyncResult(task_id, app=celery_app)
+        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
+            return str(status.state)
+        elif status == "FAILURE":
+            break
+    else:
+        return 'SUCCESS'
+    return 'FAILURE'
 
 #작업결과
 @app.route('/simple_task_result/<task_id>')
