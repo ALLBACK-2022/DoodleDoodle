@@ -10,6 +10,7 @@ function ResultButtons({ isforOne, playerNumber, gameId }) {
     });
   }
   return (
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
@@ -65,6 +66,21 @@ function ResultButtons({ isforOne, playerNumber, gameId }) {
       <Link to="/">
         <button
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+=======
+    <div className="flex flex-row justify-center">
+      <ShareResult isforOne={isforOne} />
+
+      <button
+        onClick={onClick}
+        className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
+          py-[0.3rem] rounded-full whitespace-nowrap mx-[2rem]
+      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
+      >
+        다시하기
+      </button>
+      <Link to="/">
+        <button
+>>>>>>> backend-khl
           className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
           py-[0.3rem] rounded-full whitespace-nowrap
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button

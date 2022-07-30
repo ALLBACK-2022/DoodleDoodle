@@ -28,6 +28,7 @@ function ShareResult({ isforOne }) {
   return (
     <button
       onClick={share}
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 <<<<<<< develop
@@ -44,6 +45,8 @@ function ShareResult({ isforOne }) {
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 =======
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+=======
+>>>>>>> backend-khl
       className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] py-[0.3rem] rounded-full 
                 whitespace-nowrap ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button

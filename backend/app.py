@@ -64,10 +64,14 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
+<<<<<<< HEAD
 <<<<<<< develop
 =======
 
 >>>>>>> feat: fix AI result API
+=======
+
+>>>>>>> backend-khl
 
 with app.app_context():
     if not database_exists(sqlurl):
@@ -78,6 +82,7 @@ with app.app_context():
         insert_word()
 
 
+<<<<<<< HEAD
 <<<<<<< develop
 def _is_complete(task_ids):
     # task_id 로 status가 성공인지 아닌지
@@ -104,13 +109,18 @@ def _is_complete(task_ids):
             return "WAIT"
     return "SUCCESS"
 =======
+=======
+>>>>>>> backend-khl
 def _request_taskcheck(data):
     URL = 'http://ai:5000/api/v1/start_predict'
     response = requests.post(URL, data=data)
     response_data = response.json()
     task_status = response_data["status"]
     return task_status
+<<<<<<< HEAD
 >>>>>>> feat: fix AI result API
+=======
+>>>>>>> backend-khl
 
 
 def _organize_result(results, randword):

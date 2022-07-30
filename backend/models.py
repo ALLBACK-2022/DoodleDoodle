@@ -121,9 +121,15 @@ class Result(Base):
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
         self.game_id = game_id
+<<<<<<< HEAD
 >>>>>>> feat: fix models.py, change variables name
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
+=======
+        self.created_at = datetime.datetime.now().replace(microsecond=0)
+        self.updated_at = self.created_at
+<<<<<<< HEAD
+>>>>>>> backend-khl
 <<<<<<< develop
         
 # class Celery_taskmeta(Base):
@@ -143,6 +149,7 @@ class Result(Base):
 #     updated_at = db.Column(db.DateTime)
 
 =======
+<<<<<<< HEAD
 <<<<<<< develop
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
@@ -165,6 +172,16 @@ class Result(Base):
 <<<<<<< develop
 
 >>>>>>> feat: fix models.py, change variables name
+=======
+>>>>>>> feat: fix models.py, change variables name
+
+=======
+>>>>>>> backend-khl
+
+<<<<<<< develop
+
+<<<<<<< HEAD
+>>>>>>> backend-khl
 #     def set_updated_at(self):
 #         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 =======
@@ -175,19 +192,29 @@ class Celery_taskmeta(Base):
     status = db.Column(db.String(50))
     task_id = db.Column(db.String(155))
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 =======
 >>>>>>> feat: fix models.py, change variables name
+=======
+>>>>>>> backend-khl
 =======
 class Celery_taskmeta(Base):
     __table__ = Base.metadata.tables['celery_taskmeta']
 >>>>>>> feat: fix models.py, change variables name
+<<<<<<< HEAD
 <<<<<<< develop
 =======
 >>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 =======
 >>>>>>> feat: fix models.py, change variables name
+=======
+=======
+class Celery_taskmeta(Base):
+    __table__ = Base.metadata.tables['celery_taskmeta']
+>>>>>>> backend-khl
+>>>>>>> backend-khl
 
 
 Base.metadata.create_all(engine)
