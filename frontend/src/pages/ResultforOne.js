@@ -15,6 +15,7 @@ import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import MobileBottomBtn from '../components/MobileBottomBtn';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
+const getImageURL = '/api/v1/results/draw/';
 
 function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0 }]); // 유사도 상위 5개 이름과 유사도
@@ -23,6 +24,12 @@ function ResultforOne() {
   const [isRender, setIsRender] = useState([0, 0, 0, 0, 0]); // API호출 성공시 이미지 업데이트하기위한 인덱스배열
 
   const location = useLocation();
+
+  // drawId로 이미지 URL가져오는 함수
+  async function getRandomWordImage(drawId) {
+    const response = await axios.get(getImageURL.concat(drawId));
+    return response;
+  }
 
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
@@ -45,7 +52,7 @@ function ResultforOne() {
     setRandomWordData({
       name: response.randword.dictionary.name,
       value: response.randword.similarity,
-      imageUrl: response.randword.dictionary.img_url,
+      imageUrl: getRandomWordImage(location.state.drawId),
     });
     setIsRender([0, 1, 2, 3, 4]);
   }
