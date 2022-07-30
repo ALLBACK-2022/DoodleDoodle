@@ -64,6 +64,10 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
+<<<<<<< develop
+=======
+
+>>>>>>> feat: fix AI result API
 
 with app.app_context():
     if not database_exists(sqlurl):
@@ -74,6 +78,7 @@ with app.app_context():
         insert_word()
 
 
+<<<<<<< develop
 def _is_complete(task_ids):
     # task_id 로 status가 성공인지 아닌지
     for task_id in task_ids:
@@ -98,6 +103,14 @@ def _is_complete(task_ids):
         if not task.status == "SUCCESS":
             return "WAIT"
     return "SUCCESS"
+=======
+def _request_taskcheck(data):
+    URL = 'http://ai:5000/api/v1/start_predict'
+    response = requests.post(URL, data=data)
+    response_data = response.json()
+    task_status = response_data["status"]
+    return task_status
+>>>>>>> feat: fix AI result API
 
 
 def _organize_result(results, randword):
@@ -118,8 +131,6 @@ def _organize_result(results, randword):
         res['topfive'].pop()
     return res
 
-
-s3 = s3_connection()
 
 @ns.route("/", methods=['GET'])
 class main_page(Resource):
@@ -174,7 +185,8 @@ class randwords(Resource):
 class save(Resource):
     def _translate_word(self, aranword):
         '''한글단어를 영어로 변환한다'''
-        row = db.session.query(models.Dictionary).filter(models.Dictionary.name==aranword).first()
+        row = db.session.query(models.Dictionary).filter(
+            models.Dictionary.name == aranword).first()
         englishword = row.eng_name
         db.session.commit()
         return englishword
@@ -192,9 +204,10 @@ class save(Resource):
         if not os.path.exists('temp'):
             os.mkdir('temp')
         f = request.files['filename']
-        f.save('temp/'+ str(drawid) + '.png')
-        retPut = s3_put_object(s3, BUCKET_NAME, 'temp/' + str(drawid) +'.png', 'drawimage/' + str(drawid) +'.png')
-        os.remove('temp/' + str(drawid) +'.png')
+        f.save('temp/' + str(drawid) + '.png')
+        retPut = s3_put_object(
+            s3, BUCKET_NAME, 'temp/' + str(drawid) + '.png', 'drawimage/' + str(drawid) + '.png')
+        os.remove('temp/' + str(drawid) + '.png')
         gameid = value['game-id']
         game = db.session.query(models.Game).get(gameid)
         if game is None:
@@ -202,34 +215,35 @@ class save(Resource):
         ranword = game.random_word
         englishranword = self._translate_word(ranword)
         if retPut is None:
-            return('Draw saved fail',400)
+            return('Draw saved fail', 400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-        return_data={"draw_id":drawid,"ranword":englishranword}
+        return_data = {"draw_id": drawid, "ranword": englishranword}
         session = requests.Session()
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('http://', adapter)
         session.mount('https://', adapter)
         url = 'http://ai:5000/api/v1/start_predict'
-        response = session.post(url,json=return_data)
+        response = session.post(url, json=return_data)
         response_data = response.json()
         aiResult = response_data["task_id"]
-        retdata = {"draw_id":drawid,"task_id":aiResult}
-        
-        try:           
+        retdata = {"draw_id": drawid, "task_id": aiResult}
+
+        try:
             return retdata, 200
-        except:                  
+        except:
             return('Requset to AI fail', 400)
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
 class draw(Resource):
-    
+
     def get(self, drawid):
         '''게임id가 같은 사용자 전체의 그림을 불러온다'''
-        ret = db.session.query(models.Draw).filter(models.Draw.id == drawid).first()
+        ret = db.session.query(models.Draw).filter(
+            models.Draw.id == drawid).first()
         retimage = ret.doodle
         if ret is None:
             return('NO image in database', 400)
@@ -241,7 +255,8 @@ class draw(Resource):
 class game(Resource):
     def get(self, gameid):
         '''사용자가 그렸던 그림을 불러온다'''
-        ret = db.session.query(models.Game).filter(models.Game.id == gameid).first()
+        ret = db.session.query(models.Game).filter(
+            models.Game.id == gameid).first()
         retusernum = int(ret.player_num)
         if ret is None:
             return('Can not access data', 400)
@@ -274,15 +289,16 @@ class singleresult(Resource):
         if game is None:
             return('Can not access data', 400)
         randword = game.random_word
-        # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (_is_complete(task_id) == "WAIT"):
-            time.sleep(1.0)
-        if self._is_complete(task_id) == "FAIL":
-            return ("Get result fail", 200)
+        # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
+        data = {'task-id': [task_id]}
+        response = _request_taskcheck(data)
+        if response == "FAIL":
+            return('AI fail', 400)
+        if response == "TIME_OUT":
+            return('AI time out', 400)
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == draw_id).all()
-
         # for문을 돌면서 results로 가져온 결과들을 정리
         res = _organize_result(results=results, randword=randword)
         # 반환
@@ -295,17 +311,19 @@ class multiresults(Resource):
         '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()
         # task_id(list 형태) game_id 받기
-        task_ids = value['task-id']
-        user_num = len(task_ids)
+        task_id = value['task-id']
+        user_num = len(task_id)
         game = db.session.query(models.Game).get(value['game-id'])
         if game is None:
             return('Can not access data', 400)
         randword = game.random_word
-        # task_id들로 task가 완료되었는지 while문을 돌며 check
-        while (_is_complete(task_ids) == "WAIT"):
-            time.sleep(1.0)
-        if self._is_complete(task_ids) == "FAIL":
-            return ("Get result fail", 200)
+        # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
+        data = {'task-id': task_id}
+        response = _request_taskcheck(data)
+        if response == "FAIL":
+            return('AI fail', 400)
+        if response == "TIME_OUT":
+            return('AI time out', 400)
         # task가 다 완료되었다면 result 받아오기
         results = db.session.query(models.Result).filter(
             models.Result.game_id == game.id).all()
@@ -322,7 +340,7 @@ class multiresults(Resource):
         for results in result_list:
             user_res = _organize_result(results=results, randword=randword)
             user_res['draw-no'] = results[0].draw.draw_no
-            user_res['task-id'] = task_ids[user_res['draw-no'] - 1]
+            user_res['task-id'] = task_id[user_res['draw-no'] - 1]
             res_list.append(user_res)
 
         res_list = sorted(
@@ -332,8 +350,8 @@ class multiresults(Resource):
         return (res, 200)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)   
+    app.logger.setLevel(gunicorn_logger.level)
     app.run(port="5000", debug=True)
