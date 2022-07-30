@@ -107,7 +107,8 @@ def call_method():
 # return stats(딕셔너리 형태) = joson으로 return
 @app.route('/api/v1/task_status',methods=['POST'])
 def get_status():
-    task_ids = request.get_json()
+    response_data = request.get_json()
+    task_ids = response_data["task-id"]
     while (_is_complete(task_ids) == "STARTED"):    # started인 동안 반복
         
         time.sleep(1.0)
