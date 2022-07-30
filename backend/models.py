@@ -11,9 +11,10 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
@@ -21,9 +22,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
 
+
 class Game(Base):
     __tablename__ = 'game'
-    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True,
+                      'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     random_word = db.Column(db.String(20))
     player_num = db.Column(db.Integer)
@@ -45,7 +48,8 @@ class Game(Base):
 
 class Draw(Base):
     __tablename__ = 'draw'
-    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True,
+                      'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     draw_no = db.Column(db.Integer)
     doodle = db.Column(db.Text)
@@ -64,7 +68,8 @@ class Draw(Base):
 
 class Dictionary(Base):
     __tablename__ = 'dictionary'
-    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True,
+                      'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     eng_name = db.Column(db.String(50))
@@ -89,7 +94,8 @@ class Dictionary(Base):
 
 class Result(Base):
     __tablename__ = 'result'
-    __table_args__ = {'extend_existing': True, 'mysql_collate': 'utf8_general_ci'}
+    __table_args__ = {'extend_existing': True,
+                      'mysql_collate': 'utf8_general_ci'}
     id = db.Column(db.Integer, primary_key=True)
     similarity = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
@@ -99,42 +105,17 @@ class Result(Base):
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
 
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
-
         self.similarity = similarity
-        # self.draw_id = draw_id
-        # self.dictionary_id = dictionary_id
-        # self.game_id = game_id 
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-        
-# class Celery_taskmeta(Base):
-#     __table__ = Base.metadata.tables['celery_taskmeta']
+
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
 #     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
-
-# class Task(Base):
-#     __tablename__ = 'task'
-#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
-#     id = db.Column(db.Integer, primary_key=True)
-#     status = db.Column(db.String(20))
-#     created_at = db.Column(db.DateTime)
-#     updated_at = db.Column(db.DateTime)
-
-
-#     def __init__(self,status):
-#         self.status = status
-#         self.created_at = datetime.datetime.now().replace(microsecond=0)
-#         self.updated_at = self.created_at
-
-#     def __init__(self,status):
-#         self.status = status
-#         self.created_at = datetime.datetime.now().replace(microsecond=0)
-#         self.updated_at = self.created_at
-
-#     def set_updated_at(self):
-#         self.updated_at = datetime.datetime.now().replace(microsecond=0)
 
 
 Base.metadata.create_all(engine)

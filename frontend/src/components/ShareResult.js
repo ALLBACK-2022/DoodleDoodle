@@ -10,11 +10,19 @@ function ShareResult({ isforOne }) {
   }
 
   async function share() {
-    await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
-      await canvas.toBlob(function (blob) {
-        download(URL.createObjectURL(blob), 'result.png');
-      }, 'image/png');
-    });
+    if (isforOne) {
+      await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
+        await canvas.toBlob(function (blob) {
+          download(URL.createObjectURL(blob), 'result.png');
+        }, 'image/png');
+      });
+    } else {
+      await html2canvas(document.getElementById('resultmanypage')).then(async canvas => {
+        await canvas.toBlob(function (blob) {
+          download(URL.createObjectURL(blob), 'result.png');
+        }, 'image/png');
+      });
+    }
   }
 
   return (
