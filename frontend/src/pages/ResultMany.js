@@ -13,7 +13,7 @@ function ResultMany() {
   const [gameData, setGameData] = useState({ game_id: 0, task_ids: [] });
   const [playersInfo, setPlayersInfo] = useState([{}]);
   const [playersPics, setPlayersPics] = useState([]);
-  const location = useLocation(); // 이전 페이지에서 받아온 데이터
+  const location = useLocation();
   async function getData() {
     console.log('getData() here');
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
