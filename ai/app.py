@@ -114,9 +114,9 @@ def get_status():
     if _is_complete(task_ids) == "SUCCESS":
         return _is_complete(task_ids)
             #return ("Get result fail", 200)
-    print("Invoking Method ")
-    
-    return "FAILURE"
+    else:
+        return "FAILURE"
+   
 # @app.route('/simple_task_status/<task_id>')
 # def get_status(task_id):
 #     status = celery_app.AsyncResult(task_id, app=celery_app)
