@@ -1,3 +1,4 @@
+from sre_constants import FAILURE
 from flask import Flask, request, jsonify
 from celery.utils.log import get_task_logger
 from celery import Celery
@@ -43,6 +44,7 @@ app = Flask(__name__)
 app.config.update(
     broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbitmq:5672/',
     result_backend='db+mysql://'+ MYSQL_USER +':'+ MYSQL_PASSWORD +'@db/DoodleDoodle'
+   
 )
 
 celery_app = make_celery(app)
@@ -57,34 +59,46 @@ def call_method():
         'draw_id': draw_id, 'ranword': ranword})
 
     task_id = task.id
-    rettaskid = {"task_id":task_id}
+    # app.logger.info(r.backend)
+    return task_id
 
-    return rettaskid
 
-
-@app.route('/api/v1/task_status')
+#=> 수정 사항 : AI 서버에서 수시로 상태를 확인하고, 결과를 받아서 백앤듯 서버에 넘겨준다. 
+# task_id 리스트(json)를  list=value["task_ids] 받고
+# while (_is_complete)을 돌리면서 상태 확인 
+# return stats(딕셔너리 형태) = joson으로 return
+@app.route('/api/v1/task_status',methods=['POST'])
 def get_status():
-    status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
-    response_data = request.get_json()
-    task_ids = response_data["task-id"]
-    res, temp_str = 1, ""
-    while (res):
-        temp_str = _is_complete(task_ids)
-        res = status[str(temp_str)]
+    task_ids = request.get_json()
+    while (_is_complete(task_ids) == "STARTED"):    # started인 동안 반복
+        
         time.sleep(1.0)
-    return { "status" : temp_str}
+    if _is_complete(task_ids) == "SUCCESS":
+        return _is_complete(task_ids)
+            #return ("Get result fail", 200)
+    else:
+        return "FAILURE"
+   
+# @app.route('/simple_task_status/<task_id>')
+# def get_status(task_id):
+#     status = celery_app.AsyncResult(task_id, app=celery_app)
+#     print("Invoking Method ")
+#     return "Status of the Task " + str(status.state)
 
 def _is_complete(task_ids):
+    # task_id 로 status가 성공인지 아닌지
     for task_id in task_ids:
         status = celery_app.AsyncResult(task_id, app=celery_app)
-        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
-            return str(status.state)
-        elif status == "FAILURE":
-            break
-    else:
-        return 'SUCCESS'
-    return 'FAILURE'
-
+        
+        if status == "SUCCESS":
+            return "SUCCESS"
+        if status == "FAILURE":
+            return "FAILURE"
+        if not status == "PENDING":
+            return "PENDING"
+        return str(status.state)
+    #return "SUCCESS"
+    return "STARTED"
 #작업결과
 @app.route('/simple_task_result/<task_id>')
 def task_result(task_id):
