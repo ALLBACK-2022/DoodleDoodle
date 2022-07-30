@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import axios from 'axios'; // AI API없앨때 같이 없애기
+import axios from 'axios';
 
 import DrawingCanvas from '../components/DrawingCanvas';
 import NextButton from '../components/NextButton';
@@ -46,19 +46,16 @@ function GamePage() {
     formData.append('game-id', gameID.current);
     formData.append('draw-no', currentPlayer);
     formData.append('filename', imgFile);
-    const requestOptions = {
-      method: 'POST',
-      body: formData,
-      redirect: 'follow',
-    };
-
-    fetch(postImageURL, requestOptions)
+    await axios
+      .post(postImageURL, formData)
       .then(response => {
-        taskIdArray.push(response.taskId); // 반환값에서 TaskID받아서 저장
-        drawIdArray.push(response.drawId); // 반환값에서 drawID받아서 저장
-        console.log('save success', ' teskIdArray: ', taskIdArray);
+        taskIdArray.push(response.data.task_id); // 반환값에서 TaskID받아서 저장
+        drawIdArray.push(response.data.draw_id); // 반환값에서 drawID받아서 저장
+        console.log('drawIdArray: ', drawIdArray);
+        console.log('taskIdArray: ', taskIdArray);
+        console.log('response: ', response);
       })
-      .catch(() => console.log('error'));
+      .catch(error => console.log(error));
   }
 
   // DrawingCanvas에서 이미지 로딩 완료후 호출

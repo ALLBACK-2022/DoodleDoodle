@@ -21,7 +21,54 @@ COPY . ./
 
 # CMD ["bash", "-c", "python manage.py db migrate"]
 
+<<<<<<< develop
+<<<<<<< develop
+<<<<<<< develop
+<<<<<<< develop
+=======
+<<<<<<< feature/hunhui
+<<<<<<< develop
+>>>>>>> feat: add wait-for-it files and setting on docker
+=======
+<<<<<<< feature/hunhui
+<<<<<<< develop
+>>>>>>> fix: error in docker and wait for it
+=======
+<<<<<<< feature/hunhui
+>>>>>>> fix: fix docker errors
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
 # CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+=======
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+>>>>>>> feat: add wait-for-it files and setting on docker
+<<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: error in docker and wait for it
+=======
+COPY wait-for-it.sh ./wait-for-it.sh
+RUN chmod +x ./wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+>>>>>>> fix: error in docker and wait for it
+<<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: fix docker errors
+=======
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
+# CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+>>>>>>> fix: fix docker errors
+<<<<<<< develop
+=======
+>>>>>>> feat: add wait-for-it files and setting on docker
+=======
+>>>>>>> fix: error in docker and wait for it
+=======
+>>>>>>> fix: fix docker errors

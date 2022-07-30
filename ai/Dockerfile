@@ -18,11 +18,62 @@ RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
 COPY . ./
 
+<<<<<<< develop
+<<<<<<< develop
+<<<<<<< develop
+<<<<<<< develop
+=======
+<<<<<<< feature/hunhui
+<<<<<<< develop
+>>>>>>> feat: add wait-for-it files and setting on docker
+=======
+<<<<<<< feature/hunhui
+<<<<<<< develop
+>>>>>>> fix: error in docker and wait for it
+=======
+<<<<<<< feature/hunhui
+>>>>>>> fix: fix docker errors
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
 # CMD [ "flask", "run", "--host=0.0.0.0"]
 # CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+=======
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+
+>>>>>>> feat: add wait-for-it files and setting on docker
+<<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: error in docker and wait for it
+=======
+COPY wait-for-it.sh ./wait-for-it.sh
+RUN chmod +x ./wait-for-it.sh
+CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+<<<<<<< develop
+<<<<<<< develop
+=======
+>>>>>>> fix: fix docker errors
+=======
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
+>>>>>>> fix: fix docker errors
+<<<<<<< develop
+# CMD [ "flask", "run", "--host=0.0.0.0"]
+# CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+>>>>>>> fix: error in docker and wait for it
+=======
+>>>>>>> feat: add wait-for-it files and setting on docker
+=======
+=======
+>>>>>>> fix: fix docker errors
+# CMD [ "flask", "run", "--host=0.0.0.0"]
+# CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+>>>>>>> fix: error in docker and wait for it
+>>>>>>> fix: error in docker and wait for it
 # COPY . /app
 # docker build -t backend-img .
 # docker run --name backend-con -it -p 5000:5000 --rm backend-img

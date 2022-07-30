@@ -85,6 +85,16 @@ def _request_taskcheck(data):
     response_data = response.json()
     task_status = response_data["status"]
     return task_status
+    
+def _is_complete(task_ids):
+    # task_id 로 status가 성공인지 아닌지
+    for task_id in task_ids:
+        task = db.session.query(models.Celery_taskmeta).filter(models.Celery_taskmeta.task_id == task_id).first()
+        if task.status == "FAILURE":
+            return "FAIL"
+        if not task.status == "SUCCESS":
+            return "WAIT"
+    return "SUCCESS"
 
 
 def _organize_result(results, randword):
