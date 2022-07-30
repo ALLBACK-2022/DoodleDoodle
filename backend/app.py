@@ -80,7 +80,7 @@ with app.app_context():
 
 
 def _request_taskcheck(data):
-    URL = 'http://ai:5000/api/v1/start_predict'
+    URL = 'http://ai:5000/api/v1/task_status'
     response = requests.post(URL, data=data)
     response_data = response.json()
     task_status = response_data["status"]
