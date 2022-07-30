@@ -79,14 +79,13 @@ with app.app_context():
         insert_word()
 
 
-<<<<<<< develop
 def _request_taskcheck(data):
     URL = 'http://ai:5000/api/v1/task_status'
     response = requests.post(URL, data=data)
     response_data = response.json()
     task_status = response_data["status"]
     return task_status
-=======
+    
 def _is_complete(task_ids):
     # task_id 로 status가 성공인지 아닌지
     for task_id in task_ids:
@@ -96,7 +95,6 @@ def _is_complete(task_ids):
         if not task.status == "SUCCESS":
             return "WAIT"
     return "SUCCESS"
->>>>>>> fix: error in docker and wait for it
 
 
 def _organize_result(results, randword):
