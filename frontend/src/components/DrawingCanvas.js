@@ -40,6 +40,8 @@ function DrawingCanvas({ imgDataPost }, ref) {
     const context = canvas.getContext('2d'); // ctx할당
     context.strokeStyle = 'black'; // 붓 색깔 검은색
     context.lineWidth = window.innerWidth <= 700 ? 10 : 16; // 붓 굵이
+    context.lineCap = 'round'; // 선 부드럽게 만들어줌
+    context.lineJoin = 'round';
     setCtx(context); // 함수 밖 ctx 할당
     setXY(); // min max
   }
