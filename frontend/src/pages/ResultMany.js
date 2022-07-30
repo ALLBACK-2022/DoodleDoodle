@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-// import { useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import MobileBottomBtn from '../components/MobileBottomBtn';
 import MobileResultMulti from '../components/MobileResultMulti';
 import ResultButtons from '../components/ResultButtons';
@@ -10,19 +10,18 @@ import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
 function ResultMany() {
-  // const [gameData, setGameData] = useState({ game_id: 0, task_ids: [] });
+  const [gameData, setGameData] = useState({ game_id: 0, task_ids: [] });
   const [playersInfo, setPlayersInfo] = useState([{}]);
   const [playersPics, setPlayersPics] = useState([]);
-  // const location = useLocation(); // 이전 페이지에서 받아온 데이터
-  // const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수
+  const location = useLocation(); // 이전 페이지에서 받아온 데이터
   async function getData() {
     console.log('getData() here');
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    // setGameData(prevGameData => ({ ...gameData, game_id: location.state.gameId, task_ids: location.state.task_ids }));
+    setGameData(prevGameData => ({ ...gameData, game_id: location.state.gameId, task_ids: location.state.taskId }));
     try {
       const response = await axios.post('http://localhost:5000/api/v1/draws/results/multi', {
-        'game-id': 9,
-        'task-id': [4, 5, 1, 3, 10],
+        'game-id': gameData.game_id,
+        'task-id': gameData.task_ids,
       });
       setPlayersInfo(response.data.res);
       console.log('playersInfo');
@@ -31,7 +30,7 @@ function ResultMany() {
       console.log('Error >>', err);
     }
     try {
-      const response = await axios.get(`http://localhost:5000/api/v1/results/game/9`);
+      const response = await axios.get(`{http://localhost:5000/api/v1/results/game/${gameData.game_id}}`);
       setPlayersPics(response.data);
       console.log('playersPics');
       console.log(playersPics);
@@ -76,7 +75,7 @@ function ResultMany() {
                 doodle={playersPics[player['draw-no']]}
                 player={player['draw-no']}
                 key={player['draw-id']}
-                taskid={player['task-id']}
+                taskid={[player['task-id']]}
                 drawid={player['draw-id']}
               />
             ))}
@@ -92,7 +91,7 @@ function ResultMany() {
                 player={player['draw-no']}
                 key={player['draw-id']}
                 number={playersInfo.length}
-                taskid={player['task-id']}
+                taskid={[player['task-id']]}
                 drawid={player['draw-id']}
               />
             ))}
