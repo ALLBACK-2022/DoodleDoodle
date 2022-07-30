@@ -42,7 +42,6 @@ function TopFiveResult({ isPc, rank, chartValue, imageUrl, chartName }) {
     basicUnit = 'vh';
     maxUnit = 'vw';
   }
-  console.log(basic, max, left, top);
   return (
     <div
       className={`${isPc ? 'absolute' : ''} flex-col
