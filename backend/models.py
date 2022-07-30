@@ -135,6 +135,7 @@ class Result(Base):
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
         self.similarity = similarity
 <<<<<<< develop
+<<<<<<< develop
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
         self.game_id = game_id
@@ -143,6 +144,11 @@ class Result(Base):
         # self.dictionary_id = dictionary_id
         # self.game_id = game_id 
 >>>>>>> fix: error in docker and wait for it
+=======
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id 
+>>>>>>> chore: fix annotation
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
 <<<<<<< develop
