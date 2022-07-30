@@ -231,8 +231,7 @@ function ResultforOne() {
               />
             </div>
             <ResultText name={randomWordData.name} value={randomWordData.value} textSize={10} />
-
-            {isPC && <ResultButtons isforOne />}
+            <div className="mt-[4rem]">{isPC && <ResultButtons isforOne />}</div>
           </div>
         </div>
 
