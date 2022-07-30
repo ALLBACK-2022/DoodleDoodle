@@ -20,12 +20,12 @@ function ShareResult({ isforOne }) {
   return (
     <button
       onClick={share}
-      className={`font-cookierun deskTop:text-[2vmin] mobile:text-[2vh]
-      deskTop:w-[10vw] deskTop:py-[1vh] deskTop:max-w-[15vh]
+      className={`font-cookierun deskTop:text-2xl deskTop:w-[9rem] mobile:text-[2vh]
+      deskTop:px-[1.5rem] deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
       mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
                  ${
                    isforOne
-                     ? 'bg-primary-3 text-primary-1 hover:text-black'
+                     ? 'bg-primary-3 text-primary-1 hover:bg-primary'
                      : 'bg-black text-primary hover:bg-primary-2'
                  }`}
     >
