@@ -14,14 +14,14 @@ RUN pip install -r requirements.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
 COPY . ./
 
-EXPOSE 5000
+# EXPOSE 5000
 
-CMD gunicorn --bind=0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
+# CMD gunicorn --bind=0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
     
 
 # CMD ["bash", "-c", "python manage.py db migrate"]
 
-COPY wait-for-it.sh ./wait-for-it.sh
-RUN chmod +x ./wait-for-it.sh
-CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
 # CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
