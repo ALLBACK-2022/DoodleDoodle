@@ -41,38 +41,17 @@ sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
     '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 engine = create_engine(sqlurl)
 
-# app.config['MYSQL_DB'] = MYSQL_USER
-# app.config['MYSQL_USER'] = MYSQL_USER
-# app.config['MYSQL_PASSWORD'] = MYSQL_PASSWORD
-# app.config['MYSQL_HOST'] = MYSQL_HOST
-# app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# @celery_app.task(name='ai_predict')
-# def ai_predict(game_id, draw_no, ranword):
-#     print('ai_predict에 들어옴')
-#     logger.info('working!')
-#     return ({}, 200)
-# with open("classes.txt","r", encoding="utf8") as ins:
-# Read class names
-# @app.route("/AI", methods=['GET'])
-# name='apptask.ai_predict'
 @celery_app.task(name='ai_predict')
 def ai_predict(draw_id, ranword):
     # logger.info('ai_predict에 들어옴')
-    #drawlog= "draw_id>>"+draw_id
+    
     logger.info(draw_id)
     logger.info(ranword)
     s3 = s3_connection()
-    #path = './temp'
-    #path = 'temp'
-    # os.mkdir(path)
-    #filepath = str(game_id) + '_' + str(draw_no) + '.png'
+   
     filepath = str(draw_id) + '.png'
     # https://doodle-bucket.s3.ap-northeast-2.amazonaws.com/drawimage/1.png
-    # url=str(s3_get_object(s3, BUCKET_NAME, 'drawimage/1.png', 'temp/1.png'))
-    # print(url)
-    # if not os.path.exists('./temp'):
-    #         os.mkdir('./temp')
+    
     if not os.path.exists('temp'):
         os.mkdir('temp')
     #ret = s3_get_object(s3, BUCKET_NAME, 'drawimage/' + filepath, 'temp/'+ filepath)
@@ -157,36 +136,3 @@ def ai_predict(draw_id, ranword):
         return (otherResults, 200)
         # 결과 db에 저장 ?
     return ("can't download file", 400)
-    # if request.method =='POST':
-    #     #value = request.get_json()
-    #     if not value:
-    #         return ('No parameter', 400)
-    #     #랜덤 단어와 이미지 url을 받아온다.
-    #     s3 = s3_connection()
-    #     os.mkdir('temp')
-    #     filepath = str(value['game-id']) + '_' + str(value['draw-no']) + '.png'
-    #     if s3_get_object(s3, BUCKET_NAME, 'drawimage/'+ filepath, 'temp/' + filepath):
-    #         ranword = request.args.get('ranword')
-    #         img = plt.imread('temp/' + filepath)
-    #         img = img[:, :, 0]
-    #         img = resize(img, (28, 28))
-    #         for x in range(0, 28):
-    #             for y in range(0, 28):
-    #                 num = img[x][y] - 1
-    #                 if num < 0:
-    #                     num *= -1
-    #                 img[x][y] = num
-    #         pred = model.predict(np.expand_dims(img, axis=0))[0]
-    #         ind = (-pred).argsort()[:] # all sequence with similarity sorted by highest.
-    #         otherResults={}
-    #         result={}
-    #         for x in range(0,len(ind)):
-    #             if(class_names[ind[x]]==ranword):
-    #                 result[ class_names[ind[x]] ] = str(round(pred[ind[x]]*100, 2))+'%'
-    #             if x<5:
-    #                 otherResults[ class_names[ind[x]] ] = str(round(pred[ind[x]]*100, 2)) + '%'
-    #         otherResults['result'] = result
-    #         os.remove('temp/' + filepath)
-    #         return (otherResults, 200)
-    #     return ("can't download file", 400)
-    # return ("error", 400)

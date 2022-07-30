@@ -61,7 +61,7 @@ def call_method():
 
     return rettaskid
 
-
+#작업상태
 @app.route('/api/v1/task_status')
 def get_status():
     status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
@@ -88,8 +88,8 @@ def _is_complete(task_ids):
 #작업결과
 @app.route('/simple_task_result/<task_id>')
 def task_result(task_id):
-    ret = celery_app.AsyncResult(task_id).get()
-    return ret
+    ret = celery_app.AsyncResult(task_id).result
+    return str(ret)
 
 if __name__ == '__main__':
     app.run()
