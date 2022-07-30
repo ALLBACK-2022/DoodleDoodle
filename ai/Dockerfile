@@ -20,6 +20,7 @@ COPY . ./
 
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
@@ -35,6 +36,11 @@ CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
 COPY wait-for-it.sh ./wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh
 CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+=======
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+CMD ./wait-for-it.sh db:3306 -- flask run --host=0.0.0.0
+>>>>>>> fix: fix docker errors
 # CMD [ "flask", "run", "--host=0.0.0.0"]
 # CMD [ "./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
 >>>>>>> fix: error in docker and wait for it
