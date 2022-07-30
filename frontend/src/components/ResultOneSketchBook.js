@@ -3,7 +3,7 @@ import sketchbook from '../assets/icons/sketchbook.png';
 import ResultText from './ResultText';
 import ResultButtons from './ResultButtons';
 
-function ResultOneSketchBook({ randomWordData, isPC }) {
+function ResultOneSketchBook({ randomWordData, isPC, stateData }) {
   return (
     <div
       className="deskTop:w-[40vw] deskTop:h-[40vw] deskTop:max-w-[65vh] deskTop:max-h-[65vh]
@@ -22,7 +22,7 @@ function ResultOneSketchBook({ randomWordData, isPC }) {
         />
       </div>
       <ResultText name={randomWordData.name} value={randomWordData.value} textSize={10} />
-      <div className="mt-[4rem]">{isPC && <ResultButtons isforOne />}</div>
+      <div className="mt-[3vh]">{isPC && <ResultButtons isforOne stateData={stateData} />}</div>
     </div>
   );
 }
