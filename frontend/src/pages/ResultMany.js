@@ -1,4 +1,3 @@
-// import ResultText from '../components/ResultText';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
