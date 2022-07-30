@@ -26,34 +26,6 @@ function ResultforOne() {
 
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
-    // 혹시 axios로 안되면 이걸로
-    /* fetch(baseURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        'game-id': location.state.gameId,
-        'draw-id': location.state.drawId,
-        'task-id': location.state.taskId,
-      }),
-    })
-      .then(res => res.json())
-      .then(res =>
-        res.topfive.foreach(function fe(element) {
-          array
-            .push({ name: element.dictionary.name, value: element.similarity })
-            .then(setImageUrl(element.dictionary.img_url));
-        }),
-      )
-      .then(setChartData(array))
-      .then(res =>
-        setRandomWordData({
-          name: res.randword.dictionary.name,
-          value: res.randword.similarity,
-        }),
-      ); */
-
     const response = await axios.post(baseURL, {
       'game-id': location.state.gameId,
       'draw-id': location.state.drawId,

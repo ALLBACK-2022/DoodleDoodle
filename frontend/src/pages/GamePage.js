@@ -67,17 +67,11 @@ function GamePage() {
     const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
     postImage(file);
     if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
-    else if (maxPlayer === 1) {
-      navigate('../resultone', {
-        replace: true,
-        state: { gameId: gameID.current, taskId: taskIdArray[0], drawId: drawIdArray[0] },
-      });
-    } else {
-      navigate('../resultmany', {
-        replace: true,
-        state: { gameId: gameID.current, taskId: taskIdArray, drawId: drawIdArray },
-      });
-    }
+    const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
+    navigate(newURL, {
+      replace: true,
+      state: { gameId: gameID.current, taskId: taskIdArray, drawId: drawIdArray },
+    });
   };
 
   // NextButton을 클릭했을때 실행
