@@ -54,9 +54,7 @@ app.config.update(
     #broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbit:5672/',
     broker_url='amqp://'+RABBITMQ_DEFAULT_USER+':'+RABBITMQ_DEFAULT_PASS+'@rabbitmq:5672/',
     result_backend='db+mysql://'+ MYSQL_USER +':'+ MYSQL_PASSWORD +'@db/DoodleDoodle'
-   
     #result_backend='db+mysql://'+MYSQL_USER+':'+MYSQL_ROOT_PASSWORD+'@db/DoodleDoodle'
-
 )
 
 celery_app = make_celery(app)
@@ -64,9 +62,9 @@ celery_app = make_celery(app)
 @app.route('/api/v1/start_predict' ,methods=['POST'])
 def call_method():
     #app.logger.info("Invoking Method ")
-    #draw_id=1
-    #ranword='umbrella'
-    # post로 json data 받는 부분, postMan test를 위해선 지워야함.
+    # draw_id=1
+    # ranword='umbrella'
+    #post로 json data 받는 부분, postMan test를 위해선 지워야함.
     value = request.get_json()
     draw_id = value['draw_id']
     ranword = value['ranword']

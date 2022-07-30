@@ -64,7 +64,7 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
-    
+
 with app.app_context():
     if not database_exists(sqlurl):
         create_database(sqlurl)
@@ -77,7 +77,7 @@ with app.app_context():
 def _is_complete(task_ids):
     # task_id 로 status가 성공인지 아닌지
     for task_id in task_ids:
-        task = db.session.query(models.Task).get(task_id)
+        task = db.session.query(models.Celery_taskmeta).filter(models.Celery_taskmeta.task_id == task_id).first()
         if task.status == "FAILURE":
             return "FAIL"
         if not task.status == "SUCCESS":
