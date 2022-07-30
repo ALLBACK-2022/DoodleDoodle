@@ -20,7 +20,7 @@ function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0 }]); // 유사도 상위 5개 이름과 유사도
   const [randomWordData, setRandomWordData] = useState({ name: '?', value: 0, imageUrl: testImage }); // 주어진 단어의 이름과 유사도
   const [imageUrl, setImageUrl] = useState([testImage]); // 유사도 상위 5개의 이미지들
-  const [isRender, setIsRender] = useState([0, 0, 0, 0, 0]);
+  const [isRender, setIsRender] = useState([0, 0, 0, 0, 0]); // API호출 성공시 이미지 업데이트하기위한 인덱스배열
 
   const location = useLocation();
 
