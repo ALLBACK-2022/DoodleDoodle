@@ -11,21 +11,17 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
-MYSQL_ROOT_PASSWORD=os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_HOST=os.environ.get("MYSQL_HOST")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+MYSQL_HOST = os.environ.get("MYSQL_HOST")
+sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 Base = declarative_base()
 engine = create_engine(sqlurl)
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-<<<<<<< develop
 db = SQLAlchemy(app)
 Base.metadata.reflect(engine)
-=======
-db.init_app(app)
-Base.metadata.reflect(engine)
 
->>>>>>> feat: fix models.py, change variables name
 
 class Game(Base):
     __tablename__ = 'game'
@@ -109,112 +105,17 @@ class Result(Base):
     game_id = db.Column(db.Integer, db.ForeignKey(Game.id))
 
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
-
-<<<<<<< develop
         self.similarity = similarity
-<<<<<<< develop
-<<<<<<< develop
-        # self.draw_id = draw_id
-        # self.dictionary_id = dictionary_id
-        # self.game_id = game_id 
-=======
         self.draw_id = draw_id
         self.dictionary_id = dictionary_id
         self.game_id = game_id
-<<<<<<< HEAD
->>>>>>> feat: fix models.py, change variables name
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
-=======
-        self.created_at = datetime.datetime.now().replace(microsecond=0)
-        self.updated_at = self.created_at
-<<<<<<< HEAD
->>>>>>> backend-khl
-<<<<<<< develop
-        
-# class Celery_taskmeta(Base):
-#     __table__ = Base.metadata.tables['celery_taskmeta']
+
 
 # class Celery_taskmeta(Base):
 #     __tablename__ = Base.metadata.tables['Celery_taskmeta']
 #     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
-
-<<<<<<< develop
-# class Task(Base):
-#     __tablename__ = 'task'
-#     __table_args__ = {'mysql_collate': 'utf8_general_ci'}    
-#     id = db.Column(db.Integer, primary_key=True)
-#     status = db.Column(db.String(20))
-#     created_at = db.Column(db.DateTime)
-#     updated_at = db.Column(db.DateTime)
-
-=======
-<<<<<<< HEAD
-<<<<<<< develop
-        self.draw_id = draw_id
-        self.dictionary_id = dictionary_id
-        self.game_id = game_id
-        self.created_at = datetime.datetime.now().replace(microsecond=0)
-        self.updated_at = self.created_at
->>>>>>> feat: fix models.py, change variables name
-
-
-<<<<<<< develop
-#     def __init__(self,status):
-#         self.status = status
-#         self.created_at = datetime.datetime.now().replace(microsecond=0)
-#         self.updated_at = self.created_at
-
-=======
->>>>>>> feat: fix models.py, change variables name
-
-
-<<<<<<< develop
-
->>>>>>> feat: fix models.py, change variables name
-=======
->>>>>>> feat: fix models.py, change variables name
-
-=======
->>>>>>> backend-khl
-
-<<<<<<< develop
-
-<<<<<<< HEAD
->>>>>>> backend-khl
-#     def set_updated_at(self):
-#         self.updated_at = datetime.datetime.now().replace(microsecond=0)
-=======
-class Celery_taskmeta(Base):
-    __tablename__ = 'celery_taskmeta'
-    __table_args__ = {'mysql_collate': 'utf8mb4_0900_ai_ci'}
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(50))
-    task_id = db.Column(db.String(155))
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-=======
->>>>>>> feat: fix models.py, change variables name
-=======
->>>>>>> backend-khl
-=======
-class Celery_taskmeta(Base):
-    __table__ = Base.metadata.tables['celery_taskmeta']
->>>>>>> feat: fix models.py, change variables name
-<<<<<<< HEAD
-<<<<<<< develop
-=======
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
->>>>>>> feat: fix models.py, change variables name
-=======
-=======
-class Celery_taskmeta(Base):
-    __table__ = Base.metadata.tables['celery_taskmeta']
->>>>>>> backend-khl
->>>>>>> backend-khl
 
 
 Base.metadata.create_all(engine)

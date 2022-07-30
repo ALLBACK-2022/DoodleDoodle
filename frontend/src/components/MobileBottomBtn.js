@@ -1,20 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-<<<<<<< develop
+import { useNavigate } from 'react-router';
 import home from '../assets/icons/home2.png';
 import share from '../assets/icons/share2.png';
-=======
-=======
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
->>>>>>> backend-khl
-import { useNavigate } from 'react-router';
-import home from '../assets/icons/home.png';
-import share from '../assets/icons/share.png';
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
 import back from '../assets/icons/back.png';
 import changeImg from '../assets/icons/changeImg.png';
 

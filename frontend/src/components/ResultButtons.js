@@ -10,88 +10,20 @@ function ResultButtons({ isforOne, playerNumber, gameId }) {
     });
   }
   return (
-<<<<<<< HEAD
-<<<<<<< develop
-<<<<<<< develop
-<<<<<<< develop
     <div className="flex flex-row deskTop:my-[2rem] justify-center">
       <ShareResult isforOne={isforOne} />
 
-      <Link to="/" className="mx-[5%]">
-        <button
-          className={`font-cookierun deskTop:text-2xl deskTop:w-[9rem] mobile:text-lg px-[1.5rem] 
+      <button
+        onClick={onClick}
+        className={`font-cookierun deskTop:text-2xl deskTop:w-[9rem] mobile:text-lg px-[1.5rem] 
           py-[0.3rem] rounded-full whitespace-nowrap
       ${isforOne ? 'bg-primary-3 text-primary-1 hover:bg-primary' : 'bg-black text-primary'}`}
-        >
-          다시하기
-        </button>
-      </Link>
+      >
+        다시하기
+      </button>
       <Link to="/">
         <button
           className={`font-cookierun deskTop:text-2xl deskTop:w-[9rem] mobile:text-lg px-[1.5rem] 
-=======
-    <div className="flex flex-row justify-center">
-      <ShareResult isforOne={isforOne} />
-
-      <button
-        onClick={onClick}
-        className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
-          py-[0.3rem] rounded-full whitespace-nowrap mx-[2rem]
-=======
-    <div className="flex flex-row justify-center">
-      <ShareResult isforOne={isforOne} />
-
-      <button
-        onClick={onClick}
-        className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
-          py-[0.3rem] rounded-full whitespace-nowrap mx-[2rem]
-      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
-      >
-        다시하기
-      </button>
-      <Link to="/">
-        <button
-=======
-    <div className="flex flex-row justify-center">
-      <ShareResult isforOne={isforOne} />
-
-      <button
-        onClick={onClick}
-        className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
-          py-[0.3rem] rounded-full whitespace-nowrap mx-[2rem]
-      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
-      >
-        다시하기
-      </button>
-      <Link to="/">
-        <button
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
-    <div className="flex flex-row justify-center">
-      <ShareResult isforOne={isforOne} />
-
-      <button
-        onClick={onClick}
-        className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
-          py-[0.3rem] rounded-full whitespace-nowrap mx-[2rem]
-      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
-      >
-        다시하기
-      </button>
-      <Link to="/">
-        <button
->>>>>>> backend-khl
-          className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
-          py-[0.3rem] rounded-full whitespace-nowrap
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-      ${isforOne ? 'bg-primary-3 text-primary-1' : 'bg-black text-primary'}`}
-      >
-        다시하기
-      </button>
-      <Link to="/">
-        <button
-          className={`font-cookierun deskTop:text-3xl mobile:text-lg px-[1.5rem] 
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
           py-[0.3rem] rounded-full whitespace-nowrap
       ${isforOne ? 'bg-primary-3 text-primary-1 hover:bg-primary' : 'bg-black text-primary'}`}
         >

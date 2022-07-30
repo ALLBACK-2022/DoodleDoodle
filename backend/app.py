@@ -9,7 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests
+import os
+import models
+import random
+import logging
+import requests
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -64,14 +68,7 @@ def insert_word():
     db.session.commit()
     f1.close()
     f2.close()
-<<<<<<< HEAD
-<<<<<<< develop
-=======
 
->>>>>>> feat: fix AI result API
-=======
-
->>>>>>> backend-khl
 
 with app.app_context():
     if not database_exists(sqlurl):
@@ -82,45 +79,12 @@ with app.app_context():
         insert_word()
 
 
-<<<<<<< HEAD
-<<<<<<< develop
-def _is_complete(task_ids):
-    # task_id 로 status가 성공인지 아닌지
-    for task_id in task_ids:
-<<<<<<< develop
-<<<<<<< develop
-<<<<<<< develop
-        task = db.session.query(models.Celery_taskmeta).filter(models.Celery_taskmeta.task_id == task_id).first()
-=======
-        task = db.session.query(models.Celery_taskmeta).filter(
-            models.Celery_taskmeta.task_id == task_id).first()
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
-        task = db.session.query(models.Celery_taskmeta).filter(
-            models.Celery_taskmeta.task_id == task_id).first()
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-=======
-        task = db.session.query(models.Celery_taskmeta).filter(
-            models.Celery_taskmeta.task_id == task_id).first()
->>>>>>> feat: add celery_taskmeta table in models.py, fix restart button
-        if task.status == "FAILURE":
-            return "FAIL"
-        if not task.status == "SUCCESS":
-            return "WAIT"
-    return "SUCCESS"
-=======
-=======
->>>>>>> backend-khl
 def _request_taskcheck(data):
     URL = 'http://ai:5000/api/v1/start_predict'
     response = requests.post(URL, data=data)
     response_data = response.json()
     task_status = response_data["status"]
     return task_status
-<<<<<<< HEAD
->>>>>>> feat: fix AI result API
-=======
->>>>>>> backend-khl
 
 
 def _organize_result(results, randword):
