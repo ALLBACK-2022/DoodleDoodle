@@ -101,9 +101,9 @@ class Result(Base):
     def __init__(self, similarity, draw_id, dictionary_id, game_id):
 
         self.similarity = similarity
-        # self.draw_id = draw_id
-        # self.dictionary_id = dictionary_id
-        # self.game_id = game_id 
+        self.draw_id = draw_id
+        self.dictionary_id = dictionary_id
+        self.game_id = game_id 
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.updated_at = self.created_at
         
