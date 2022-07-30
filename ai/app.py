@@ -72,7 +72,7 @@ def get_status():
         temp_str = _is_complete(task_ids)
         res = status[str(temp_str)]
         time.sleep(1.0)
-    return temp_str
+    return { "status" : temp_str}
 
 def _is_complete(task_ids):
     for task_id in task_ids:
