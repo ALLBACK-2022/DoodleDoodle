@@ -23,6 +23,7 @@ COPY . ./
 
 <<<<<<< develop
 <<<<<<< develop
+<<<<<<< develop
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
@@ -38,3 +39,9 @@ RUN chmod +x ./wait-for-it.sh
 CMD [ "./wait-for-it.sh", "db:3306", "--", "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 # CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 >>>>>>> fix: error in docker and wait for it
+=======
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+CMD ./wait-for-it.sh db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app
+# CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+>>>>>>> fix: fix docker errors
