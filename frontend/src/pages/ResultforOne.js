@@ -11,7 +11,7 @@ import ResultButtons from '../components/ResultButtons';
 import ResultImage from '../components/ResultImage';
 import GameBGImg from '../components/GameBGImg';
 
-import testImage from '../assets/icons/mobiledoodle_4.png'; // 기본 이미지
+import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
 
