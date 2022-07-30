@@ -3,18 +3,15 @@ import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
 import axios from 'axios';
 
-import ResultText from '../components/ResultText';
-import sketchbook from '../assets/icons/sketchbook.png';
-import ResultPieChart from '../components/ResultPieChart';
-import PieChartLabel from '../components/PieChartLabel';
-import ResultButtons from '../components/ResultButtons';
-import ResultImage from '../components/ResultImage';
+import ResultOneSketchBook from '../components/ResultOneSketchBook';
 import GameBGImg from '../components/GameBGImg';
+import TopFiveResult from '../components/TopFiveResult';
 
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import MobileBottomBtn from '../components/MobileBottomBtn';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
+const getImageURL = '/api/v1/results/draw/';
 
 function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0 }]); // 유사도 상위 5개 이름과 유사도
@@ -23,6 +20,12 @@ function ResultforOne() {
   const [isRender, setIsRender] = useState([0, 0, 0, 0, 0]); // API호출 성공시 이미지 업데이트하기위한 인덱스배열
 
   const location = useLocation();
+
+  // drawId로 이미지 URL가져오는 함수
+  async function getRandomWordImage(drawId) {
+    const response = await axios.get(getImageURL.concat(drawId));
+    return response;
+  }
 
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
@@ -45,7 +48,7 @@ function ResultforOne() {
     setRandomWordData({
       name: response.randword.dictionary.name,
       value: response.randword.similarity,
-      imageUrl: response.randword.dictionary.img_url,
+      imageUrl: getRandomWordImage(location.state.drawId),
     });
     setIsRender([0, 1, 2, 3, 4]);
   }
@@ -80,52 +83,37 @@ function ResultforOne() {
         </div>
         <div
           className="flex deskTop:flex-row mobile:flex-col-reverse
-        deskTop:mt-[3vh] items-center justify-center"
+          deskTop:mt-[3vh] items-center justify-center"
         >
           {isMobile && (
             <div
               className="relative flex-col justify-center top-[5vh]
-            max-h-[40vh] w-[100%] h-[40vh]"
+              max-h-[40vh] w-[100%] h-[40vh]"
             >
               <div className="flex flex-row space-x-[3vw] justify-center">
-                <div className="flex-col w-[12.5vh] h-[12.5vh] max-h-[28.7vw]">
-                  <div className="relative h-[100%]">
-                    <ResultPieChart chartData={chart[isRender[0]].value} />
-                    <ResultImage imageUrl={imageUrl[isRender[0]]} />
-                  </div>
-                  <PieChartLabel text={chart[isRender[0]].name} />
-                </div>
-                <div className="flex-col w-[12.5vh] h-[12.5vh] max-h-[28.7vw]">
-                  <div className="relative h-[100%]">
-                    <ResultPieChart chartData={chart[isRender[1]].value} />
-                    <ResultImage imageUrl={imageUrl[isRender[1]]} />
-                  </div>
-                  <PieChartLabel text={chart[isRender[1]].name} />
-                </div>
-                <div className="flex-col w-[12.5vh] h-[12.5vh] max-h-[28.7vw]">
-                  <div className="relative h-[100%]">
-                    <ResultPieChart chartData={chart[isRender[2]].value} />
-                    <ResultImage imageUrl={imageUrl[isRender[2]]} />
-                  </div>
-                  <PieChartLabel text={chart[isRender[2]].name} />
-                </div>
+                {[0, 1, 2].map(element => (
+                  <TopFiveResult
+                    key={element}
+                    isPc={false}
+                    rank={element}
+                    chartValue={chart[isRender[element]].value}
+                    imageUrl={imageUrl[isRender[element]]}
+                    chartName={chart[isRender[element]].name}
+                  />
+                ))}
               </div>
 
               <div className="flex flex-row mt-[4vh] space-x-[3vw] justify-center">
-                <div className="flex-col w-[12.5vh] h-[12.5vh] max-h-[28.7vw]">
-                  <div className="relative h-[100%]">
-                    <ResultPieChart chartData={chart[isRender[3]].value} />
-                    <ResultImage imageUrl={imageUrl[isRender[3]]} />
-                  </div>
-                  <PieChartLabel text={chart[isRender[3]].name} />
-                </div>
-                <div className="flex-col w-[12.5vh] h-[12.5vh] max-h-[28.7vw]">
-                  <div className="relative h-[100%]">
-                    <ResultPieChart chartData={chart[isRender[4]].value} />
-                    <ResultImage imageUrl={imageUrl[isRender[4]]} />
-                  </div>
-                  <PieChartLabel text={chart[isRender[4]].name} />
-                </div>
+                {[3, 4].map(element => (
+                  <TopFiveResult
+                    key={element}
+                    isPc={false}
+                    rank={element}
+                    chartValue={chart[isRender[element]].value}
+                    imageUrl={imageUrl[isRender[element]]}
+                    chartName={chart[isRender[element]].name}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -134,79 +122,20 @@ function ResultforOne() {
               className="relative justify-center top-[2vh]
             max-w-[60vh] max-h-[60vh] w-[40vw] h-[40vw]"
             >
-              <div
-                className="absolute flex-col w-[20vw] h-[20vw]
-              max-h-[30vh] max-w-[30vh] left-[2%] top-[2%]"
-              >
-                <div className="relative h-[100%]">
-                  <ResultPieChart chartData={chart[isRender[0]].value} />
-                  <ResultImage imageUrl={imageUrl[isRender[0]]} />
-                </div>
-                <PieChartLabel text={chart[isRender[0]].name} />
-              </div>
-              <div
-                className="absolute flex-col w-[12vw] h-[12vw]
-              max-h-[18vh] max-w-[18vh] left-[70%]"
-              >
-                <div className="relative h-[100%]">
-                  <ResultPieChart chartData={chart[isRender[1]].value} />
-                  <ResultImage imageUrl={imageUrl[isRender[1]]} />
-                </div>
-                <PieChartLabel text={chart[isRender[1]].name} />
-              </div>
-              <div
-                className="absolute flex-col w-[12vw] h-[12vw]
-              max-h-[18vh] max-w-[18vh] left-[65%] top-[40%]"
-              >
-                <div className="relative h-[100%]">
-                  <ResultPieChart chartData={chart[isRender[2]].value} />
-                  <ResultImage imageUrl={imageUrl[isRender[2]]} />
-                </div>
-                <PieChartLabel text={chart[isRender[2]].name} />
-              </div>
-              <div
-                className="absolute flex-col w-[12vw] h-[12vw]
-              max-h-[18vh] max-w-[18vh] left-[35%] top-[70%]"
-              >
-                <div className="relative h-[100%]">
-                  <ResultPieChart chartData={chart[isRender[3]].value} />
-                  <ResultImage imageUrl={imageUrl[isRender[3]]} />
-                </div>
-                <PieChartLabel text={chart[isRender[3]].name} />
-              </div>
-              <div
-                className="absolute flex-col w-[12vw] h-[12vw]
-              max-h-[18vh] max-w-[18vh] top-[70%]"
-              >
-                <div className="relative h-[100%]">
-                  <ResultPieChart chartData={chart[isRender[4]].value} />
-                  <ResultImage imageUrl={imageUrl[isRender[4]]} />
-                </div>
-                <PieChartLabel text={chart[isRender[4]].name} />
-              </div>
+              {[0, 1, 2, 3, 4].map(element => (
+                <TopFiveResult
+                  key={element}
+                  isPc={isPC}
+                  rank={element}
+                  chartValue={chart[isRender[element]].value}
+                  imageUrl={imageUrl[isRender[element]]}
+                  chartName={chart[isRender[element]].name}
+                />
+              ))}
             </div>
           )}
-          <div
-            className="deskTop:w-[40vw] deskTop:h-[40vw] deskTop:max-w-[65vh] deskTop:max-h-[65vh]
-          mobile:h-[30vh] deskTop:ml-[4vw] flex-col justify-center"
-          >
-            <div
-              className="flex justify-center items-center relative 
-          deskTop:h-[80%] mobile:h-[90%] mobile:mb-[-1vh]"
-            >
-              <img src={sketchbook} className="deskTop:h-[100%] mobile:h-[90%]" alt="" />
-              <img
-                src={randomWordData.imageUrl}
-                alt=""
-                className="absolute h-[50%] top-1/2 left-1/2
-              -translate-y-[50%] -translate-x-[50%]"
-              />
-            </div>
-            <ResultText name={randomWordData.name} value={randomWordData.value} textSize={10} />
-            <div className="mt-[4rem]">{isPC && <ResultButtons isforOne />}</div>
-          </div>
+          <ResultOneSketchBook randomWordData={randomWordData} isPC={isPC} />
         </div>
-
         <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
           {isMobile && <MobileBottomBtn isforOne />}
         </div>
