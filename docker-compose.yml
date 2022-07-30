@@ -140,6 +140,7 @@ services:
     tty: true
 
   statsd-exporter:
+    container_name: exporter-con
     image: prom/statsd-exporter:v0.22.4
     ports:
       - "9125:9125"
@@ -150,6 +151,7 @@ services:
       - --statsd.mapping-config=/statsd/statsd.conf
 
   prometheus:
+    container_name: prometheus-con
     image: prom/prometheus:v2.33.5
     ports:
       - "9090:9090"
@@ -159,6 +161,7 @@ services:
       - '--config.file=/workspace/prometheus.yml'
 
   grafana:
+    container_name: grafana-con
     image: grafana/grafana:8.4.3
     ports:
       - "3000:3000"
