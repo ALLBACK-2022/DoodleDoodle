@@ -108,11 +108,13 @@ def call_method():
 @app.route('/api/v1/task_status',methods=['POST'])
 def get_status():
     task_ids = request.get_json()
+    if _is_complete(task_ids) == "SUCCESS":
+        return _is_complete(task_ids)
     while (_is_complete(task_ids) == "STARTED"):    # started인 동안 반복
         
         time.sleep(1.0)
-    if _is_complete(task_ids) == "SUCCESS":
-        return _is_complete(task_ids)
+        if _is_complete(task_ids) == "SUCCESS":
+            return _is_complete(task_ids)
             #return ("Get result fail", 200)
     else:
         return "FAILURE"
