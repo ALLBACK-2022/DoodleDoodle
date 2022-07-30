@@ -12,6 +12,7 @@ import ResultImage from '../components/ResultImage';
 import GameBGImg from '../components/GameBGImg';
 
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
+import MobileBottomBtn from '../components/MobileBottomBtn';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
 
@@ -235,7 +236,9 @@ function ResultforOne() {
           </div>
         </div>
 
-        <div className="absolute bottom-[9vh] items-center w-[92vw]">{isMobile && <ResultButtons isforOne />}</div>
+        <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
+          {isMobile && <MobileBottomBtn isforOne />}
+        </div>
       </div>
     </div>
   );
