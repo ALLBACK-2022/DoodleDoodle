@@ -1,11 +1,12 @@
 import { Pie, PieChart, ResponsiveContainer, Cell } from 'recharts';
 
-function ResultPieChart({ chartData }) {
+function ResultPieChart({ chartValue }) {
   const COLORS = ['#f8d359', '#d9d9d9']; // 노랑, 흰색
   const newData = [
-    { name: '', value: chartData },
-    { name: '', value: 100 - chartData },
+    { name: '', value: chartValue },
+    { name: '', value: 100 - chartValue },
   ];
+  console.log(chartValue);
   return (
     <ResponsiveContainer>
       <PieChart width="100%" height="100%">
