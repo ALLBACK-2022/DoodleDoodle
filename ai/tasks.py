@@ -63,7 +63,7 @@ def ai_predict(draw_id, ranword):
             for line in ins:
                 class_names.append(line.rstrip('\n'))
         # Load the model
-        model = keras.models.load_model('./ai-model/6000_30_128.h5')
+        model = keras.models.load_model('./ai-model/1820.h5')
         # model.summary()
         # print('tasks.py: 모델 로드 완료')
         img = plt.imread('temp/' + filepath)
@@ -87,8 +87,7 @@ def ai_predict(draw_id, ranword):
             if x < 5:
                 otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
         # 결과 DB에 저장
-        otherResults, result, flag, now = {}, {
-        }, True, datetime.datetime.now().replace(microsecond=0)
+        otherResults, result, flag, now = {}, {}, True, datetime.datetime.now().replace(microsecond=0)
         for x in range(0, len(ind)):
             if(class_names[ind[x]] == ranword):
                 result[ranword] = round(pred[ind[x]]*100, 1)

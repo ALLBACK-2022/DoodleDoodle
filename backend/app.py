@@ -6,6 +6,7 @@ from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from pyrsistent import b
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
@@ -80,8 +81,13 @@ with app.app_context():
 
 
 def _request_taskcheck(data):
-    URL = 'http://ai:5000/api/v1/task_status'
-    response = requests.post(URL, data=data)
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    url = 'http://ai:5000/api/v1/task_status'
+    response = session.post(url, json=data)
     response_data = response.json()
     task_status = response_data["status"]
     return task_status
@@ -96,7 +102,6 @@ def _is_complete(task_ids):
             return "WAIT"
     return "SUCCESS"
 
-
 def _organize_result(results, randword):
     res = {}
     topfive = []
@@ -108,7 +113,8 @@ def _organize_result(results, randword):
             res['randword'] = word
         topfive.append(word)
     res['topfive'] = topfive
-    res['draw-id'] = results[0].draw_id
+    if results:
+        res['draw-id'] = results[0].draw_id
     res['topfive'] = sorted(
         res['topfive'], key=lambda d: d['similarity'], reverse=True)
     if len(res['topfive']) > 5:
@@ -148,7 +154,7 @@ class randwords(Resource):
     def get(self):
         '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
-            models.Dictionary.id == random.randint(1, 345))
+            models.Dictionary.id == random.randint(1, 99))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
@@ -264,7 +270,7 @@ class game(Resource):
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
 class singleresult(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다(다인)'''
+        '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()
         # task_id(list 형태) game_id 받기
         task_id = value['task-id']
@@ -274,9 +280,9 @@ class singleresult(Resource):
             return('Can not access data', 400)
         randword = game.random_word
         # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
-        data = {'task-id': [task_id]}
+        data = {'task-id': task_id}
         response = _request_taskcheck(data)
-        if response == "FAIL":
+        if response == "FAILURE":
             return('AI fail', 400)
         if response == "TIME_OUT":
             return('AI time out', 400)
@@ -292,7 +298,7 @@ class singleresult(Resource):
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
 class multiresults(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다(1인)'''
+        '''AI가 분석한 결과를 가져온다(다인)'''
         value = request.get_json()
         # task_id(list 형태) game_id 받기
         task_id = value['task-id']
