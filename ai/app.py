@@ -75,9 +75,8 @@ def get_status():
     while (res):
         temp_str = _is_complete(task_ids)
         res = status[str(temp_str)]
-        time.sleep(1.0)
-        #test 
-        time.sleep(35.0)
+        time.sleep(1.0) 
+        #time.sleep(35.0)
         end = time.time()
         if((end-start)>30):
             print('시간이 초과되었습니다!!')
