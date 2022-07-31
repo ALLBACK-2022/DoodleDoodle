@@ -9,11 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os
-import models
-import random
-import logging
-import requests
+import os, models, random, logging, requests
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -103,13 +99,19 @@ def _organize_result(results, randword):
         if result.dictionary.name == randword:
             res['randword'] = word
         topfive.append(word)
+    if(len(topfive) > 5):
+        for i in range(0, 5):
+            for j in range(1, 6):
+                if topfive[i]['dictionary']['name'] == topfive[j]['dictionary']['name']:
+                    topfive.pop(i)
+                    break
+            if len(topfive) == 5:
+                break
     res['topfive'] = topfive
     if results:
         res['draw-id'] = results[0].draw_id
     res['topfive'] = sorted(
         res['topfive'], key=lambda d: d['similarity'], reverse=True)
-    if len(res['topfive']) > 5:
-        res['topfive'].pop()
     return res
 
 
