@@ -111,7 +111,7 @@ def _organize_result(results, randword):
     if(len(topfive) > 5):
         for i in range(0, 5):
             for j in range(1, 6):
-                if topfive[i]['dictionary']['name'] == topfive[j]['dictionary']['name']:
+                if i != j and topfive[i]['dictionary']['name'] == topfive[j]['dictionary']['name']:
                     topfive.pop(i)
                     break
             if len(topfive) == 5:
