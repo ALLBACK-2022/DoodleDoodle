@@ -11,12 +11,12 @@ import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import MobileBottomBtn from '../components/MobileBottomBtn';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
-const getImageURL = '/api/v1/results/draw/';
+const getImageURL = 'http://localhost:5000/api/v1/results/draw/';
 
 function ResultforOne() {
-  const [chart, setChart] = useState([{ name: '?', value: 0 }]); // 유사도 상위 5개 이름과 유사도
+  const [chart, setChart] = useState([{ name: '?', value: 0.0 },]); // 유사도 상위 5개 이름과 유사도
   const [randomWordData, setRandomWordData] = useState({ name: '?', value: 0, imageUrl: testImage }); // 주어진 단어의 이름과 유사도
-  const [imageUrl, setImageUrl] = useState([testImage]); // 유사도 상위 5개의 이미지들
+  const [imageUrl, setImageUrl] = useState([testImage,]); // 유사도 상위 5개의 이미지들
   const [isRender, setIsRender] = useState([0, 0, 0, 0, 0]); // API호출 성공시 이미지 업데이트하기위한 인덱스배열
 
   const location = useLocation();
@@ -24,33 +24,56 @@ function ResultforOne() {
   // drawId로 이미지 URL가져오는 함수
   async function getRandomWordImage(drawId) {
     const response = await axios.get(getImageURL.concat(drawId));
-    return response;
+    console.log(getImageURL.concat(drawId));
+    // console.log(response);
+    return response.data;
   }
 
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
-    const response = await axios.post(baseURL, {
+    await axios.post(baseURL, {
       'game-id': location.state.gameId,
       'draw-id': location.state.drawId,
       'task-id': location.state.taskId,
-    });
-    const topfiveArray = [];
-    const imageArray = [];
-    response.topfive.forEach(element => {
-      topfiveArray.push({
-        name: element.dictionary.name,
-        value: element.similarity,
-      });
-      imageArray.push(element.dictionary.img_url);
-    });
-    setImageUrl(imageArray);
-    setChart(topfiveArray);
-    setRandomWordData({
-      name: response.randword.dictionary.name,
-      value: response.randword.similarity,
-      imageUrl: getRandomWordImage(location.state.drawId),
-    });
-    setIsRender([0, 1, 2, 3, 4]);
+    }).then((response) => {
+      const topfiveArray = [];
+      const imageArray = [];
+
+      const top = response.data.topfive;
+      for(let i = 0; i < 5; i += 1){
+        if(typeof top[i] != 'undefined'){
+          console.log(top[i]);
+          topfiveArray.push({
+            name: top[i].dictionary.name,
+            value: top[i].similarity,
+          });
+          imageArray.push(top[i].dictionary.img_url);
+        }
+        else{
+          console.log("topfive Error");
+        }
+      }
+
+      console.log(imageArray);
+      console.log(topfiveArray);
+      setImageUrl(imageArray);
+      setChart(topfiveArray);
+      if(typeof response.data.ranword != 'undefined'){
+        setRandomWordData({
+          name: response.data.randword.dictionary.name,
+          value: response.data.randword.similarity,
+          imageUrl: getRandomWordImage(location.state.drawId),
+        });
+        console.log(response.data.randword.similarity);
+      }
+      else{
+        console.log("randword Error");
+      }
+      if(imageArray.length == 5 && topfiveArray.length == 5){
+        setTimeout(() => console.log("sleep"), 3000);
+        setIsRender([0, 1, 2, 3, 4]);
+      }
+    })
   }
 
   useEffect(() => {
@@ -92,7 +115,7 @@ function ResultforOne() {
             >
               <div className="flex flex-row space-x-[3vw] justify-center">
                 {[0, 1, 2].map(element => (
-                  <TopFiveResult
+                  <TopFiveResult 
                     key={element}
                     isPc={false}
                     rank={element}

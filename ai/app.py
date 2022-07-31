@@ -16,6 +16,17 @@ RABBITMQ_DEFAULT_PASS=os.environ.get("RABBITMQ_DEFAULT_PASS")
 
 os.chdir('/ai')
 
+def _is_complete(task_ids):
+    for task_id in task_ids:
+        status = celery_app.AsyncResult(task_id, app=celery_app)
+        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
+            return str(status.state)
+        elif status == "FAILURE":
+            break
+    else:
+        return 'SUCCESS'
+    return 'FAILURE'
+
 def make_celery(app):
     celery = Celery(
         'ai',
@@ -47,7 +58,7 @@ app.config.update(
 
 celery_app = make_celery(app)
 
-@app.route('/api/v1/start_predict' ,methods=['POST'])
+@app.route('/api/v1/start_predict', methods=['POST'])
 def call_method():
     value = request.get_json()
     draw_id = value['draw_id']
@@ -62,7 +73,7 @@ def call_method():
     return rettaskid
 
 
-@app.route('/api/v1/task_status')
+@app.route('/api/v1/task_status', methods=['POST'])
 def get_status():
     status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
     response_data = request.get_json()
@@ -72,21 +83,11 @@ def get_status():
         temp_str = _is_complete(task_ids)
         res = status[str(temp_str)]
         time.sleep(1.0)
-    return { "status" : temp_str}
-
-def _is_complete(task_ids):
-    for task_id in task_ids:
-        status = celery_app.AsyncResult(task_id, app=celery_app)
-        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
-            return str(status.state)
-        elif status == "FAILURE":
-            break
-    else:
-        return 'SUCCESS'
-    return 'FAILURE'
+    response = { "status" : temp_str}
+    return response
 
 #작업결과
-@app.route('/simple_task_result/<task_id>')
+@app.route('/simple_task_result/<task_id>', methods=['GET'])
 def task_result(task_id):
     ret = celery_app.AsyncResult(task_id).get()
     return ret
