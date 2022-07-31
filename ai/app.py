@@ -94,17 +94,6 @@ def get_status():
 
     return { "status" : temp_str}
 
-def _is_complete(task_ids):
-    for task_id in task_ids:
-        status = celery_app.AsyncResult(task_id, app=celery_app)
-        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
-            return str(status.state)
-        elif status == "FAILURE":
-            break
-    else:
-        return 'SUCCESS'
-    return 'FAILURE'
-
 #작업결과
 @app.route('/simple_task_result/<task_id>', methods=['GET'])
 def task_result(task_id):
