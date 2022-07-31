@@ -23,16 +23,16 @@ function GamePage() {
   const canvasRef = useRef(); // DrawingCanvas컴포넌트의 함수를 불러오기위한 ref
   const gameID = useRef(); // 게임 ID
 
-  const taskIdArray = [];
-  const drawIdArray = [];
+  const taskIdArray = useRef([]);
+  const drawIdArray = useRef([]);
 
   // 플레이어수, 게임ID, 단어를 이전 페이지에서 받아와서 업데이트
   function setGameData() {
     setRandWord(location.state.drawWord);
     setMaxPlayer(location.state.playerNum);
     gameID.current = location.state.gameID;
-    taskIdArray.length = 0;
-    drawIdArray.length = 0;
+    taskIdArray.current.length = 0;
+    drawIdArray.current.length = 0;
   }
 
   // 페이지 로드 시 1회 실행, 게임 Data 세팅 및 캔버스 기본 세팅
@@ -49,16 +49,24 @@ function GamePage() {
     await axios
       .post(postImageURL, formData)
       .then(response => {
-        taskIdArray.push(response.data.task_id); // 반환값에서 TaskID받아서 저장
-        drawIdArray.push(response.data.draw_id); // 반환값에서 drawID받아서 저장
-        console.log('drawIdArray: ', drawIdArray);
-        console.log('taskIdArray: ', taskIdArray);
+        taskIdArray.current[currentPlayer - 1] = response.data.task_id; // 반환값에서 TaskID받아서 저장
+        drawIdArray.current[currentPlayer - 1] = response.data.draw_id; // 반환값에서 drawID받아서 저장
+        // taskIdArray.push(response.data.task_id);
+        // drawIdArray.push(response.data.draw_id);
+        console.log('drawIdArray: ', drawIdArray.current);
+        console.log('taskIdArray: ', taskIdArray.current);
         console.log('response: ', response);
         if (currentPlayer >= maxPlayer) {
           const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
+          console.log('goToResultPage');
           navigate(newURL, {
             replace: true,
-            state: { gameId: gameID.current, taskId: taskIdArray, drawId: drawIdArray, isFromGamePage: true },
+            state: {
+              gameId: gameID.current,
+              taskId: taskIdArray.current,
+              drawId: drawIdArray.current,
+              isFromGamePage: true,
+            },
           });
         }
       })
@@ -68,7 +76,12 @@ function GamePage() {
           const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
           navigate(newURL, {
             replace: true,
-            state: { gameId: gameID.current, taskId: [1], drawId: [1], isFromGamePage: true },
+            state: {
+              gameId: gameID.current,
+              taskId: taskIdArray.current,
+              drawId: taskIdArray.current,
+              isFromGamePage: true,
+            },
           });
         }
       });
