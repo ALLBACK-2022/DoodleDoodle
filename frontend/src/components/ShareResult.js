@@ -28,8 +28,8 @@ function ShareResult({ isforOne }) {
   return (
     <button
       onClick={share}
-      className={`font-cookierun deskTop:text-2xl deskTop:w-[9rem] mobile:text-[2vh]
-      deskTop:px-[1.5rem] deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
+      className={`font-cookierun deskTop:text-[2.5vmin] deskTop:w-[30%] mobile:text-[2vh]
+      deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
       mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
                  ${
                    isforOne

@@ -71,10 +71,13 @@ def call_method():
     rettaskid = {"task_id":task_id}
 
     return rettaskid
-
-
+    
 @app.route('/api/v1/task_status', methods=['POST'])
 def get_status():
+
+    #상태 조회 제한 시간
+    start = time.time()
+
     status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
     response_data = request.get_json()
     task_ids = response_data["task-id"]
@@ -82,15 +85,31 @@ def get_status():
     while (res):
         temp_str = _is_complete(task_ids)
         res = status[str(temp_str)]
-        time.sleep(1.0)
-    response = { "status" : temp_str}
-    return response
+        time.sleep(1.0) 
+        #time.sleep(35.0)
+        end = time.time()
+        if((end-start)>30):
+            print('시간이 초과되었습니다!!')
+            return { "status" : "FAILURE"}
+
+    return { "status" : temp_str}
+
+def _is_complete(task_ids):
+    for task_id in task_ids:
+        status = celery_app.AsyncResult(task_id, app=celery_app)
+        if not (str(status.state) == "SUCCESS" or str(status.state) == "FAILURE"):
+            return str(status.state)
+        elif status == "FAILURE":
+            break
+    else:
+        return 'SUCCESS'
+    return 'FAILURE'
 
 #작업결과
 @app.route('/simple_task_result/<task_id>', methods=['GET'])
 def task_result(task_id):
-    ret = celery_app.AsyncResult(task_id).get()
-    return ret
+    ret = celery_app.AsyncResult(task_id).result
+    return str(ret)
 
 if __name__ == '__main__':
     app.run()

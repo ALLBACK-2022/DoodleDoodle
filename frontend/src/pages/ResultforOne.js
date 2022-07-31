@@ -157,7 +157,7 @@ function ResultforOne() {
               ))}
             </div>
           )}
-          <ResultOneSketchBook randomWordData={randomWordData} isPC={isPC} />
+          <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />
         </div>
         <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
           {isMobile && <MobileBottomBtn isforOne />}

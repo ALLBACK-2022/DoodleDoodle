@@ -14,12 +14,12 @@ function ResultText({ name, value, textSize }) {
 
     case 10: // result one Page
       return (
-        <h1
-          className="font-cookierun text-center
+        <div
+          className="font-cookierun text-center deskTop:h-[8vh]
           deskTop:text-[3vmin] mobile:text-[2vh]"
         >
           {text}
-        </h1>
+        </div>
       );
 
     default:
