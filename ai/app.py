@@ -64,6 +64,10 @@ def call_method():
 #작업상태
 @app.route('/api/v1/task_status')
 def get_status():
+
+    #상태 조회 제한 시간
+    start = time.time()
+
     status = {"STARTED" : 1, "PENDING" : 1, "FAILURE" : 0, "SUCCESS" : 0, "RETRY" : 1}
     response_data = request.get_json()
     task_ids = response_data["task-id"]
@@ -72,6 +76,13 @@ def get_status():
         temp_str = _is_complete(task_ids)
         res = status[str(temp_str)]
         time.sleep(1.0)
+        #test 
+        time.sleep(35.0)
+        end = time.time()
+        if((end-start)>30):
+            print('시간이 초과되었습니다!!')
+            return { "status" : "FAILURE"}
+
     return { "status" : temp_str}
 
 def _is_complete(task_ids):
