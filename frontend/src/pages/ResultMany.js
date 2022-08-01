@@ -8,38 +8,17 @@ import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
-const getnfoURL = 'http://localhost:5000/api/v1/draws/results/multi';
+const getInfoURL = 'http://localhost:5000/api/v1/draws/results/multi';
 const getImageURL = 'http://localhost:5000/api/v1/results/game/';
 
 function ResultMany() {
-  const [playersInfo, setPlayersInfo] = useState([{}]);
+  const tempInfo = [];
+  const tempPics = [];
   const [playersPics, setPlayersPics] = useState([]);
+  const [playersInfo, setPlayersInfo] = useState([]);
   const [infoLoading, setInfoLoading] = useState(false);
   const [picLoading, setPicLoading] = useState(false);
   const location = useLocation();
-  async function getData() {
-    console.log('getData() here');
-
-    const response1 = await axios
-      .post(getnfoURL, {
-        'game-id': location.state.gameId,
-        'task-id': location.state.taskId,
-      })
-      .then(setInfoLoading(true));
-    setPlayersInfo(response1.data.res);
-    console.log('playersInfo');
-    console.log(playersInfo);
-
-    const response2 = await axios.get(getImageURL.concat(location.state.gameId)).then(setPicLoading(true));
-    setPlayersPics(response2.data);
-    console.log('playersPics');
-    console.log(playersPics);
-  }
-  useEffect(() => {
-    getData();
-    console.log('useEffect() here');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -48,12 +27,61 @@ function ResultMany() {
     query: '(min-width: 701px)',
   });
 
+  async function getData() {
+    console.log('getData() here');
+    console.log('task-id from gamepage', location.state.taskId);
+    await axios
+      .post(getInfoURL, {
+        'game-id': location.state.gameId,
+        'task-id': location.state.taskId,
+      })
+      .then(response1 => {
+        const response = response1.data.res;
+        console.log(response);
+        // eslint-disable-next-line no-unused-vars
+        const temp = response.map(element => tempInfo.push(element));
+        console.log('playersInfo length', tempInfo.length);
+        // eslint-disable-next-line no-unused-vars
+        const temp2 = tempInfo.map(player => {
+          console.log('randword similarity', player.randword.similarity);
+          console.log('draw-no', player['draw-no']);
+          console.log('task-id', [player['task-id']]);
+          console.log('draw-id', player['draw-id']);
+          return player;
+        });
+        setPlayersInfo(tempInfo);
+        setInfoLoading(loading => !loading);
+        console.log('infoLoading', infoLoading);
+      })
+      .then();
+
+    await axios.get(getImageURL.concat(location.state.gameId)).then(response2 => {
+      const response = response2.data;
+      console.log(response);
+      // test
+      // eslint-disable-next-line no-unused-vars
+      const temp = location.state.taskId.map((element, index) => {
+        tempPics.push(response[index + 1]);
+        return null;
+      });
+      setPlayersPics(tempPics);
+      setPicLoading(pics => !pics);
+      console.log('PicLoading', picLoading);
+      console.log(tempPics);
+    });
+  }
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    console.log('PicLoading', picLoading);
+    console.log('infoLoading', infoLoading);
+  }, [infoLoading, picLoading]);
+
   return (
     <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
-      <div
-        id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`}
-        className="px-[3rem] py-[2rem] w-full h-[100vh] overflow-y-auto scrollSection"
-      >
+      <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-[100vh] ">
         <h1
           className="text-black font-cookierun text-left
         deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
@@ -69,7 +97,7 @@ function ResultMany() {
               <MobileResultMulti
                 rank={index + 1}
                 percentage={player.randword.similarity}
-                doodle={playersPics[player['draw-no']]}
+                doodle={playersPics[player['draw-no'] - 1]}
                 player={player['draw-no']}
                 key={player['draw-id']}
                 taskid={[player['task-id']]}
@@ -79,12 +107,12 @@ function ResultMany() {
           </div>
         )}
         {isPc && infoLoading && picLoading && (
-          <div className="flex flex-wrap place-content-around w-[85%] justify-center m-auto">
+          <div className="flex flex-wrap place-content-around w-[85%] h-[70%] justify-center m-auto">
             {playersInfo.map((player, index) => (
               <ResultMulti
                 rank={index + 1}
                 percentage={player.randword.similarity}
-                doodle={playersPics[player['draw-no']]}
+                doodle={playersPics[player['draw-no'] - 1]}
                 player={player['draw-no']}
                 key={player['draw-id']}
                 number={playersInfo.length}
