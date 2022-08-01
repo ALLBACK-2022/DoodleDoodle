@@ -20,7 +20,7 @@
 
 .sketchbook {
     background: url("./assets/icons/sketchbook.png");
-    background-size: 100% 100%;
+    background-size: auto;
     background-position: center;
 }
 

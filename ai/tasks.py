@@ -41,17 +41,18 @@ sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
     '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 engine = create_engine(sqlurl)
 
+
 @celery_app.task(name='ai_predict')
-def ai_predict(draw_id, ranword):
+async def ai_predict(draw_id, ranword):
     # logger.info('ai_predict에 들어옴')
-    
+
     logger.info(draw_id)
     logger.info(ranword)
     s3 = s3_connection()
-   
+
     filepath = str(draw_id) + '.png'
     # https://doodle-bucket.s3.ap-northeast-2.amazonaws.com/drawimage/1.png
-    
+
     if not os.path.exists('temp'):
         os.mkdir('temp')
     #ret = s3_get_object(s3, BUCKET_NAME, 'drawimage/' + filepath, 'temp/'+ filepath)
@@ -87,7 +88,8 @@ def ai_predict(draw_id, ranword):
             if x < 5:
                 otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
         # 결과 DB에 저장
-        otherResults, result, flag, now = {}, {}, True, datetime.datetime.now().replace(microsecond=0)
+        otherResults, result, flag, now = {}, {
+        }, True, datetime.datetime.now().replace(microsecond=0)
         for x in range(0, len(ind)):
             if(class_names[ind[x]] == ranword):
                 result[ranword] = round(pred[ind[x]]*100, 1)
@@ -128,6 +130,7 @@ def ai_predict(draw_id, ranword):
                 models.Draw.id == draw_id).first().game_id
             row = models.Result(similarity=0.0, draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
                                 created_at=now, updated_at=now)
+
             db.session.add(row)
         db.session.commit()
         # print('tasks.py:결과 도출 성공', otherResults)
