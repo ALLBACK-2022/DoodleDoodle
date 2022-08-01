@@ -78,8 +78,8 @@ function GamePage() {
             replace: true,
             state: {
               gameId: gameID.current,
-              taskId: taskIdArray.current,
-              drawId: taskIdArray.current,
+              taskId: maxPlayer,
+              drawId: maxPlayer,
               isFromGamePage: true,
             },
           });

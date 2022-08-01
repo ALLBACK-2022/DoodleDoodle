@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
-import MobileBottomBtn from '../components/MobileBottomBtn';
+// import MobileBottomBtn from '../components/MobileBottomBtn';
 import MobileResultMulti from '../components/MobileResultMulti';
 import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
@@ -123,7 +123,16 @@ function ResultMany() {
             ))}
           </div>
         )}
-        {isMobile && infoLoading && (
+        {infoLoading && (
+          <div className="mobile:text-center mobile:mt-[5%] deskTop:fixed deskTop:bottom-[4rem] deskTop:right-[5rem]">
+            <ResultButtons isforOne={false} stateData={location.state} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+  /*
+  {isMobile && infoLoading && (
           <div className="text-center mt-[5%]">
             <MobileBottomBtn goback={false} playerNumber={playersInfo.length} gameId={location.state.gameId} />
           </div>
@@ -133,8 +142,6 @@ function ResultMany() {
             <ResultButtons isforOne={false} playerNumber={playersInfo.length} gameId={location.state.gameId} />
           </div>
         )}
-      </div>
-    </div>
-  );
+  */
 }
 export default ResultMany;
