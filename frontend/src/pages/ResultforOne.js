@@ -8,17 +8,20 @@ import GameBGImg from '../components/GameBGImg';
 import TopFiveResult from '../components/TopFiveResult';
 
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
-import MobileBottomBtn from '../components/MobileBottomBtn';
+// import MobileBottomBtn from '../components/MobileBottomBtn';
+import ResultButtons from '../components/ResultButtons';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
 const getImageURL = 'http://localhost:5000/api/v1/results/draw/';
 
 function ResultforOne() {
-  const [chart, setChart] = useState([{ name: '?', value: 0.0 },]); // 유사도 상위 5개 이름과 유사도
+  const [chart, setChart] = useState([{ name: '?', value: 0.0 }]); // 유사도 상위 5개 이름과 유사도
   const [randomWordData, setRandomWordData] = useState({ name: '?', value: 0, imageUrl: testImage }); // 주어진 단어의 이름과 유사도
   const [imageUrl, setImageUrl] = useState([testImage]); // 유사도 상위 5개의 이미지들
   const [isLoad, setIsLoad] = useState(false);
   const [isImageLoad, setIsImageLoad] = useState(false);
+
+  const defaultData = { name: '?', value: 0.0 };
 
   const location = useLocation();
 
@@ -41,6 +44,7 @@ function ResultforOne() {
   }
 
   let testCount = 0;
+  let errorCount = 0;
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
     // 결과 받아오는 API 호출
@@ -81,8 +85,15 @@ function ResultforOne() {
         getRandomWordData(randomWord);
       })
       .catch(error => {
-        testCount += 10;
-        console.log('test', testCount, ': ', error);
+        errorCount += 1;
+        console.log('test', testCount, '-error', errorCount, ': ', error);
+        if (errorCount >= 2) {
+          setChart([defaultData, defaultData, defaultData, defaultData, defaultData]);
+          setImageUrl([testImage, testImage, testImage, testImage, testImage]);
+          setRandomWordData({ name: defaultData.name, value: defaultData.value, imageUrl: testImage });
+          setIsLoad(true);
+          setIsImageLoad(true);
+        }
       });
   }
 
@@ -103,7 +114,7 @@ function ResultforOne() {
 
   return (
     <div id="resultonepage" className="relative w-screen h-screen bg-primary select-none">
-      <GameBGImg isGamePage={false} />
+      <GameBGImg pageName="ResultforOne" />
       <div
         className="flex absolute deskTop:px-[8vw] mobile:px-[4vw]
         pt-[8vh] w-full h-full flex-col"
@@ -126,7 +137,7 @@ function ResultforOne() {
             >
               <div className="flex flex-row space-x-[3vw] justify-center">
                 {[0, 1, 2].map(element => (
-                  <TopFiveResult 
+                  <TopFiveResult
                     key={element}
                     isPc={false}
                     rank={element}
@@ -169,9 +180,11 @@ function ResultforOne() {
             <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />
           )}
         </div>
-        <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
-          {isMobile && <MobileBottomBtn isforOne />}
-        </div>
+        {isMobile && (
+          <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
+            <ResultButtons isforOne stateData={location.state} />
+          </div>
+        )}
       </div>
     </div>
   );

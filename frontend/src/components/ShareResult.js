@@ -33,12 +33,9 @@ function ShareResult({ resultString ,isforOne, img }) {
       onClick={shareButton}
       className={`font-cookierun deskTop:text-[2.5vmin] deskTop:w-[30%] mobile:text-[2vh]
       deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
-      mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
-                 ${
-                   isforOne
-                     ? 'bg-primary-3 text-primary-1 hover:bg-primary'
-                     : 'bg-black text-primary hover:bg-primary-2'
-                 }`} >
+      mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh]
+      ${isforOne ? 'bg-primary-3 text-primary-1 hover:bg-primary' : 'bg-black text-primary hover:bg-primary-2'}`}
+    >
       저장하기
     </button>
 }

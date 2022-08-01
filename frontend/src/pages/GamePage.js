@@ -78,8 +78,8 @@ function GamePage() {
             replace: true,
             state: {
               gameId: gameID.current,
-              taskId: taskIdArray.current,
-              drawId: taskIdArray.current,
+              taskId: maxPlayer,
+              drawId: maxPlayer,
               isFromGamePage: true,
             },
           });
@@ -110,7 +110,7 @@ function GamePage() {
 
   return (
     <div className="w-screen h-screen bg-primary relative select-none">
-      <GameBGImg isGamePage />
+      <GameBGImg pageName="GamePage" />
       <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} />
       <PlayerText currentPlayer={currentPlayer} maxPlayer={maxPlayer} />
       <WordText randWord={randWord} />
