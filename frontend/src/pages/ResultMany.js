@@ -81,7 +81,7 @@ function ResultMany() {
 
   return (
     <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
-      <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-[100vh] ">
+      <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-full ">
         <h1
           className="text-black font-cookierun text-left
         deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
@@ -102,12 +102,13 @@ function ResultMany() {
                 key={player['draw-id']}
                 taskid={[player['task-id']]}
                 drawid={player['draw-id']}
+                gameid={location.state.gameId}
               />
             ))}
           </div>
         )}
         {isPc && infoLoading && picLoading && (
-          <div className="flex flex-wrap place-content-around w-[85%] h-[70%] justify-center m-auto">
+          <div className="flex flex-wrap place-content-around w-[85%] h-[60%] justify-center m-auto">
             {playersInfo.map((player, index) => (
               <ResultMulti
                 rank={index + 1}
