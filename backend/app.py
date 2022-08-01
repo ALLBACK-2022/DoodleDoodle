@@ -55,6 +55,7 @@ result_parser = ns.parser()
 
 db = SQLAlchemy(app)
 s3 = s3_connection()
+random.seed(random.randint(0, 300))
 
 
 def insert_word():
