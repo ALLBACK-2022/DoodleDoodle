@@ -117,8 +117,6 @@ def _is_complete(task_ids):
         return 'SUCCESS'
     return 'FAILURE'
 
-# 작업결과
-
 
 @app.route('/simple_task_result/<task_id>', methods=['GET'])
 def task_result(task_id):
