@@ -1,33 +1,36 @@
-import React from 'react';
-import html2canvas from 'html2canvas';
+import React, { useEffect } from 'react';
+import '../assets/icons/smile.png'
 
-function ShareResult({ isforOne }) {
-  function download(dataurl, filename) {
-    const link = document.createElement('a');
-    link.href = dataurl;
-    link.download = filename;
-    link.click();
-  }
+function ShareResult({ resultString ,isforOne, img }) {
 
-  async function share() {
-    if (isforOne) {
-      await html2canvas(document.getElementById('resultonepage')).then(async canvas => {
-        await canvas.toBlob(function (blob) {
-          download(URL.createObjectURL(blob), 'result.png');
-        }, 'image/png');
-      });
-    } else {
-      await html2canvas(document.getElementById('resultmanypage')).then(async canvas => {
-        await canvas.toBlob(function (blob) {
-          download(URL.createObjectURL(blob), 'result.png');
-        }, 'image/png');
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://developers.kakao.com/sdk/js/kakao.min.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () =>  document.body.removeChild(script);
+  }, [])
+
+  let array = resultString.split('을 ');
+  const str = array[0] + '을\n' + array[1];
+
+  function shareButton() {
+    if (window.Kakao) {
+      const kakao = window.Kakao
+
+      kakao.init(process.env.REACT_APP_KAKAO_TOKEN)
+      
+      Kakao.Link.sendCustom({
+        templateId: 80689,
+        templateArgs: {
+          ARGS : str,
+          THU : img,
+        }
       });
     }
   }
-
-  return (
-    <button
-      onClick={share}
+  return <button
+      onClick={shareButton}
       className={`font-cookierun deskTop:text-[2.5vmin] deskTop:w-[30%] mobile:text-[2vh]
       deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
       mobile:w-[11vh] mobile:max-w-[23vw] mobile:py-[1vh] rounded-full whitespace-nowrap
@@ -35,11 +38,8 @@ function ShareResult({ isforOne }) {
                    isforOne
                      ? 'bg-primary-3 text-primary-1 hover:bg-primary'
                      : 'bg-black text-primary hover:bg-primary-2'
-                 }`}
-    >
+                 }`} >
       저장하기
     </button>
-  );
 }
-
 export default ShareResult;
