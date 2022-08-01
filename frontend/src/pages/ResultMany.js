@@ -118,6 +118,7 @@ function ResultMany() {
                 number={playersInfo.length}
                 taskid={[player['task-id']]}
                 drawid={player['draw-id']}
+                gameid={location.state.gameId}
               />
             ))}
           </div>
