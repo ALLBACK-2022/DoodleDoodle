@@ -50,6 +50,7 @@ services:
       context: ./ai
     ports:
     - 5001:5000
+    platform: linux/x86_64
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: ./app.py

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import Loading from '../components/loading';
 import DrawingCanvas from '../components/DrawingCanvas';
 import NextButton from '../components/NextButton';
 import ClearButton from '../components/ClearButton';
@@ -16,6 +17,7 @@ function GamePage() {
   const [randWord, setRandWord] = useState(''); // 그림을 그릴 단어
   const [maxPlayer, setMaxPlayer] = useState(); // 전체 플레이어 수
   const [currentPlayer, countPlayer] = useState(1); // 현재 플레이어 번호
+  const [isLoad, setIsLoad] = useState(false);
 
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
   const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수
@@ -92,6 +94,8 @@ function GamePage() {
   // 마지막 플레이어면 1인 or 다인용 결과페이지로 이동(state로 id들 전달)
   const imgDataPost = data => {
     // 파일객체 생성 및 백엔드에 저장
+    // 로딩 구현 위치
+    // <Loading />;
     const metadata = { type: 'image/png' };
     const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
     postImage(file);
@@ -100,6 +104,12 @@ function GamePage() {
 
   // NextButton을 클릭했을때 실행
   const nextButtonClick = () => {
+    if (isLoad === true) {
+      return;
+    }
+    if (currentPlayer >= maxPlayer) {
+      setIsLoad(true);
+    }
     canvasRef.current.convertCanvasToImage();
   };
 
@@ -116,6 +126,7 @@ function GamePage() {
       <WordText randWord={randWord} />
       <ClearButton clearButtonClick={clearButtonClick} />
       <NextButton nextButtonClick={nextButtonClick} isMaxPlayer={currentPlayer >= maxPlayer} />
+      <div>{isLoad && <Loading />}</div>
     </div>
   );
 }

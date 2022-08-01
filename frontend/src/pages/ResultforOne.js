@@ -9,6 +9,7 @@ import TopFiveResult from '../components/TopFiveResult';
 
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import MobileBottomBtn from '../components/MobileBottomBtn';
+import Loading from '../components/loading';
 
 const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
 const getImageURL = 'http://localhost:5000/api/v1/results/draw/';
@@ -164,6 +165,10 @@ function ResultforOne() {
                 />
               ))}
             </div>
+          )}
+          {/* // 로딩  ? 는 실행 : 아닌 (or 연산자 ) */}
+          {!isLoad || !isImageLoad || (
+            <Loading />
           )}
           {isLoad && isImageLoad && (
             <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />

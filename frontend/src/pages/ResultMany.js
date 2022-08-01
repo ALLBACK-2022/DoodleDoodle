@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
+import Loading from '../components/loading';
 import MobileBottomBtn from '../components/MobileBottomBtn';
 import MobileResultMulti from '../components/MobileResultMulti';
 import ResultButtons from '../components/ResultButtons';
@@ -133,6 +134,9 @@ function ResultMany() {
             <ResultButtons isforOne={false} playerNumber={playersInfo.length} gameId={location.state.gameId} />
           </div>
         )}
+        {!infoLoading || !picLoading || (
+            <Loading />
+          )}
       </div>
     </div>
   );

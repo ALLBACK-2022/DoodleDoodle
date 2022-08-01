@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM --platform=linux/x86_64 python:3.8
 # This prevents Python from writing out pyc files
 ENV PYTHONDONTWRITEBYTECODE 1
 # This keeps Python from buffering stdin/stdout

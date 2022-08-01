@@ -29,7 +29,6 @@ opencv-python
 runway
 numpy
 Keras
-tensorflow
 scikit-image
 matplotlib
 boto3
