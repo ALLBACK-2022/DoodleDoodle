@@ -28,7 +28,3 @@ function ResultText({ name, value, textSize }) {
 }
 
 export default ResultText;
-
-/*
-
-*/

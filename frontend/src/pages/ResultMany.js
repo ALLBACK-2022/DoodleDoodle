@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
-// import MobileBottomBtn from '../components/MobileBottomBtn';
+import GameBGImg from '../components/GameBGImg';
 import MobileResultMulti from '../components/MobileResultMulti';
 import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
@@ -80,18 +80,19 @@ function ResultMany() {
   }, [infoLoading, picLoading]);
 
   return (
-    <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
-      <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-[100vh] ">
+    <div id="resultmanypage" className={`relative flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
+      <GameBGImg pageName="ResultMany" />
+      <div className="px-[3rem] deskTop:py-[2rem] mobile:pt-[8vh] w-full h-[100vh] absolute">
         <h1
           className="text-black font-cookierun text-left
-        deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
+          deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
         >
           누가 더 똑같이 그렸을까요?
         </h1>
         {isMobile && infoLoading && picLoading && (
           <div
             className="scrollSection h-[25rem] 
-      py-[2rem] px-[0.8rem] overflow-y-auto text-center m-auto mb-[1.5rem]"
+            py-[2rem] px-[0.8rem] overflow-y-auto text-center m-auto mb-[1.5rem]"
           >
             {playersInfo.map((player, index) => (
               <MobileResultMulti
@@ -102,6 +103,7 @@ function ResultMany() {
                 key={player['draw-id']}
                 taskid={[player['task-id']]}
                 drawid={player['draw-id']}
+                gameid={location.state.gameId}
               />
             ))}
           </div>
@@ -124,24 +126,16 @@ function ResultMany() {
           </div>
         )}
         {infoLoading && (
-          <div className="mobile:text-center mobile:mt-[5%] deskTop:fixed deskTop:bottom-[4rem] deskTop:right-[5rem]">
+          <div
+            className="mobile:absolute mobile:text-center mobile:bottom-[9vh]
+            mobile:items-center mobile:w-[92vw] deskTop:w-[40vw] deskTop:max-w-[65vh]
+            deskTop:fixed deskTop:bottom-[6vh] deskTop:right-[8vw]"
+          >
             <ResultButtons isforOne={false} stateData={location.state} />
           </div>
         )}
       </div>
     </div>
   );
-  /*
-  {isMobile && infoLoading && (
-          <div className="text-center mt-[5%]">
-            <MobileBottomBtn goback={false} playerNumber={playersInfo.length} gameId={location.state.gameId} />
-          </div>
-        )}
-        {isPc && infoLoading && (
-          <div className="fixed bottom-[4rem] right-[5rem]">
-            <ResultButtons isforOne={false} playerNumber={playersInfo.length} gameId={location.state.gameId} />
-          </div>
-        )}
-  */
 }
 export default ResultMany;

@@ -20,7 +20,7 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
       console.log(response.data);
       // 새로운 gameId 받아서 이동
 
-      navigate('../random', { replace: true, state: { playerNum: count, gameID: response.data } });
+      navigate(-1, { replace: true, state: { playerNum: count, gameID: response.data } });
     });
   }
 
@@ -34,7 +34,7 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
     } else {
       navigate('../resultmany', {
         replace: true,
-        state: { playerNum: stateData.drawId.length, gameID: stateData.gameId },
+        state: stateData,
       });
     }
   }
@@ -43,15 +43,20 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
     return (
       <div className="inline-flex flex-row w-[90%]  place-content-end gap-6">
         <div className="flex   space-y-[0.3rem]">
-          <button onClick={onClick} className="h-[2.7rem] w-[2.7rem] ">
-            <img className="h-[2.7rem] w-[2.7rem]" src={stateData.isFromGamePage ? restart : back} alt="" />
-            {/* 다시하기 */}
+          <button onClick={onClick} className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
+            <img
+              className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]"
+              src={stateData.isFromGamePage ? restart : back}
+              alt=""
+            />
+            {/* 다시하기 or 뒤로가기 */}
           </button>
         </div>
         <Link to="/">
           <div className="flex  space-y-[0.3rem]">
-            <button className="h-[2.7rem] w-[2.7rem] ">
-              <img className="h-[2.7rem] w-[2.7rem]" src={home} alt="" />
+            <button className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
+              <img className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]" src={home} alt="" />
+              {/* 홈으로 */}
             </button>
           </div>
         </Link>
