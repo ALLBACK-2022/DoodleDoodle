@@ -1,3 +1,4 @@
+#주석
 from flask import Flask, request, Response
 from fileinput import filename
 import time
@@ -36,7 +37,7 @@ sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
     '@' + MYSQL_HOST + ':3306/DoodleDoodle'
 engine = create_engine(sqlurl)
 
-
+#주석
 app.config['MYSQL_DB'] = MYSQL_USER
 app.config['MYSQL_USER'] = MYSQL_USER
 app.config['MYSQL_PASSWORD'] = MYSQL_PASSWORD
