@@ -131,7 +131,7 @@ def ai_predict(draw_id, ranword):
             db.session.add(row)
         db.session.commit()
         # print('tasks.py:결과 도출 성공', otherResults)
-        #os.remove('temp/' + filepath)
+        os.remove('temp/' + filepath)
         return (otherResults, 200)
         # 결과 db에 저장 ?
     return ("can't download file", 400)
