@@ -139,7 +139,7 @@ class randwords(Resource):
     def get(self):
         '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
-            models.Dictionary.id == random.randint(1, 345))
+            models.Dictionary.id == random.randint(1, 99))
         if randword.first() is None:
             return ('Can not access data', 400)
         return (randword[0].name, 200)
