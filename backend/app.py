@@ -6,7 +6,6 @@ from flask_restx import Resource, Api
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from pyrsistent import b
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
@@ -86,17 +85,9 @@ def _request_taskcheck(data):
     response = session.post(url, json=data)
     response_data = response.json()
     task_status = response_data["status"]
+    print('task_status', task_status)
     return task_status
-    
-def _is_complete(task_ids):
-    # task_id 로 status가 성공인지 아닌지
-    for task_id in task_ids:
-        task = db.session.query(models.Celery_taskmeta).filter(models.Celery_taskmeta.task_id == task_id).first()
-        if task.status == "FAILURE":
-            return "FAIL"
-        if not task.status == "SUCCESS":
-            return "WAIT"
-    return "SUCCESS"
+
 
 def _organize_result(results, randword):
     res = {}
@@ -272,8 +263,9 @@ class game(Resource):
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
 class singleresult(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다(1인)'''
+        '''AI가 분석한 결과를 가져온다(다인)'''
         value = request.get_json()
+        print(value)
         # task_id(list 형태) game_id 받기
         task_id = value['task-id']
         draw_id = value['draw-id']
@@ -284,7 +276,7 @@ class singleresult(Resource):
         # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
         data = {'task-id': task_id}
         response = _request_taskcheck(data)
-        if response == "FAILURE":
+        if response == "FAIL":
             return('AI fail', 400)
         if response == "TIME_OUT":
             return('AI time out', 400)
@@ -300,8 +292,10 @@ class singleresult(Resource):
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
 class multiresults(Resource):
     def post(self):
-        '''AI가 분석한 결과를 가져온다(다인)'''
+        print('here post')
+        '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()
+        print(value)
         # task_id(list 형태) game_id 받기
         task_id = value['task-id']
         user_num = len(task_id)
@@ -329,9 +323,12 @@ class multiresults(Resource):
         for result in results:
             result_list[result.draw.draw_no - 1].append(result)
         # 이제 result 조회해서 가져오기
+        print('result_list', result_list)
         for results in result_list:
+            print('results', results)
             user_res = _organize_result(results=results, randword=randword)
-            user_res['draw-no'] = results[0].draw.draw_no
+            if results:
+                user_res['draw-no'] = results[0].draw.draw_no
             user_res['task-id'] = task_id[user_res['draw-no'] - 1]
             res_list.append(user_res)
 
