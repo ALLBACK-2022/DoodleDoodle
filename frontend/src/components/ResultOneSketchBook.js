@@ -4,11 +4,10 @@ import ResultText from './ResultText';
 import ResultButtons from './ResultButtons';
 
 function ResultOneSketchBook({ randomWordData, isPC, stateData }) {
-
-  let text = ""
+  let text = '';
   if (randomWordData.value < 30) {
     text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 밖에 예측못했네요...`;
-  } else if (value < 60) {
+  } else if (randomWordData.value < 60) {
     text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 정도로 예측했네요.`;
   } else {
     text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 나, 예측했어요!`;
@@ -32,7 +31,9 @@ function ResultOneSketchBook({ randomWordData, isPC, stateData }) {
         />
       </div>
       <ResultText name={randomWordData.name} value={randomWordData.value} textSize={10} />
-      <div className="mt-[3vh]">{isPC && <ResultButtons isforOne stateData={stateData} resultString={text} img={randomWordData.imageUrl}/>}</div>
+      <div className="mt-[3vh]">
+        {isPC && <ResultButtons isforOne stateData={stateData} resultString={text} img={randomWordData.imageUrl} />}
+      </div>
     </div>
   );
 }

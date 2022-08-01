@@ -1,35 +1,35 @@
 import React, { useEffect } from 'react';
-import '../assets/icons/smile.png'
+import '../assets/icons/smile.png';
 
-function ShareResult({ resultString ,isforOne, img }) {
-
+function ShareResult({ resultString, isforOne, img }) {
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://developers.kakao.com/sdk/js/kakao.min.js";
+    const script = document.createElement('script');
+    script.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
     script.async = true;
     document.body.appendChild(script);
-    return () =>  document.body.removeChild(script);
-  }, [])
+    return () => document.body.removeChild(script);
+  }, []);
 
-  let array = resultString.split('을 ');
-  const str = array[0] + '을\n' + array[1];
+  const array = resultString.split('을 ');
+  const str = array[0].concat('을\n', array[1]);
 
   function shareButton() {
     if (window.Kakao) {
-      const kakao = window.Kakao
+      const kakao = window.Kakao;
 
-      kakao.init(process.env.REACT_APP_KAKAO_TOKEN)
-      
-      Kakao.Link.sendCustom({
+      kakao.init(process.env.REACT_APP_KAKAO_TOKEN);
+
+      kakao.Link.sendCustom({
         templateId: 80689,
         templateArgs: {
-          ARGS : str,
-          THU : img,
-        }
+          ARGS: str,
+          THU: img,
+        },
       });
     }
   }
-  return <button
+  return (
+    <button
       onClick={shareButton}
       className={`font-cookierun deskTop:text-[2.5vmin] deskTop:w-[30%] mobile:text-[2vh]
       deskTop:py-[0.3rem] deskTop:max-w-[15vh] rounded-full whitespace-nowrap
@@ -38,5 +38,6 @@ function ShareResult({ resultString ,isforOne, img }) {
     >
       저장하기
     </button>
+  );
 }
 export default ShareResult;
