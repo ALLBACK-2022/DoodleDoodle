@@ -4,7 +4,7 @@ import ShareResult from './ShareResult';
 
 // const NumURL = 'http://localhost:5000/api/v1/games';
 
-function ResultButtons({ isforOne, stateData }) {
+function ResultButtons({ isforOne, stateData, resultString, img }) {
   const navigate = useNavigate();
 
   // 랜덤페이지로 이동
@@ -31,7 +31,7 @@ function ResultButtons({ isforOne, stateData }) {
   }
   return (
     <div className="flex flex-row justify-center space-x-[5%]">
-      <ShareResult isforOne={isforOne} />
+      <ShareResult isforOne={isforOne} resultString={resultString} img={img} />
 
       <button
         onClick={onClick}
