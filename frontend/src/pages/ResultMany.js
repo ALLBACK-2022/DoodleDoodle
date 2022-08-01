@@ -87,6 +87,9 @@ function ResultMany() {
 =======
     <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-full ">
+<<<<<<< develop
+>>>>>>> feat: delete y-scroll
+=======
 >>>>>>> feat: delete y-scroll
         <h1
           className="text-black font-cookierun text-left
