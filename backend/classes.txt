@@ -1,99 +1,99 @@
-airplane
-alarm clock
-apple
-axe
-banana
-baseball
-bathtub
-bench
-bicycle
-birthday cake
-book
-boomerang
-bridge
-bucket
-butterfly
-cactus
-candle
-canoe
-car
-cell phone
-chair
-church
-couch
-crown
-cup
-diamond
-donut
-door
-dresser
-drill
-dumbbell
-eyeglasses
-fish
-flashlight
-floor lamp
-flower
-fork
-frying pan
-golf_club
-hamburger
-hammer
-hat
-headphones
-hexagon
-hot air balloon
-hourglass
-house
-ice cream
-kangaroo
-key
-knife
-leaf
-light bulb
-mailbox
-megaphone
-mountain
-mushroom
-paint can
-pants
-paper clip
-peanut
-pear
-pencil
-picture frame
-pillow
-rainbow
-rollerskates
-sailboat
-saw
-see saw
-sheep
-shoe
-skateboard
-snake
-snowflake
-snowman
-sock
-spoon
-square
-star
-stethoscope
-suitcase
-swing set
-sword
-t-shirt
-table
-teapot
-television
-tent
-tooth
-traffic light
-tree
-triangle
-umbrella
-vase
-washing machine
-wheel
-wine bottle
-wine glass
+비행기
+알람 시계
+사과
+도끼
+바나나
+야구
+욕조
+벤치
+자전거
+생일 케이크
+책
+부메랑
+교량
+바구니
+나비
+선인장
+양초
+카누
+자동차
+휴대전화
+의자
+교회
+침상
+왕관
+컵
+다이아몬드
+도넛
+문
+장롱
+송곳
+아령
+안경
+생선
+플래시
+플로어 램프
+꽃
+포크
+프라이팬
+골프 클럽
+햄버거
+망치
+모자
+헤드폰
+육각형
+열기구
+모래시계
+집
+아이스크림
+캥거루
+열쇠
+칼
+잎
+전구
+사서함
+메가폰
+산
+버섯
+페인트 통
+바지
+종이 클립
+땅콩
+배
+연필
+사진 프레임
+베개
+무지개
+롤러 스케이트
+요트
+톱
+시소
+양
+구두
+스케이트보드
+뱀
+눈송이
+눈사람
+양말
+숟가락
+정사각형
+별
+청진기
+여행 가방
+그네
+검
+티셔츠
+테이블
+찻주전자
+텔레비전
+텐트
+이빨
+신호등
+나무
+삼각형
+우산
+꽃병
+세탁기
+바퀴
+와인 병
+와인 잔
