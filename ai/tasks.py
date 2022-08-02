@@ -17,10 +17,10 @@ import os
 from skimage.transform import resize
 import matplotlib.pyplot as plt
 # ----------DB-----------------
-from sqlalchemy import create_engine
-from .models import db
-from . import models
-import datetime
+# from sqlalchemy import create_engine
+# from .models import db
+# from . import models
+# import datetime
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -30,16 +30,16 @@ logger.info(os.getcwd())
 # os.chdir('C://Users//jiwon//DoodleDoodle_RabbitCeleryConn//DoodleDoodle//ai')
 os.chdir('/ai')
 # print('바뀐 작업 경로는 in task.py :', os.getcwd())
-MYSQL_USER = os.environ.get("MYSQL_USER")
-MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
-MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
-MYSQL_USER = os.environ.get("MYSQL_USER")
-MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
-MYSQL_HOST = os.environ.get("MYSQL_HOST")
-MYSQL_PORT = os.environ.get("MYSQL_PORT")
-sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
-    '@' + MYSQL_HOST + ':3306/DoodleDoodle'
-engine = create_engine(sqlurl)
+# MYSQL_USER = os.environ.get("MYSQL_USER")
+# MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+# MYSQL_ROOT_PASSWORD = os.environ.get("MYSQL_ROOT_PASSWORD")
+# MYSQL_USER = os.environ.get("MYSQL_USER")
+# MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
+# MYSQL_HOST = os.environ.get("MYSQL_HOST")
+# MYSQL_PORT = os.environ.get("MYSQL_PORT")
+# sqlurl = 'mysql+pymysql://root:' + MYSQL_ROOT_PASSWORD + \
+#     '@' + MYSQL_HOST + ':3306/DoodleDoodle'
+# engine = create_engine(sqlurl)
 
 
 @celery_app.task(name='ai_predict')
