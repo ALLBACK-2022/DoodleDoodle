@@ -3,16 +3,7 @@ import sketchbook from '../assets/icons/sketchbook.png';
 import ResultText from './ResultText';
 import ResultButtons from './ResultButtons';
 
-function ResultOneSketchBook({ randomWordData, isPC, stateData }) {
-  let text = '';
-  if (randomWordData.value < 30) {
-    text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 밖에 예측못했네요...`;
-  } else if (randomWordData.value < 60) {
-    text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 정도로 예측했네요.`;
-  } else {
-    text = `AI는 ${randomWordData.name}을 ${randomWordData.value}% 나, 예측했어요!`;
-  }
-
+function ResultOneSketchBook({ randomWordData, isPC, isFromGamePage, text }) {
   return (
     <div
       className="deskTop:w-[40vw] deskTop:h-[40vw] deskTop:max-w-[65vh] deskTop:max-h-[65vh]
@@ -30,9 +21,17 @@ function ResultOneSketchBook({ randomWordData, isPC, stateData }) {
           -translate-y-[50%] -translate-x-[50%]"
         />
       </div>
-      <ResultText name={randomWordData.name} value={randomWordData.value} textSize={10} />
+      <ResultText textSize={10} text={text} />
       <div className="mt-[3vh]">
-        {isPC && <ResultButtons isforOne stateData={stateData} resultString={text} img={randomWordData.imageUrl} />}
+        {isPC && (
+          <ResultButtons
+            isforOne
+            resultString={text}
+            img={randomWordData.imageUrl}
+            userNum={1}
+            isFromGamePage={isFromGamePage}
+          />
+        )}
       </div>
     </div>
   );

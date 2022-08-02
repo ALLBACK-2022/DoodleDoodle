@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import axios from 'axios';
 import ShareResult from './ShareResult';
-
 import home from '../assets/icons/mobile-home.png';
 import back from '../assets/icons/mobile-back.png';
 import restart from '../assets/icons/mobile-again.png';
@@ -38,27 +37,25 @@ function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum })
 
   if (isMobile) {
     return (
-      <div className="inline-flex flex-row w-[90%]  place-content-end gap-6">
-        <div className="flex   space-y-[0.3rem]">
-          <button onClick={onClick} className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
-            <img className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]" src={isFromGamePage ? restart : back} alt="" />
-            {/* 다시하기 or 뒤로가기 */}
-          </button>
-        </div>
+      <div className="inline-flex flex-row w-[90%] place-content-center gap-6 ">
+        <button onClick={onClick} className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]">
+          <img className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={isFromGamePage ? restart : back} alt="" />
+          {/* 다시하기 or 뒤로가기 */}
+        </button>
+
         <Link to="/">
-          <div className="flex  space-y-[0.3rem]">
-            <button className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
-              <img className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]" src={home} alt="" />
-              {/* 홈으로 */}
-            </button>
-          </div>
+          <button className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]">
+            <img className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={home} alt="" />
+            {/* 홈으로 */}
+          </button>
         </Link>
+        <ShareResult isforOne={isforOne} resultString={resultString} img={img} isMobile />
       </div>
     );
   }
   return (
     <div className="flex flex-row justify-center space-x-[5%]">
-      <ShareResult isforOne={isforOne} resultString={resultString} img={img} />
+      <ShareResult isforOne={isforOne} resultString={resultString} img={img} isMobile={false} />
 
       <button
         onClick={onClick}
