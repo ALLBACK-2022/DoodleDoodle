@@ -64,20 +64,37 @@ app.config.update(
 
 celery_app = make_celery(app)
 
-#AI 작업 요청
+# AI 작업 요청
+
+
 @app.route('/api/v1/start_predict', methods=['POST'])
 def call_method():
-    value = request.get_json()
-    img = value['img']
+    '''사용자가 그린 그림을 저장한다'''
+    #form data로 받는다.
+    value = request.form.to_dict(flat=False)
     ranword = value['ranword']
 
-    #이미지에 따라서 수정 필요
+    # 파일명으로 저장
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+
+    f = request.files['filename']
+    filename= 'test'
+    f.save('temp/' + filename + '.png') # 저장은 됨다. 
+    #다시 파일 삭제 
+    # os.remove('temp/' + str(drawid) + '.png')
+
+    # value = request.get_json()
+    # img = value['img']
+    # ranword = value['ranword']
+    print('f.name',f.name)
+    print('filename',filename)
+    # 이미지에 따라서 수정 필요
     task = celery_app.send_task('ai_predict', kwargs={
-        'img': img, 'ranword': ranword})
+        'filename': filename, 'ranword': ranword})
 
     task_id = task.id
     isTaskid = {"task_id": task_id}
-
     return isTaskid
 # @app.route('/api/v1/start_predict', methods=['POST'])
 # def call_method():
@@ -93,14 +110,16 @@ def call_method():
 
 #     return rettaskid
 
-#상태 조회
+# 상태 조회
+
+
 @app.route('/api/v1/task_status', methods=['POST'])
 def get_status():
     response_data = request.get_json()
     task_id = response_data["task-id"]
     status = celery_app.AsyncResult(task_id, app=celery_app)
-    
-    isStatus ={"status" : str(status.state)}
+
+    isStatus = {"status": str(status.state)}
     return isStatus
 
 # @app.route('/api/v1/task_status', methods=['POST'])
@@ -140,7 +159,7 @@ def get_status():
 #         return 'SUCCESS'
 #     return 'FAILURE'
 
-#결과 반환
+# 결과 반환
 @app.route('/api/v1/result_predict', methods=['POST'])
 def task_result():
     response_data = request.get_json()
@@ -152,6 +171,25 @@ def task_result():
 # def task_result(task_id):
 #     ret = celery_app.AsyncResult(task_id).result
 #     return str(ret)
+
+
+def saveImg(self):
+    '''사용자가 그린 그림을 저장한다'''
+    value = request.form.to_dict(flat=False)
+    ranword = value['ranword']
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+    f = request.files['filename']
+    f.save('temp/' + f.name + '.png')  # 파일명으로 저장
+
+    os.remove('temp/' + str(drawid) + '.png')
+
+    # adapter = HTTPAdapter(max_retries=retry)
+    # session.mount('http://', adapter)
+    # session.mount('https://', adapter)
+    # url = 'http://ai:5000/api/v1/start_predict'
+    # response = session.post(url, json=return_data)
+    # response_data = response.json()
 
 
 if __name__ == '__main__':
