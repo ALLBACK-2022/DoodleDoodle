@@ -144,6 +144,14 @@ class user_num(Resource):
 @ns.route("/api/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
 
+    def _translate_word(self, aranword):
+        '''한글단어를 영어로 변환한다'''
+        row = db.session.query(models.Dictionary).filter(
+            models.Dictionary.name == aranword).first()
+        db.session.commit()
+        englishword = row.eng_name
+        return englishword
+
     def get(self):
         '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
@@ -161,7 +169,11 @@ class randwords(Resource):
             models.Game.id == value['id']).first()
         selectgame.random_word = value['name']
         db.session.commit()
-        return ('random word saved', 201)
+        transword = self._translate_word(value['name'])
+        rep =  {"engName": transword}
+        if rep is None:
+            return ('no word found', 400)
+        return (rep, 201)
 
 
 @ns.route("/api/v1/draws", methods=['POST'])
