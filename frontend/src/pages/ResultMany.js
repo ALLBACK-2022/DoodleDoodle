@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useLocation } from 'react-router';
 import GameBGImg from '../components/GameBGImg';
@@ -14,7 +14,9 @@ function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
   const [randword, setRandword] = useState('');
   const [infoLoading, setInfoLoading] = useState(false);
+  const [gameId, setGameId] = useState(-1);
   const location = useLocation();
+  const mounted = useRef(false);
 
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -22,6 +24,17 @@ function ResultMany() {
   const isPc = useMediaQuery({
     query: '(min-width: 701px)',
   });
+
+  // storage의 값이 null일 때 sessionstorage에 저장, null이 아니면 sessionStorage에서 값 끌어오기
+  function setGameid() {
+    const storageGameId = sessionStorage.getItem('gameId');
+    if (!storageGameId) {
+      window.sessionStorage.setItem('gameId', location.state.gameId);
+      setGameId(location.state.gameId);
+    } else {
+      setGameId(Number(storageGameId));
+    }
+  }
 
   function setResultString(drawno, word, similarity) {
     if (similarity < 30) {
@@ -35,7 +48,7 @@ function ResultMany() {
 
   async function getData() {
     console.log('getData() here');
-    await axios.get(getInfoURL + location.state.gameId.toString()).then(response => {
+    await axios.get(getInfoURL + gameId.toString()).then(response => {
       console.log(response);
       setRandword(response.randword);
       setPlayersInfo(response.user);
@@ -51,9 +64,20 @@ function ResultMany() {
     });
   }
   useEffect(() => {
-    getData();
+    setGameid();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+    } else {
+      getData();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId]);
+
   useEffect(() => {
     console.log('infoLoading', infoLoading);
   }, [infoLoading]);
@@ -84,7 +108,6 @@ function ResultMany() {
                 player={player['draw-no']}
                 key={player['draw-id']}
                 drawid={player['draw-id']}
-                gameid={location.state.gameId}
               />
             ))}
           </div>
@@ -103,7 +126,6 @@ function ResultMany() {
                 key={player['draw-id']}
                 number={playersInfo.length}
                 drawid={player['draw-id']}
-                gameid={location.state.gameId}
               />
             ))}
           </div>
@@ -116,7 +138,8 @@ function ResultMany() {
           >
             <ResultButtons
               isforOne={false}
-              stateData={location.state}
+              isFromGamePage
+              userNum={playersInfo.length}
               img={playersInfo[0].img_url}
               resultString={setResultString(playersInfo[0]['draw-no'], randword, playersInfo[0].similarity)}
             />

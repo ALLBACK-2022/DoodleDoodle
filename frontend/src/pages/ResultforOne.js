@@ -153,11 +153,23 @@ function ResultforOne() {
               ))}
             </div>
           )}
-          {isLoad && <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />}
+          {isLoad && (
+            <ResultOneSketchBook
+              randomWordData={randomWordData}
+              isPC={isPC}
+              isFromGamePage={location.state.isFromGamePage}
+              userNum={1}
+            />
+          )}
         </div>
         {isMobile && (
           <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
-            <ResultButtons isforOne stateData={location.state} />
+            <ResultButtons
+              isforOne
+              isFromGamePage={location.state.isFromGamePage}
+              userNum={1}
+              img={randomWordData.imageUrl}
+            />
           </div>
         )}
       </div>
