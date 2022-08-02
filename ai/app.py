@@ -172,6 +172,7 @@ def task_result():
 #     ret = celery_app.AsyncResult(task_id).result
 #     return str(ret)
 
+#     return {"status": temp_str}
 
 def saveImg(self):
     '''사용자가 그린 그림을 저장한다'''
@@ -190,6 +191,11 @@ def saveImg(self):
     # url = 'http://ai:5000/api/v1/start_predict'
     # response = session.post(url, json=return_data)
     # response_data = response.json()
+
+# @app.route('/simple_task_result/<task_id>', methods=['GET'])
+# def task_result(task_id):
+#     ret = celery_app.AsyncResult(task_id).result
+#     return str(ret)
 
 
 if __name__ == '__main__':
