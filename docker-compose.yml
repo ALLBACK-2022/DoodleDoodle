@@ -10,12 +10,11 @@ services:
     volumes: 
       - build_frontend:/frontend/build
       - ./frontend:/frontend/
-      # - ./frontend/node_modules/:/frontend/node_modules
+      - ./frontend/node_modules/:/frontend/node_modules
     restart: always
     image: run
     environment:
       - WATCHPACK_POLLING="true"
-    # stdin_open: true
     tty: true
 
   backend:
@@ -31,11 +30,7 @@ services:
       STATSD_HOST: "statsd-exporter"
       STATSD_PORT: "9125"
     container_name: backend-con
-    # expose:
-    #   - 5000
     restart: always
-    # command: flask run --host=0.0.0.0 --port=5000
-    # command: gunicorn --bind 0.0.0.0:5000 app:app
     links:
       - rabbitmq
       - db
@@ -44,6 +39,8 @@ services:
     depends_on:
       - db
       - rabbitmq
+    networks:
+      - app-tier
     tty: true
 
   ai:
@@ -54,12 +51,14 @@ services:
     environment:
       FLASK_ENV: development
       FLASK_DEBUG: 1
+      APP_NAME: "ai"
       FLASK_APP: ./app.py
+      STATSD_HOST: "statsd-exporter"
+      STATSD_PORT: "9125"
     container_name: ai-con
     expose:
       - 5001
     restart: always
-    # command: flask run --host=0.0.0.0 --port=5001
     volumes:
       - ./ai:/ai/
     depends_on:
@@ -69,6 +68,8 @@ services:
     links:
       - rabbitmq
       - db
+    networks:
+      - app-tier
     tty: true
 
   db:
@@ -81,23 +82,26 @@ services:
       - data_mysql:/mysql
     env_file:
       - .env
-    # environment:
-    #   MYSQL_DATABASE: "${MYSQL_DATABASE}"
-    #   MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    networks:
+      - app-tier
     tty: true
 
   nginx:
     image: nginx:1.21.5-alpine
     build: ./nginx
     ports:
-      - 80:80
+      - 8080:8080
+      - 8081:8081
     volumes:
+      - build_frontend:/var/www/frontend
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - build_frontend:/frontend/
     container_name: nginx-con
     depends_on:
       - frontend
       - backend
+      - ai
+    networks:
+      - app-tier
     tty: true
 
   rabbitmq:
@@ -109,9 +113,10 @@ services:
     ports:
       - 5672:5672 
       - 15672:15672
-    # command: rabbitmq-plugins enable rabbitmq_management
     volumes:
       - data_rabbitmq:/rabbitmq
+    networks:
+      - app-tier
     tty: true
 
   worker:
@@ -120,15 +125,14 @@ services:
       dockerfile: Dockerfile.celery
     container_name: worker-con
     user: root
-    # https://stackoverflow.com/questions/50054671/no-module-named-app-when-running-celery-worker-a-app-in-eb-ebextensions
     command: celery -A ai.tasks.celery_app worker --loglevel=info
-    # volumes:
-      # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     restart: always
     depends_on:
       - rabbitmq
       - ai
       - db
+    networks:
+      - app-tier
     tty: true
     
   flower:
@@ -141,6 +145,8 @@ services:
       - FLOWER_PORT=5555
     ports:
       - 5555:5555
+    networks:
+      - app-tier
     tty: true
 
   statsd-exporter:
@@ -153,6 +159,8 @@ services:
       - ./etc/statsd-exporter/statsd.conf:/statsd/statsd.conf
     command:
       - --statsd.mapping-config=/statsd/statsd.conf
+    networks:
+      - app-tier
 
   prometheus:
     container_name: prometheus-con
@@ -163,6 +171,8 @@ services:
       - ./etc/prometheus:/workspace
     command:
       - '--config.file=/workspace/prometheus.yml'
+    networks:
+      - app-tier
 
   grafana:
     container_name: grafana-con
@@ -179,14 +189,15 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
 
 volumes:
   build_frontend: null
   data_mysql: null
   data_rabbitmq: null
 
-#docker-compose up --build
-#volume
-#docker volume prune
-# sudo curl -L “https://github.com/docker/compose/releases/download/2.2.3/docker-compose-$(uname -s)-$(uname -m)” -o /usr/local/bin/docker-compose
-# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password --name mysql-con -v /var/lib/docker/volumes/mysql/_data mysql:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
