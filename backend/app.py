@@ -89,21 +89,21 @@ def _request_taskcheck(data):
     return task_status
 
 
-def _organize_result(results, randword):
-    res = {}
-    topfive = []
+def _organize_result(results, doodle):
+    res, topfive = {}, []
+    res['doodle'] = doodle
     for result in results:
         word = {}
         word['dictionary'] = result.dictionary.serialize()
         word['similarity'] = result.similarity
-        if result.dictionary.name == randword:
-            res['randword'] = word
+        # if result.dictionary.name == randword:
+        #     res['randword'] = word
         topfive.append(word)
     if(len(topfive) > 5):
         for i in range(0, 5):
             for j in range(1, 6):
                 if i != j and topfive[i]['dictionary']['name'] == topfive[j]['dictionary']['name']:
-                    topfive.pop(i)
+                    word['randword'] = topfive.pop(i)
                     break
             if len(topfive) == 5:
                 break
@@ -261,10 +261,13 @@ class game(Resource):
 
 @ns.route("/api/v1/game-result", methods=['POST'])
 class game_result(Resource):
+    '''프런트가 ai한테 받은 결과값을 백엔드로 보내준다(new)'''
     def post(self):
         value = request.get_json()
         draw_id = value['draw-id']
         top_five = value['top-five']
+        if draw_id is None or top_five is None:
+            return("Can not find request data", 400)
         for result in top_five:
             now = datetime.datetime.now().replace(microsecond=0)
             result['dictionary']
@@ -277,6 +280,19 @@ class game_result(Resource):
         return ("save success", 200)
 
 
+@ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+class newsingleresult(Resource):
+    '''사용자가 그렸던 그림을 불러온다. + 1인용 결과페이지 + 개인 결과 페이지(new)'''
+    def get(self, drawid):
+        results = db.session.query(models.Result).filter(
+            models.Result.draw_id == drawid).all()
+        doodle = db.session.query(models.Draw).filter(
+            models.Draw.id == drawid).first().doodle
+        res = _organize_result(results=results, doodle=doodle)
+        if res is None:
+            return ("Can not access data", 400)
+        return (res, 200)
+        
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
 class singleresult(Resource):
     def post(self):
@@ -301,7 +317,7 @@ class singleresult(Resource):
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == draw_id).all()
         # for문을 돌면서 results로 가져온 결과들을 정리
-        res = _organize_result(results=results, randword=randword)
+        res = _organize_result(results, randword)
         # 반환
         return (res, 200)
 
@@ -343,7 +359,7 @@ class multiresults(Resource):
         print('result_list', result_list)
         for results in result_list:
             print('results', results)
-            user_res = _organize_result(results=results, randword=randword)
+            user_res = _organize_result(results, randword)
             if results:
                 user_res['draw-no'] = results[0].draw.draw_no
             user_res['task-id'] = task_id[user_res['draw-no'] - 1]
