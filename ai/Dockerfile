@@ -20,7 +20,7 @@ COPY . ./
 
 COPY wait-for-it.sh ./wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh
-CMD [ "./wait-for-it.sh", "-t", "30", "backend:5000", "--", "flask", "run", "--host=0.0.0.0"]
+CMD [ "./wait-for-it.sh", "-t", "50", "backend:5000", "--", "flask", "run", "--host=0.0.0.0"]
 
 
 # COPY . /app

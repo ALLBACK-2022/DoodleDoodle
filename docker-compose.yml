@@ -15,6 +15,7 @@ services:
     image: run
     environment:
       - WATCHPACK_POLLING="true"
+      - WDS_SOCKET_PORT=0
     tty: true
 
   backend:
