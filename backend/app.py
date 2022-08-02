@@ -297,10 +297,13 @@ class game(Resource):
 
 @ns.route("/api/v1/game-result", methods=['POST'])
 class game_result(Resource):
+    '''프런트가 ai한테 받은 결과값을 백엔드로 보내준다(new)'''
     def post(self):
         value = request.get_json()
         draw_id = value['draw-id']
         top_five = value['top-five']
+        if draw_id is None or top_five is None:
+            return("Can not find request data", 400)
         for result in top_five:
             now = datetime.datetime.now().replace(microsecond=0)
             result['dictionary']
