@@ -52,8 +52,8 @@ services:
     environment:
       FLASK_ENV: development
       FLASK_DEBUG: 1
-      APP_NAME: "ai"
       FLASK_APP: ./app.py
+      APP_NAME: "ai"
       STATSD_HOST: "statsd-exporter"
       STATSD_PORT: "9125"
     container_name: ai-con

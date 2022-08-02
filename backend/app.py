@@ -268,12 +268,15 @@ class game_result(Resource):
         top_five = value['top-five']
         if draw_id is None or top_five is None:
             return("Can not find request data", 400)
-        for result in top_five:
+        for idx, result in enumerate(top_five):
             now = datetime.datetime.now().replace(microsecond=0)
-            result['dictionary']
             game_id = db.session.query(models.Draw).filter(
                 models.Draw.id == draw_id).first().game_id
-            row = models.Result(similarity=result['similarity'], draw_id=draw_id, dictionary_id=result['dicionary']['id'], game_id=game_id,
+            name = db.session.query(models.Game).filter(
+                models.Game.id == game_id).first().random_word
+            dictionary_id = db.session.query(models.Dicionary).filter(
+                models.Dictionary.name == name).first().id
+            row = models.Result(similarity=top_five[result.keys()[idx]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id,
                 created_at=now, updated_at=now)
             db.session.add(row)
         db.session.commit()
