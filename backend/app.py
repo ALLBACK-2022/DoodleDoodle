@@ -9,11 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests
+import os, models, random, logging
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
-
+from sqlalchemy import and_
 
 app = Flask(__name__)
 load_dotenv()
@@ -232,27 +232,33 @@ class draw(Resource):
 @ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
 class game(Resource):
     def get(self, gameid):
-        '''사용자가 그렸던 그림을 불러온다'''
-        ret = db.session.query(models.Game).filter(
-            models.Game.id == gameid).first()
-        retusernum = int(ret.player_num)
-        if ret is None:
+        '''ai가 분석한 결과를 가져온다(다인)'''
+        game = db.session.query(models.Game).get(gameid)
+        randword = game.random_word
+        row = db.session.query(models.Dictionary).filter(models.Dictionary.name == randword).first()
+        dictnum = row.id
+        #results = db.session.query(models.Result).filter(models.Result.game_id == gameid).filter(models.Result.dictionary_id == dictnum).all()
+        results = db.session.query(models.Result).filter(and_(models.Result.game_id == gameid, models.Result.dictionary_id == dictnum)).all() 
+        #[<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>,<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>]
+        if results is None:
             return('Can not access data', 400)
-        db.session.commit()
-        print(retusernum)
-        ret1 = []
-        ret2 = []
-        for i in range(1, retusernum+1):
-            row = db.session.query(models.Draw).filter(
-                models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
-            print(row)
-            returl = row.doodle
-            db.session.commit()
-            ret1.append(i)
-            ret2.append(returl)
-        retdict = {name: value for name, value in zip(ret1, ret2)}
-        # print(retdict)
-        return (retdict, 200)
+        # ret = {} #리턴할 최종 json
+        #a = { "randword": randword } 
+        x = {}
+        res_list = []
+        print(results)
+        for result in results:
+            x = {"draw-id":result.draw_id , "draw_no":result.draw.draw_no, "img_url": result.draw.doodle, "similarity":result.similarity}
+            res_list.append(x)      #그린 그림에 대한 정보만 담겨있는 딕셔너리
+            #print(result)
+        
+        res_list = sorted(res_list, key=lambda d: d['similarity'], reverse=True) # 유사도로 내림차순 정렬
+        #b = {"users":res_list}           #key값을 user로 가지고 value를 res_list로 가짐 
+        ret = {}
+        ret['randword'] = randword
+        ret['users'] = res_list
+        return(ret, 200)
+
 
 
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
