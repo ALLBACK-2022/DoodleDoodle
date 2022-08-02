@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests
+import os, models, random, logging, requests, datetime
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -259,6 +259,23 @@ class game(Resource):
         # print(retdict)
         return (retdict, 200)
 
+@ns.route("/api/v1/game-result", methods=['POST'])
+class game_result(Resource):
+    def post(self):
+        value = request.get_json()
+        draw_id = value['draw-id']
+        top_five = value['top-five']
+        for result in top_five:
+            now = datetime.datetime.now().replace(microsecond=0)
+            result['dictionary']
+            game_id = db.session.query(models.Draw).filter(
+                models.Draw.id == draw_id).first().game_id
+            row = models.Result(similarity=result['similarity'], draw_id=draw_id, dictionary_id=result['dicionary']['id'], game_id=game_id,
+                created_at=now, updated_at=now)
+            db.session.add(row)
+        db.session.commit()
+        return ("save success", 200)
+
 
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
 class singleresult(Resource):
@@ -343,4 +360,4 @@ if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
-    app.run(port="5000", debug=True)
+    app.run(port=5000, debug=True)
