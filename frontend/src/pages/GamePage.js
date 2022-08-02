@@ -10,9 +10,9 @@ import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
 
 // const postImageToBackURL = 'http://localhost:5000/api/v1/draws'; // 백엔드에 이미지 보내는 API
-const postImageToAIURL = 'http://localhost:5000/api/v1/ai/pictures'; // AI에 이미지 보내는 API
-const getAITaskStatusURL = 'http://localhost:5000/api/v1/task_status'; // AI에게 Taskid로 상태확인
-const getAIResultURL = 'http://localhost:5000/api/v1/result_predict'; // AI에게 Taskid로 분석결과 받기
+const postImageToAIURL = 'http://localhost:5001/api/v1/ai/pictures'; // AI에 이미지 보내는 API
+const getAITaskStatusURL = 'http://localhost:5001/api/v1/task_status'; // AI에게 Taskid로 상태확인
+const getAIResultURL = 'http://localhost:5001/api/v1/result_predict'; // AI에게 Taskid로 분석결과 받기
 // const postResultToBackURL = 'http://localhost:5000/api/v1/game-result'; // 백엔드에 AI결과값 보내는 API
 
 // 게임 페이지
@@ -86,8 +86,14 @@ function GamePage() {
   */
 
   async function getAIResult(taskId) {
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/json; charset=UTF-8',
+    };
     await axios
-      .post(getAIResultURL, { task_id: taskId })
+      .post(getAIResultURL, { task_id: taskId }, heders)
       .then(response => {
         console.log('player', currentPlayer, ': ', response);
         // 이미지에 분석 결과 보내기
@@ -103,23 +109,34 @@ function GamePage() {
   let statusCheckCount = 0;
   let statusErrorCount = 0;
   const errorLimit = 5;
-  const requestLimit = 20;
-  const requestInterval = 250; // 0.25s
+  const requestLimit = 60;
+  const requestInterval = 500; // 0.25s
   async function checkAIStatus(taskId) {
+    console.log(taskId);
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/json; charset=UTF-8',
+    };
     await axios
-      .post(getAITaskStatusURL, { task_id: taskId })
+      .post(getAITaskStatusURL, { task_id: taskId }, heders)
       .then(response => {
         statusCheckCount += 1;
-        console('checkAIStatus-', statusCheckCount, ': ', response);
+        console.log('checkAIStatus-', statusCheckCount, ': ', response);
+        console.log('reqInterval: ', requestInterval);
         // 상태가 SUCCESS 면 AI에 결과값 요청하기
         if (response.data.status === 'SUCCESS') getAIResult(taskId);
         // 상태가 SUCCESS가 아니고 아직 요청 제한횟수 이하면 0.25초 뒤 다시 호출
-        else if (statusCheckCount <= requestLimit) setTimeout(checkAIStatus(taskId), requestInterval);
+        else if (statusCheckCount <= requestLimit)
+          setTimeout(function () {
+            checkAIStatus(taskId);
+          }, requestInterval);
         else console.log('*요청카운트가 요청 제한횟수 이상입니다*');
       })
       .catch(error => {
         statusErrorCount += 1;
-        console('checkAIStatusError-', statusErrorCount, ': ', error);
+        console.log('checkAIStatusError-', statusErrorCount, ': ', error);
         // 에러카운트가 에러 제한횟수 이상이되면 호출 중지
         if (statusErrorCount < errorLimit) setTimeout(checkAIStatus(taskId), requestInterval);
         else console.log('*에러카운트가 에러 제한횟수 이상입니다*');
@@ -131,11 +148,19 @@ function GamePage() {
     const formData = new FormData();
     formData.append('filename', imgFile);
     formData.append('randword', engRandWord);
+    console.log(engRandWord);
+    console.log(formData);
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    };
     await axios
-      .post(postImageToAIURL, formData)
+      .post(postImageToAIURL, formData, heders)
       .then(response => {
         // response에서 taskId 받아서 AI에 폴링하기
-        console('postImageToAI: ', response);
+        console.log('postImageToAI: ', response);
         checkAIStatus(response.data.task_id);
       })
       .catch(error => {

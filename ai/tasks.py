@@ -22,8 +22,6 @@ import matplotlib.pyplot as plt
 # from . import models
 # import datetime
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 logger = get_task_logger(__name__)
 logger.info(os.getcwd()) # 얘 조차도 안뜸.
 os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))

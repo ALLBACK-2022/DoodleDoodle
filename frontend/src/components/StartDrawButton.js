@@ -7,6 +7,8 @@ function StartDrawButton({ image, word }) {
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
   const navigate = useNavigate(); // 페이지 이동 시 사용
 
+  // 여기 수정하면  MobileRandomBtn.js도 수정
+
   async function onClick() {
     window.sessionStorage.removeItem('gameId');
 
