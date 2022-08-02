@@ -26,12 +26,13 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
 
   function onClick() {
     console.log(stateData);
-    // 이전 페이지가 게임페이지면 랜덤페이지로 이동
-    // 다인용 결과페이지에서 왔으면 다인용 결과페이지로 이동
+    // 이전 페이지가 게임페이지면 랜덤페이지로 이동(다시하기 버튼)
     if (stateData.isFromGamePage) {
       // stateData.drawId.length 를 알수없으면 오류대신 undefined, ?? 왼쪽이 undefined면 오른쪽값으로
       goToRandomPage(stateData.drawId?.length ?? stateData.drawId);
-    } else {
+    }
+    // 다인용 결과페이지에서 왔으면 다인용 결과페이지로 이동(뒤로가기 버튼)
+    else {
       navigate(-1, { replace: false });
     }
   }

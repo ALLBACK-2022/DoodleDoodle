@@ -8,54 +8,27 @@ import GameBGImg from '../components/GameBGImg';
 import TopFiveResult from '../components/TopFiveResult';
 
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
-// import MobileBottomBtn from '../components/MobileBottomBtn';
 import ResultButtons from '../components/ResultButtons';
 
-const baseURL = 'http://localhost:5000/api/v1/draws/results/single';
-const getImageURL = 'http://localhost:5000/api/v1/results/draw/';
+const baseURL = 'api/v1/results/draw/';
 
 function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0.0 }]); // 유사도 상위 5개 이름과 유사도
   const [randomWordData, setRandomWordData] = useState({ name: '?', value: 0, imageUrl: testImage }); // 주어진 단어의 이름과 유사도
   const [imageUrl, setImageUrl] = useState([testImage]); // 유사도 상위 5개의 이미지들
   const [isLoad, setIsLoad] = useState(false);
-  const [isImageLoad, setIsImageLoad] = useState(false);
 
   const defaultData = { name: '?', value: 0.0 };
 
   const location = useLocation();
 
-  // drawId로 이미지 URL가져오는 함수
-  async function getRandomWordData(randomWord) {
-    await axios
-      .get(getImageURL + location.state.drawId.toString())
-      .then(response => {
-        console.log(response.data);
-        console.log(randomWord);
-        setRandomWordData({
-          name: randomWord.dictionary.name,
-          value: randomWord.similarity,
-          // 페이지 넘어오며 받은 drawId로 API호출해서 이미지파일 받아옴
-          imageUrl: response.data,
-        });
-        setIsImageLoad(true);
-      })
-      .catch(error => console.log(error));
-  }
-
   let testCount = 0;
-  let errorCount = 0;
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
     // 결과 받아오는 API 호출
     console.log('getResult Start');
-    console.log(location.state.taskId);
     await axios
-      .post(baseURL, {
-        'game-id': location.state.gameId,
-        'draw-id': location.state.drawId,
-        'task-id': location.state.taskId,
-      })
+      .get(baseURL + location.state.drawId.toString())
       // 호출이 완료되면
       .then(response => {
         testCount += 1;
@@ -65,6 +38,7 @@ function ResultforOne() {
         // 유사도 상위 5개 데이터 저장
         const top = response.data.topfive;
         const randomWord = response.data.randword;
+        const userDoodle = response.data.doodle;
         console.log(top);
         // topfiveArray에 5개 데이터의 이름과 유사도 값을 넣고
         // imageArray에 5개 데이터의 이미지를 사전에서 불러와 넣는다
@@ -82,17 +56,20 @@ function ResultforOne() {
         setChart(topfiveArray);
         setIsLoad(true);
         // 처음 주어진 랜덤단어의 이름, 유사도, 내가 그렸던 그림 업데이트
-        getRandomWordData(randomWord);
+        setRandomWordData({
+          name: randomWord.dictionary.name,
+          value: randomWord.similarity,
+          // 페이지 넘어오며 받은 drawId로 API호출해서 이미지파일 받아옴
+          imageUrl: userDoodle,
+        });
       })
       .catch(error => {
-        errorCount += 1;
-        console.log('test', testCount, '-error', errorCount, ': ', error);
-        if (errorCount >= 2) {
+        console.log('test', testCount, ' error: ', error);
+        if (error) {
           setChart([defaultData, defaultData, defaultData, defaultData, defaultData]);
           setImageUrl([testImage, testImage, testImage, testImage, testImage]);
           setRandomWordData({ name: defaultData.name, value: defaultData.value, imageUrl: testImage });
           setIsLoad(true);
-          setIsImageLoad(true);
         }
       });
   }
@@ -130,7 +107,7 @@ function ResultforOne() {
           className="flex deskTop:flex-row mobile:flex-col-reverse
           deskTop:mt-[3vh] items-center justify-center"
         >
-          {isMobile && isLoad && isImageLoad && (
+          {isMobile && isLoad && (
             <div
               className="relative flex-col justify-center top-[5vh]
               max-h-[40vh] w-[100%] h-[40vh]"
@@ -160,7 +137,7 @@ function ResultforOne() {
               </div>
             </div>
           )}
-          {isPC && isLoad && isImageLoad && (
+          {isPC && isLoad && (
             <div
               className="relative justify-center top-[2vh]
             max-w-[60vh] max-h-[60vh] w-[40vw] h-[40vw]"
@@ -176,9 +153,7 @@ function ResultforOne() {
               ))}
             </div>
           )}
-          {isLoad && isImageLoad && (
-            <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />
-          )}
+          {isLoad && <ResultOneSketchBook randomWordData={randomWordData} stateData={location.state} isPC={isPC} />}
         </div>
         {isMobile && (
           <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">

@@ -35,24 +35,20 @@ function ResultMany() {
 
   async function getData() {
     console.log('getData() here');
-    await axios
-      .post(getInfoURL, {
-        'game-id': location.state.gameId,
-      })
-      .then(response => {
-        console.log(response);
-        setRandword(response.randword);
-        setPlayersInfo(response.user);
-        // eslint-disable-next-line no-unused-vars
-        const temp2 = playersInfo.map(player => {
-          console.log('draw-no', player['draw-no']);
-          console.log('draw-id', player['draw-id']);
-          console.log('img_url', player.img_url);
-          console.log('img_url', player.similarity);
-          return player;
-        });
-        setInfoLoading(loading => !loading);
+    await axios.get(getInfoURL + location.state.gameId.toString()).then(response => {
+      console.log(response);
+      setRandword(response.randword);
+      setPlayersInfo(response.user);
+      // eslint-disable-next-line no-unused-vars
+      const temp2 = playersInfo.map(player => {
+        console.log('draw-no', player['draw-no']);
+        console.log('draw-id', player['draw-id']);
+        console.log('img_url', player.img_url);
+        console.log('img_url', player.similarity);
+        return player;
       });
+      setInfoLoading(loading => !loading);
+    });
   }
   useEffect(() => {
     getData();
