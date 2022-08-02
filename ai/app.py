@@ -146,8 +146,7 @@ def task_result():
     response_data = request.get_json()
     task_id = response_data["task-id"]
     result = str(celery_app.AsyncResult(task_id).result)
-    isResult ={"result": result}
-    return isResult
+    return result
 
 # @app.route('/simple_task_result/<task_id>', methods=['GET'])
 # def task_result(task_id):

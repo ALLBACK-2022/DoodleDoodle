@@ -86,50 +86,52 @@ def ai_predict(draw_id, ranword):
                 result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
             if x < 5:
                 otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
-        # 결과 DB에 저장
-        otherResults, result, flag, now = {}, {}, True, datetime.datetime.now().replace(microsecond=0)
-        for x in range(0, len(ind)):
-            if(class_names[ind[x]] == ranword):
-                result[ranword] = round(pred[ind[x]]*100, 1)
-                selectByWord = db.session.query(models.Dictionary).filter(
-                    models.Dictionary.eng_name == ranword).first().id
-                selectDictionary = db.session.query(models.Dictionary).filter(
-                    models.Dictionary.id == selectByWord).first().id
-                selectDraw = db.session.query(models.Draw).filter(
-                    models.Draw.id == draw_id).first().game_id
-                row = models.Result(similarity=result[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
-                                    created_at=now, updated_at=now)
-                db.session.add(row)
-                if flag:
-                    flag = False
-                # return 할 result에 저장
-                result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
-            if x < 5:
-                otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 1)
-                selectByWord = db.session.query(models.Dictionary).filter(
-                    models.Dictionary.eng_name == class_names[ind[x]]).first().id
-                selectDictionary = db.session.query(models.Dictionary).filter(
-                    models.Dictionary.id == selectByWord).first().id
-                selectDraw = db.session.query(models.Draw).filter(
-                    models.Draw.id == draw_id).first().game_id
-                row = models.Result(similarity=otherResults[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
-                                    created_at=now, updated_at=now)
-                db.session.add(row)
-                # return 할 result에 저장
-                otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
+        
         otherResults['result'] = result
-        if flag:
-            result[ranword] = 0.0
-            selectByWord = db.session.query(models.Dictionary).filter(
-                models.Dictionary.eng_name == ranword).first().id
-            selectDictionary = db.session.query(models.Dictionary).filter(
-                models.Dictionary.id == selectByWord).first().id
-            selectDraw = db.session.query(models.Draw).filter(
-                models.Draw.id == draw_id).first().game_id
-            row = models.Result(similarity=0.0, draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
-                                created_at=now, updated_at=now)
-            db.session.add(row)
-        db.session.commit()
+        # 결과 DB에 저장
+        # otherResults, result, flag, now = {}, {}, True, datetime.datetime.now().replace(microsecond=0)
+        # for x in range(0, len(ind)):
+        #     if(class_names[ind[x]] == ranword):
+        #         result[ranword] = round(pred[ind[x]]*100, 1)
+        #         selectByWord = db.session.query(models.Dictionary).filter(
+        #             models.Dictionary.eng_name == ranword).first().id
+        #         selectDictionary = db.session.query(models.Dictionary).filter(
+        #             models.Dictionary.id == selectByWord).first().id
+        #         selectDraw = db.session.query(models.Draw).filter(
+        #             models.Draw.id == draw_id).first().game_id
+        #         row = models.Result(similarity=result[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
+        #                             created_at=now, updated_at=now)
+        #         db.session.add(row)
+        #         if flag:
+        #             flag = False
+        #         # return 할 result에 저장
+        #         result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
+        #     if x < 5:
+        #         otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 1)
+        #         selectByWord = db.session.query(models.Dictionary).filter(
+        #             models.Dictionary.eng_name == class_names[ind[x]]).first().id
+        #         selectDictionary = db.session.query(models.Dictionary).filter(
+        #             models.Dictionary.id == selectByWord).first().id
+        #         selectDraw = db.session.query(models.Draw).filter(
+        #             models.Draw.id == draw_id).first().game_id
+        #         row = models.Result(similarity=otherResults[class_names[ind[x]]], draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
+        #                             created_at=now, updated_at=now)
+        #         db.session.add(row)
+        #         # return 할 result에 저장
+        #         otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
+        # otherResults['result'] = result
+        # if flag:
+        #     result[ranword] = 0.0
+        #     selectByWord = db.session.query(models.Dictionary).filter(
+        #         models.Dictionary.eng_name == ranword).first().id
+        #     selectDictionary = db.session.query(models.Dictionary).filter(
+        #         models.Dictionary.id == selectByWord).first().id
+        #     selectDraw = db.session.query(models.Draw).filter(
+        #         models.Draw.id == draw_id).first().game_id
+        #     row = models.Result(similarity=0.0, draw_id=draw_id, dictionary_id=selectDictionary, game_id=selectDraw,
+        #                         created_at=now, updated_at=now)
+        #     db.session.add(row)
+        # db.session.commit()
         # print('tasks.py:결과 도출 성공', otherResults)
         os.remove('temp/' + filepath)
         return (otherResults, 200)
