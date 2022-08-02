@@ -80,20 +80,12 @@ function ResultMany() {
   }, [infoLoading, picLoading]);
 
   return (
-<<<<<<< develop
     <div id="resultmanypage" className={`relative flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <GameBGImg pageName="ResultMany" />
-      <div className="px-[3rem] deskTop:py-[2rem] mobile:pt-[8vh] w-full h-[100vh] absolute">
-=======
-    <div id="resultmanypage" className={`flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
-      <div id={`${isMobile ? 'mobileBGImg' : 'BGyellowImg'}`} className="px-[3rem] py-[2rem] w-full h-full ">
-<<<<<<< HEAD
-<<<<<<< develop
->>>>>>> feat: delete y-scroll
-=======
->>>>>>> feat: delete y-scroll
-=======
->>>>>>> backend-khl
+      <div
+        className="px-[3rem] deskTop:py-[2rem] mobile:pt-[8vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
+      "
+      >
         <h1
           className="text-black font-cookierun text-left
           deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
@@ -120,7 +112,10 @@ function ResultMany() {
           </div>
         )}
         {isPc && infoLoading && picLoading && (
-          <div className="flex flex-wrap place-content-around w-[85%] h-[60%] justify-center m-auto">
+          <div
+            className="flex flex-wrap place-content-around w-[85%] 
+          justify-center m-auto"
+          >
             {playersInfo.map((player, index) => (
               <ResultMulti
                 rank={index + 1}
