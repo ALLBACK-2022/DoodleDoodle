@@ -2,13 +2,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import axios from 'axios';
 import ShareResult from './ShareResult';
-
 import home from '../assets/icons/mobile-home.png';
 import back from '../assets/icons/mobile-back.png';
 import restart from '../assets/icons/mobile-again.png';
 
 const NumURL = 'http://localhost:5000/api/v1/games';
-function ResultButtons({ isforOne, stateData, resultString, img }) {
+function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum }) {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -25,44 +24,38 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
   }
 
   function onClick() {
-    console.log(stateData);
-    // 이전 페이지가 게임페이지면 랜덤페이지로 이동
-    // 다인용 결과페이지에서 왔으면 다인용 결과페이지로 이동
-    if (stateData.isFromGamePage) {
-      // stateData.drawId.length 를 알수없으면 오류대신 undefined, ?? 왼쪽이 undefined면 오른쪽값으로
-      goToRandomPage(stateData.drawId?.length ?? stateData.drawId);
-    } else {
+    // 이전 페이지가 게임페이지면 랜덤페이지로 이동(다시하기 버튼)
+    if (isFromGamePage) {
+      // userNum 넘겨주기
+      goToRandomPage(userNum);
+    }
+    // 뒤로가기 버튼
+    else {
       navigate(-1, { replace: false });
     }
   }
 
   if (isMobile) {
     return (
-      <div className="inline-flex flex-row w-[90%]  place-content-end gap-6">
-        <div className="flex   space-y-[0.3rem]">
-          <button onClick={onClick} className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
-            <img
-              className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]"
-              src={stateData.isFromGamePage ? restart : back}
-              alt=""
-            />
-            {/* 다시하기 or 뒤로가기 */}
-          </button>
-        </div>
+      <div className="inline-flex flex-row w-[90%] place-content-center gap-6 ">
+        <button onClick={onClick} className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]">
+          <img className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={isFromGamePage ? restart : back} alt="" />
+          {/* 다시하기 or 뒤로가기 */}
+        </button>
+
         <Link to="/">
-          <div className="flex  space-y-[0.3rem]">
-            <button className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]">
-              <img className="h-[5vh] w-[5vh] max-h-[10vw] max-w-[10vw]" src={home} alt="" />
-              {/* 홈으로 */}
-            </button>
-          </div>
+          <button className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]">
+            <img className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={home} alt="" />
+            {/* 홈으로 */}
+          </button>
         </Link>
+        <ShareResult isforOne={isforOne} resultString={resultString} img={img} isMobile />
       </div>
     );
   }
   return (
     <div className="flex flex-row justify-center space-x-[5%]">
-      <ShareResult isforOne={isforOne} resultString={resultString} img={img} />
+      <ShareResult isforOne={isforOne} resultString={resultString} img={img} isMobile={false} />
 
       <button
         onClick={onClick}
@@ -70,7 +63,7 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
           py-[0.3rem] rounded-full whitespace-nowrap
       ${isforOne ? 'bg-primary-3 text-primary-1 hover:bg-primary' : 'bg-black text-primary'}`}
       >
-        {stateData.isFromGamePage ? '다시하기' : '뒤로가기'}
+        {isFromGamePage ? '다시하기' : '뒤로가기'}
       </button>
       <Link to="/" className="deskTop:w-[30%]">
         <button
