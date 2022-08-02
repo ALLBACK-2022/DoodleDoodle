@@ -20,7 +20,7 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
       console.log(response.data);
       // 새로운 gameId 받아서 이동
 
-      navigate(-1, { replace: true, state: { playerNum: count, gameID: response.data } });
+      navigate('../random', { replace: true, state: { playerNum: count, gameID: response.data } });
     });
   }
 
@@ -32,10 +32,7 @@ function ResultButtons({ isforOne, stateData, resultString, img }) {
       // stateData.drawId.length 를 알수없으면 오류대신 undefined, ?? 왼쪽이 undefined면 오른쪽값으로
       goToRandomPage(stateData.drawId?.length ?? stateData.drawId);
     } else {
-      navigate('../resultmany', {
-        replace: true,
-        state: stateData,
-      });
+      navigate(-1, { replace: false });
     }
   }
 
