@@ -295,6 +295,22 @@ class game(Resource):
         ret['users'] = res_list
         return(ret, 200)
 
+@ns.route("/api/v1/game-result", methods=['POST'])
+class game_result(Resource):
+    def post(self):
+        value = request.get_json()
+        draw_id = value['draw-id']
+        top_five = value['top-five']
+        for result in top_five:
+            now = datetime.datetime.now().replace(microsecond=0)
+            result['dictionary']
+            game_id = db.session.query(models.Draw).filter(
+                models.Draw.id == draw_id).first().game_id
+            row = models.Result(similarity=result['similarity'], draw_id=draw_id, dictionary_id=result['dicionary']['id'], game_id=game_id,
+                created_at=now, updated_at=now)
+            db.session.add(row)
+        db.session.commit()
+        return ("save success", 200)
 
 @ns.route("/api/v1/game-result", methods=['POST'])
 class game_result(Resource):
