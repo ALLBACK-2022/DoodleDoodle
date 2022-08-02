@@ -198,5 +198,24 @@ def saveImg(self):
 #     return str(ret)
 
 
+def saveImg(self):
+    '''사용자가 그린 그림을 저장한다'''
+    value = request.form.to_dict(flat=False)
+    ranword = value['ranword']
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+    f = request.files['filename']
+    f.save('temp/' + f.name + '.png')  # 파일명으로 저장
+
+    os.remove('temp/' + str(drawid) + '.png')
+
+    # adapter = HTTPAdapter(max_retries=retry)
+    # session.mount('http://', adapter)
+    # session.mount('https://', adapter)
+    # url = 'http://ai:5000/api/v1/start_predict'
+    # response = session.post(url, json=return_data)
+    # response_data = response.json()
+
+
 if __name__ == '__main__':
     app.run()
