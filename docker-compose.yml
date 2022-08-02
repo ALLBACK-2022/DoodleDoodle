@@ -19,14 +19,12 @@ services:
     tty: true
 
   backend:
-    depends_on:
-      - db
-      - rabbitmq
     build:
       context: ./backend
     ports:
      - 5000:5000
     environment:
+      FLASK_ENV: development
       FLASK_DEBUG: 1
       FLASK_APP: ./app.py
       APP_NAME: "backend"
@@ -43,6 +41,9 @@ services:
       - db
     volumes:
       - ./backend:/backend/
+    depends_on:
+      - db
+      - rabbitmq
     tty: true
 
   ai:
@@ -51,6 +52,7 @@ services:
     ports:
     - 5001:5000
     environment:
+      FLASK_ENV: development
       FLASK_DEBUG: 1
       FLASK_APP: ./app.py
     container_name: ai-con
@@ -67,6 +69,7 @@ services:
     links:
       - rabbitmq
       - db
+    tty: true
 
   db:
     image: mysql
