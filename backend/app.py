@@ -13,7 +13,7 @@ import os, models, random, logging, requests
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
-from requests.adapters import HTTPAdapter, Retry
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -166,16 +166,10 @@ class randwords(Resource):
 
 @ns.route("/api/v1/draws", methods=['POST'])
 class save(Resource):
-    def _translate_word(self, aranword):
-        '''한글단어를 영어로 변환한다'''
-        row = db.session.query(models.Dictionary).filter(
-            models.Dictionary.name == aranword).first()
-        englishword = row.eng_name
-        db.session.commit()
-        return englishword
 
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
+        #미리 draw table에 row 추가 
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'],
                           doodle="", game_id=value['game-id'])
@@ -186,6 +180,7 @@ class save(Resource):
         drawid = ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
+        #s3 버킷에 파일 업로드
         f = request.files['filename']
         f.save('temp/' + str(drawid) + '.png')
         retPut = s3_put_object(
@@ -196,24 +191,12 @@ class save(Resource):
         if game is None:
             return ('Can not access data', 400)
         ranword = game.random_word
-        englishranword = self._translate_word(ranword)
         if retPut is None:
             return('Draw saved fail', 400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-        return_data = {"draw_id": drawid, "ranword": englishranword}
-        session = requests.Session()
-        retry = Retry(connect=3, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
-        url = 'http://ai:5000/api/v1/start_predict'
-        response = session.post(url, json=return_data)
-        response_data = response.json()
-        aiResult = response_data["task_id"]
-        retdata = {"draw_id": drawid, "task_id": aiResult}
-
+        retdata = {"draw_id": drawid}
         try:
             return retdata, 200
         except:
