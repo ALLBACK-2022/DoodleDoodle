@@ -16,7 +16,6 @@ from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy import and_
 
-
 app = Flask(__name__)
 load_dotenv()
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
