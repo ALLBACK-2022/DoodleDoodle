@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router';
 
-function MobileResultMulti({ percentage, rank, doodle, player, taskid, drawid, gameid }) {
+function MobileResultMulti({ percentage, rank, doodle, player, drawid, gameid }) {
   const navigate = useNavigate();
   const containerStyles = {
     height: '1.6rem',
@@ -25,7 +25,7 @@ function MobileResultMulti({ percentage, rank, doodle, player, taskid, drawid, g
   function onClick() {
     navigate('../resultone', {
       replace: true,
-      state: { taskId: taskid, drawId: drawid, gameId: gameid },
+      state: { drawId: drawid, gameId: gameid, isFromGamePage: false },
     });
   }
 
