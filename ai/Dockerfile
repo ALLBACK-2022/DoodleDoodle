@@ -13,8 +13,8 @@ RUN pip install --upgrade pip
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 RUN FLASK_ENV=development
 
-COPY requirements.txt /ai/
-RUN pip install -r requirements.txt
+COPY requirements_app.txt /ai/
+RUN pip install -r requirements_app.txt
 # RUN pip3 install --upgrade pip && pip3 install --no-cache-dir Flask flask_prometheus_metrics
 COPY . ./
 

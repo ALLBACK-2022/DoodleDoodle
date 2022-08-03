@@ -11,9 +11,9 @@ RUN apt-get update \
 
 RUN pip install --upgrade pip
 
-COPY requirements.txt /ai/
-RUN pip install -r requirements.txt
-RUN pip freeze > requirements.txt
+COPY requirements_cel.txt /ai/
+RUN pip install -r requirements_cel.txt
+RUN pip freeze > requirements_cel.txt
 
 COPY . .
 

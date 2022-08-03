@@ -4,10 +4,10 @@ from flask import Flask
 from flask_cors import CORS
 # ----------S3------------------
 #from ai.connection import conn
-from .connection import s3_connection, s3_get_object
+#from .connection import s3_connection, s3_get_object
 #from conf import BUCKET_NAME
 #from . import conf as BUCKET_NAME
-from .config import BUCKET_NAME
+#from .config import BUCKET_NAME
 #from connection import s3_connection, s3_get_object
 # ----------AI------------------
 #import keras
@@ -29,12 +29,7 @@ logger.info(os.getcwd()) # 얘 조차도 안뜸.
 os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 # print('현재 실행 중인 작업 경로는 in task.py :', os.getcwd())
 # os.chdir('C://Users//jiwon//DoodleDoodle_RabbitCeleryConn//DoodleDoodle//ai')
-
-
-
 #os.chdir('/ai')
-
-
 
 # print('바뀐 작업 경로는 in task.py :', os.getcwd())
 # MYSQL_USER = os.environ.get("MYSQL_USER")
@@ -96,7 +91,6 @@ def ai_predict(filename, ranword):
             otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
 
     otherResults['result'] = result
-    print("task.py, remove",filename)
     #os.remove('/ai/temp/' + filepath)
     #os.remove('./temp/' + filepath)
     #os.remove('/ai/temp/' + filepath)
