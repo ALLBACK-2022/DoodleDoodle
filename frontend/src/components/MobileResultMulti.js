@@ -4,6 +4,23 @@ import { useNavigate } from 'react-router';
 
 function MobileResultMulti({ percentage, rank, doodle, player, drawid }) {
   const navigate = useNavigate();
+  function chagneRank2String(ranknum) {
+    switch (ranknum) {
+      case 1:
+        return '1st';
+      case 2:
+        return '2nd';
+      case 3:
+        return '3rd';
+      case 4:
+      case 5:
+      case 6:
+        return ''.concat(ranknum, 'th');
+      default:
+        return '1st';
+    }
+  }
+
   const containerStyles = {
     height: '1.6rem',
     width: '100%',
@@ -35,7 +52,7 @@ function MobileResultMulti({ percentage, rank, doodle, player, drawid }) {
     w-[100%] h-[7rem] place-content-center"
     >
       <div className="flex items-center">
-        <div className="text-primary-3 font-cookierun_m text-[1.25rem] mr-[1rem]">{rank}</div>
+        <div className="text-primary-3 font-cookierun_m text-[1.25rem] mr-[1rem]">{chagneRank2String(rank)}</div>
         <div
           tabIndex={0}
           role="button"
