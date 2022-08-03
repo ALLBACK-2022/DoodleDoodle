@@ -7,6 +7,8 @@ function StartDrawButton({ image, word }) {
   const navigate = useNavigate(); // 페이지 이동 시 사용
 
   async function onClick() {
+    window.sessionStorage.removeItem('gameId');
+
     const req = {
       id: location.state.gameID,
       name: word,

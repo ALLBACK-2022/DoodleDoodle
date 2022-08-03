@@ -24,5 +24,6 @@ COPY . ./
 COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 CMD ./wait-for-it.sh -t 30 db:3306 -- gunicorn --bind 0.0.0.0:5000 --statsd-host=${STATSD_HOST}:${STATSD_PORT} --statsd-prefix=${APP_NAME} app:app --reload
+
 # CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 

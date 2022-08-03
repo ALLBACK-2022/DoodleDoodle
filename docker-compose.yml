@@ -61,6 +61,7 @@ services:
       - 5001
     restart: always
     volumes:
+      #- ./ai:/ai
       - ./ai:/ai/
     depends_on:
       - rabbitmq
@@ -128,6 +129,9 @@ services:
     user: root
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     restart: always
+    volumes:
+      #- ./ai:/ai
+      - ./ai:/ai/
     depends_on:
       - rabbitmq
       - ai
