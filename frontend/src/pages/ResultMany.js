@@ -14,9 +14,10 @@ function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
   const [randword, setRandword] = useState('');
   const [infoLoading, setInfoLoading] = useState(false);
-  const [gameId, setGameId] = useState(-1);
+  // const [gameId, setGameId] = useState(-1);
   const location = useLocation();
   const mounted = useRef(false);
+  const gameId = useRef(-1);
 
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -30,9 +31,9 @@ function ResultMany() {
     const storageGameId = sessionStorage.getItem('gameId');
     if (!storageGameId) {
       window.sessionStorage.setItem('gameId', location.state.gameId);
-      setGameId(location.state.gameId);
+      gameId.current = location.state.gameId;
     } else {
-      setGameId(Number(storageGameId));
+      gameId.current = Number(storageGameId);
     }
   }
 
@@ -48,12 +49,14 @@ function ResultMany() {
 
   async function getData() {
     console.log('getData() here');
-    await axios.get(getInfoURL + gameId.toString()).then(response => {
+    await axios.get(getInfoURL + gameId.current.toString()).then(response => {
       console.log(response);
-      setRandword(response.randword);
-      setPlayersInfo(response.user);
+      setRandword(response.data.randword);
+      setPlayersInfo(response.data.users);
+      console.log(playersInfo);
+      console.log(response.data.users);
       // eslint-disable-next-line no-unused-vars
-      const temp2 = playersInfo.map(player => {
+      const temp2 = response.data.users.map(player => {
         console.log('draw-no', player['draw-no']);
         console.log('draw-id', player['draw-id']);
         console.log('img_url', player.img_url);
