@@ -59,6 +59,7 @@ services:
     restart: always
     # command: flask run --host=0.0.0.0 --port=5001
     volumes:
+      #- ./ai:/ai
       - ./ai:/ai/
     depends_on:
       - rabbitmq
@@ -122,6 +123,9 @@ services:
     # volumes:
       # - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
     restart: always
+    volumes:
+      #- ./ai:/ai
+      - ./ai:/ai/
     depends_on:
       - rabbitmq
       - ai
