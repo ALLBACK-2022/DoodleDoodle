@@ -285,21 +285,31 @@ class game(Resource):
 class game_result(Resource):
     '''프런트가 ai한테 받은 결과값을 백엔드로 보내준다(new)'''
     def post(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         value = request.get_json()
         draw_id = value['draw-id']
         top_five = value['top-five']
-        if draw_id is None or top_five is None:
+        randword = value['randword']['result']
+        now = datetime.datetime.now().replace(microsecond=0)
+        print(list(randword.keys())[0])
+        if draw_id is None or top_five is None or randword is None:
             return("Can not find request data", 400)
-        for idx, result in enumerate(top_five):
-            now = datetime.datetime.now().replace(microsecond=0)
-            game_id = db.session.query(models.Draw).filter(
-                models.Draw.id == draw_id).first().game_id
+        game_id = db.session.query(models.Draw).filter(
+            models.Draw.id == draw_id).first().game_id
+        dictionary_id = db.session.query(models.Dictionary).filter(
+            models.Dictionary.eng_name == list(randword.keys())[0]).first().id
+        row = models.Result(similarity=randword[list(randword.keys())[0]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
+        db.session.add(row)
+        for result in top_five:
+            print(result)
             name = db.session.query(models.Game).filter(
                 models.Game.id == game_id).first().random_word
-            dictionary_id = db.session.query(models.Dicionary).filter(
+            dictionary_id = db.session.query(models.Dictionary).filter(
                 models.Dictionary.name == name).first().id
-            row = models.Result(similarity=top_five[result.keys()[idx]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id,
-                created_at=now, updated_at=now)
+            row = models.Result(similarity=list(result.values())[0], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
             db.session.add(row)
         db.session.commit()
         return ("save success", 200)

@@ -8,7 +8,7 @@ import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
-const getInfoURL = 'api/v1/results/game/';
+const getInfoURL = 'http://localhost:5000/api/v1/results/game/';
 
 function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);

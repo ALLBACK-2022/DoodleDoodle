@@ -10,9 +10,9 @@ import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
 
 const postImageToBackURL = 'http://localhost:5000/api/v1/draws'; // 백엔드에 이미지 보내는 API
-const postImageToAIURL = 'http://localhost:5001/api/v1/ai/pictures'; // AI에 이미지 보내는 API
-const getAITaskStatusURL = 'http://localhost:5001/api/v1/task_status'; // AI에게 Taskid로 상태확인
-const getAIResultURL = 'http://localhost:5001/api/v1/result_predict'; // AI에게 Taskid로 분석결과 받기
+const postImageToAIURL = 'http://localhost:8081/api/v1/ai/pictures'; // AI에 이미지 보내는 API
+const getAITaskStatusURL = 'http://localhost:8081/api/v1/task_status'; // AI에게 Taskid로 상태확인
+const getAIResultURL = 'http://localhost:8081/api/v1/result_predict'; // AI에게 Taskid로 분석결과 받기
 const postResultToBackURL = 'http://localhost:5000/api/v1/game-result'; // 백엔드에 AI결과값 보내는 API
 
 // 게임 페이지
@@ -58,15 +58,16 @@ function GamePage() {
     await axios
       .post(postImageToBackURL, formData, heders)
       .then(response => {
-        console.log('player', currentPlayer, '-drawId: ', response.data.draw_id);
         drawIdArray.current[currentPlayer - 1] = response.data.draw_id; // 반환값에서 drawID받아서 저장
+        console.log('player', currentPlayer, '-drawId: ', drawIdArray.current[currentPlayer - 1]);
       })
       .catch(error => console.log(error));
   }
 
   // AI에게 받은 결과를 백엔드로 전달
-  async function postResultToBack(topFiveArray) {
-    console.log('player', currentPlayer, ': ', topFiveArray);
+  async function postResultToBack(topFiveArray, randWordData) {
+    console.log('player', currentPlayer, ': ', randWordData, topFiveArray);
+    console.log(drawIdArray.current[currentPlayer - 1]);
     const heders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
@@ -74,8 +75,9 @@ function GamePage() {
       'Content-type': 'application/json; charset=UTF-8',
     };
     const request = {
-      'draw-id': drawIdArray[currentPlayer - 1],
+      'draw-id': drawIdArray.current[currentPlayer - 1],
       'top-five': topFiveArray,
+      randword: randWordData,
     };
     await axios
       .post(postResultToBackURL, request, heders)
@@ -123,25 +125,23 @@ function GamePage() {
         console.log('player', currentPlayer, ': ', response);
         const resData = response.data;
         console.log(resData);
-        let index = 0;
         const topFiveArray = [];
-
+        const randWordData = {};
         // eslint-disable-next-line no-restricted-syntax
-        for (const key in Object.keys(resData)) {
+        for (const key in resData) {
           if (key !== 'result') {
             console.log(key, ': ', resData[key]);
             const data = {};
             data[key] = resData[key];
-            topFiveArray[index] = data[key];
-            index += 1;
+            topFiveArray.push(data);
           } else {
-            console.log(`in dict [${key}] have not any value`);
-            index += 1;
+            randWordData[key] = resData[key];
           }
         }
         console.log('topfive: ', topFiveArray);
+        console.log('topfive: ', randWordData);
         // 이미지에 분석 결과 보내기(response가공하던 뭐던해서)
-        postResultToBack(topFiveArray);
+        postResultToBack(topFiveArray, randWordData);
       })
       .catch(error => {
         console.log('error in getAIResult: ', error);
@@ -199,6 +199,7 @@ function GamePage() {
         checkAIStatus(response.data.task_id);
       })
       .catch(error => {
+        console.log(engRandWord, imgFile);
         console.log('postImageToAIError:', error);
       });
   }

@@ -199,7 +199,7 @@ def task_result():
     print('responseData: ', response_data)
     print('request: ', request)
     print('task_id: ', task_id)
-    result = str(celery_app.AsyncResult(task_id).result)
+    result = celery_app.AsyncResult(task_id).result
     return result
 
 # @app.route('/simple_task_result/<task_id>', methods=['GET'])
