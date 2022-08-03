@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import '../assets/icons/smile.png';
 import share from '../assets/icons/share.png';
 
 function ShareResult({ resultString, isforOne, img, isMobile }) {
+  const isShare = useRef(false);
+
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
@@ -18,7 +20,10 @@ function ShareResult({ resultString, isforOne, img, isMobile }) {
       const str = array[0].concat('을\n', array[1]);
 
       const kakao = window.Kakao;
-      kakao.init(process.env.REACT_APP_KAKAO_TOKEN);
+      if (!isShare.current) {
+        kakao.init(process.env.REACT_APP_KAKAO_TOKEN);
+        isShare.current = true;
+      }
 
       kakao.Link.sendCustom({
         templateId: 80689,

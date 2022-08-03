@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
-// import { useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import axios from 'axios';
 
 import ResultOneSketchBook from '../components/ResultOneSketchBook';
@@ -10,7 +10,7 @@ import TopFiveResult from '../components/TopFiveResult';
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import ResultButtons from '../components/ResultButtons';
 
-const baseURL = 'api/v1/results/draw/';
+const baseURL = 'http://localhost:5000/api/v1/results/draw/';
 
 function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0.0 }]); // 유사도 상위 5개 이름과 유사도
@@ -20,15 +20,16 @@ function ResultforOne() {
 
   const defaultData = { name: '?', value: 0.0 };
 
-  // const location = useLocation();
+  const location = useLocation();
 
   let testCount = 0;
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
     // 결과 받아오는 API 호출
     console.log('getResult Start');
+    const drawId = location.state.isFromGamePage ? location.state.drawId[0] : location.state.drawId;
     await axios
-      .get(baseURL + 1)
+      .get(baseURL.concat(drawId))
       // 호출이 완료되면
       .then(response => {
         testCount += 1;
@@ -37,18 +38,21 @@ function ResultforOne() {
         const imageArray = [];
         // 유사도 상위 5개 데이터 저장
         const top = response.data.topfive;
-        const randomWord = response.data.randword;
+        // 반복문 돌려서 randomWord
+        let randomWord;
         const userDoodle = response.data.doodle;
-        console.log(top);
+        console.log(top, userDoodle);
         // topfiveArray에 5개 데이터의 이름과 유사도 값을 넣고
         // imageArray에 5개 데이터의 이미지를 사전에서 불러와 넣는다
-        for (let i = 0; i < 5; i += 1) {
+        for (let i = 0; i < 6; i += 1) {
           console.log(top[i].dictionary.name, ': ', top[i].similarity);
-          topfiveArray.push({
-            name: top[i].dictionary.name,
-            value: top[i].similarity,
-          });
-          imageArray.push(top[i].dictionary.img_url);
+          if (i < 5) {
+            topfiveArray.push({
+              name: top[i].dictionary.name,
+              value: top[i].similarity,
+            });
+            imageArray.push(top[i].dictionary.img_url);
+          } else randomWord = top[i];
         }
         console.log('<randomWord>', randomWord.dictionary.name, ': ', randomWord.similarity);
         // 유사도 상위5개 차트의 이미지와 이름, 유사도값 업데이트
@@ -165,7 +169,7 @@ function ResultforOne() {
             <ResultOneSketchBook
               randomWordData={randomWordData}
               isPC={isPC}
-              isFromGamePage={false}
+              isFromGamePage={location.state.isFromGamePage}
               text={setResultString(randomWordData.name, randomWordData.value)}
             />
           )}
@@ -174,7 +178,7 @@ function ResultforOne() {
           <div className="absolute text-center bottom-[9vh] items-center w-[92vw]">
             <ResultButtons
               isforOne
-              isFromGamePage={false}
+              isFromGamePage={location.state.isFromGamePage}
               userNum={1}
               img={randomWordData.imageUrl}
               resultString={setResultString(randomWordData.name, randomWordData.value)}
