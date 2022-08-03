@@ -3,10 +3,15 @@ from flask import Flask, request, jsonify
 from celery.utils.log import get_task_logger
 from celery import Celery
 from dotenv import load_dotenv
+from flask_cors import CORS, cross_origin
 import sys
 import time
 import os
 from pathlib import Path
+
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 load_dotenv()
 
@@ -69,15 +74,20 @@ celery_app = make_celery(app)
 # AI 작업 요청
 
 
-@app.route('/api/v1/start_predict', methods=['POST'])
+@app.route('/api/v1/ai/pictures', methods=['POST'])
+@cross_origin()
 def call_method():
+    request.headers.get('Access-Control-Allow-Origin')
+    request.headers.get('Access-Control-Allow-Methods')
+    request.headers.get('Access-Control-Allow-Headers')
+    request.headers.get('Content-type')
     '''사용자가 그린 그림을 저장한다'''
     #form data로 받는다.
     value = request.form.to_dict(flat=False)
-    print('value',value)
-    ranword = value['ranword']
-    print('받아온 ranword',ranword)
-
+    print(value['randword'])
+    print(value)
+    randword = value['randword']
+    print(randword[0])
     # 파일명으로 저장
     if not os.path.exists('temp'):
         os.mkdir('temp')
@@ -102,7 +112,7 @@ def call_method():
     print('app.py-> filename',filename)
     # 이미지에 따라서 수정 필요
     task = celery_app.send_task('ai_predict', kwargs={
-        'filename': filename, 'ranword': ranword[0]})
+        'filename': filename, 'randword': randword[0]})
 
     task_id = task.id
     isTaskid = {"task_id": task_id}
@@ -125,9 +135,14 @@ def call_method():
 
 
 @app.route('/api/v1/task_status', methods=['POST'])
+@cross_origin()
 def get_status():
+    request.headers.get('Access-Control-Allow-Origin')
+    request.headers.get('Access-Control-Allow-Methods')
+    request.headers.get('Access-Control-Allow-Headers')
+    request.headers.get('Content-type')
     response_data = request.get_json()
-    task_id = response_data["task-id"]
+    task_id = response_data["task_id"]
     status = celery_app.AsyncResult(task_id, app=celery_app)
 
     isStatus = {"status": str(status.state)}
@@ -173,10 +188,18 @@ def get_status():
 
 # 결과 반환
 @app.route('/api/v1/result_predict', methods=['POST'])
+@cross_origin()
 def task_result():
+    request.headers.get('Access-Control-Allow-Origin')
+    request.headers.get('Access-Control-Allow-Methods')
+    request.headers.get('Access-Control-Allow-Headers')
+    request.headers.get('Content-type')
     response_data = request.get_json()
-    task_id = response_data["task-id"]
-    result = str(celery_app.AsyncResult(task_id).result)
+    task_id = response_data["task_id"]
+    print('responseData: ', response_data)
+    print('request: ', request)
+    print('task_id: ', task_id)
+    result = celery_app.AsyncResult(task_id).result
     return result
 
 # @app.route('/simple_task_result/<task_id>', methods=['GET'])

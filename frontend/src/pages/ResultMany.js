@@ -8,15 +8,16 @@ import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
-const getInfoURL = 'api/v1/results/game/';
+const getInfoURL = 'http://localhost:5000/api/v1/results/game/';
 
 function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
   const [randword, setRandword] = useState('');
   const [infoLoading, setInfoLoading] = useState(false);
-  const [gameId, setGameId] = useState(-1);
+  // const [gameId, setGameId] = useState(-1);
   const location = useLocation();
   const mounted = useRef(false);
+  const gameId = useRef(-1);
 
   const isMobile = useMediaQuery({
     query: '(max-width: 700px)',
@@ -30,9 +31,9 @@ function ResultMany() {
     const storageGameId = sessionStorage.getItem('gameId');
     if (!storageGameId) {
       window.sessionStorage.setItem('gameId', location.state.gameId);
-      setGameId(location.state.gameId);
+      gameId.current = location.state.gameId;
     } else {
-      setGameId(Number(storageGameId));
+      gameId.current = Number(storageGameId);
     }
   }
 
@@ -47,19 +48,28 @@ function ResultMany() {
   }
 
   async function getData() {
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    };
+
     console.log('getData() here');
-    await axios.get(getInfoURL + gameId.toString()).then(response => {
+    await axios.get(getInfoURL + gameId.current.toString(), heders).then(response => {
       console.log(response);
-      setRandword(response.randword);
-      setPlayersInfo(response.user);
+      setRandword(response.data.randword);
+      setPlayersInfo(response.data.users);
+      console.log(playersInfo);
+      console.log(randword);
       // eslint-disable-next-line no-unused-vars
-      const temp2 = playersInfo.map(player => {
-        console.log('draw-no', player['draw-no']);
-        console.log('draw-id', player['draw-id']);
-        console.log('img_url', player.img_url);
-        console.log('img_url', player.similarity);
-        return player;
-      });
+      // const temp2 = response.data.users.map(player => {
+      //   console.log('draw-no', player.draw_no);
+      //   console.log('draw-id', player['draw-id']);
+      //   console.log('img_url', player.img_url);
+      //   console.log('img_url', player.similarity);
+      //   return player;
+      // });
       setInfoLoading(loading => !loading);
     });
   }
@@ -103,9 +113,9 @@ function ResultMany() {
             {playersInfo.map((player, index) => (
               <MobileResultMulti
                 rank={index + 1}
-                percentage={player.randword.similarity}
+                percentage={player.similarity}
                 doodle={player.img_url}
-                player={player['draw-no']}
+                player={player.draw_no}
                 key={player['draw-id']}
                 drawid={player['draw-id']}
               />
@@ -120,9 +130,9 @@ function ResultMany() {
             {playersInfo.map((player, index) => (
               <ResultMulti
                 rank={index + 1}
-                percentage={player.randword.similarity}
+                percentage={player.similarity}
                 doodle={player.img_url}
-                player={player['draw-no']}
+                player={player.draw_no}
                 key={player['draw-id']}
                 number={playersInfo.length}
                 drawid={player['draw-id']}
@@ -141,7 +151,7 @@ function ResultMany() {
               isFromGamePage
               userNum={playersInfo.length}
               img={playersInfo[0].img_url}
-              resultString={setResultString(playersInfo[0]['draw-no'], randword, playersInfo[0].similarity)}
+              resultString={setResultString(playersInfo[0].draw_no, randword, playersInfo[0].similarity)}
             />
           </div>
         )}
