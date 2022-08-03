@@ -6,6 +6,7 @@ import AboutIcon from '../assets/icons/aboutIcon.png';
 import MainIcon from '../assets/icons/mainIcon.png';
 import GameStartButton from '../components/GameStartButton';
 import DoodleBelt from '../components/DoodleBelt';
+import Loading from '../components/Loading';
 
 /*
  *   '두들 두들!' 시작 페이지
@@ -20,6 +21,9 @@ function Main() {
   });
   return (
     <div className="flex w-screen h-screen relative bg-primary">
+      <div className="absolute w-[100%] h-[100%]">
+        <Loading />
+      </div>
       {isMobile && (
         <div className="w-[100%]">
           <DoodleBelt isTop />
