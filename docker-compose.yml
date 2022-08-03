@@ -21,6 +21,7 @@ services:
 <<<<<<< feature/new/hunhui
 <<<<<<< feature/new/hunhui
 <<<<<<< feature/new/hunhui
+<<<<<<< feature/new/hunhui
 =======
 <<<<<<< develop
 <<<<<<< feature/new/hunhui
@@ -53,6 +54,8 @@ services:
 
     # stdin_open: true
 >>>>>>> feat: delete test code
+=======
+>>>>>>> chore: delete git message
     tty: true
 
   backend:
