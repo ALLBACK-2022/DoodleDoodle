@@ -12,12 +12,19 @@ function StartDrawButton({ image, word }) {
   async function onClick() {
     window.sessionStorage.removeItem('gameId');
 
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    };
+
     const req = {
       id: location.state.gameID,
       name: word,
     };
 
-    await axios.post(baseURL, req).then(response => {
+    await axios.post(baseURL, req, heders).then(response => {
       console.log(response);
       navigate('../gamepage', {
         replace: true,
