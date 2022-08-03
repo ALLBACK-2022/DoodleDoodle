@@ -234,11 +234,13 @@ function GamePage() {
 
   // NextButton을 클릭했을때 실행
   const nextButtonClick = () => {
-    if (currentPlayer >= maxPlayer) {
-      setIsLoad(true);
-      console.log('d');
-    }
-    canvasRef.current.convertCanvasToImage();
+    if (!isLoad) {
+      if (currentPlayer >= maxPlayer) {
+        setIsLoad(true);
+        console.log('d');
+      }
+      canvasRef.current.convertCanvasToImage();
+    } else console.log('loding...');
   };
 
   // ClearButton을 클릭했을때 실행
