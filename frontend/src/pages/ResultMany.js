@@ -92,7 +92,12 @@ function ResultMany() {
     <div id="resultmanypage" className={`relative flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <GameBGImg pageName="ResultMany" />
       <div
+<<<<<<< HEAD
         className="deskTop:py-[2rem] mobile:pt-[7vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
+=======
+        className="px-[3rem] deskTop:py-[2rem] mobile:pt-[8vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
+        overflow-x-hidden inline-block text-center
+>>>>>>> halin2
       "
       >
         <h1
