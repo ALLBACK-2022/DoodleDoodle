@@ -138,8 +138,8 @@ function ResultMany() {
         )}
         {infoLoading && (
           <div
-            className="mobile:absolute mobile:text-center mobile:bottom-[9vh]
-            mobile:items-center mobile:w-[92vw] deskTop:w-[40vw] deskTop:max-w-[65vh]
+            className="mobile:absolute mobile:text-center mobile:bottom-[5vh] mobile:mx-auto
+            mobile:items-center mobile:w-[75vw] deskTop:w-[40vw] deskTop:max-w-[65vh]
             deskTop:fixed deskTop:bottom-[6vh] deskTop:right-[8vw]"
           >
             <ResultButtons
