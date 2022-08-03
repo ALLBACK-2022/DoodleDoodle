@@ -25,10 +25,17 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 logger = get_task_logger(__name__)
-logger.info(os.getcwd())
+logger.info(os.getcwd()) # 얘 조차도 안뜸.
+os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 # print('현재 실행 중인 작업 경로는 in task.py :', os.getcwd())
 # os.chdir('C://Users//jiwon//DoodleDoodle_RabbitCeleryConn//DoodleDoodle//ai')
-os.chdir('/ai')
+
+
+
+#os.chdir('/ai')
+
+
+
 # print('바뀐 작업 경로는 in task.py :', os.getcwd())
 # MYSQL_USER = os.environ.get("MYSQL_USER")
 # MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
@@ -44,13 +51,16 @@ os.chdir('/ai')
 
 @celery_app.task(name='ai_predict')
 def ai_predict(filename, ranword):
-    # logger.info('ai_predict에 들어옴')
+    logger.info('ai_predict에 들어옴')
 
     logger.info(filename)
     logger.info(ranword)
+    logger.info(type( ranword) ) #list
+    #logger.info( ranword.index(0))
     
 
     filepath = filename + '.png'  # filename =string?
+    logger.info(filepath)
 
     with open("./ai-model/classes.txt", "r", encoding="utf8") as ins:
         class_names = []
@@ -59,8 +69,12 @@ def ai_predict(filename, ranword):
     # Load the model
     model = keras.models.load_model('./ai-model/1820.h5')
     # model.summary()
-    # print('tasks.py: 모델 로드 완료')
+    #print('image 불러오기 전:>>>>>',os.getcwd())
+    
+    #img = plt.imread('./temp/' + filepath)
+    #img = plt.imread('temp/' + filepath)
     img = plt.imread('/ai/temp/' + filepath)
+    #img = plt.imread('/ai/temp/' + filename)
     img = img[:, :, 0]
     img = resize(img, (28, 28))
     print('tasks.py: img', img)
@@ -82,7 +96,10 @@ def ai_predict(filename, ranword):
             otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
 
     otherResults['result'] = result
-    os.remove('temp/' + filepath)
+    print("task.py, remove",filename)
+    #os.remove('/ai/temp/' + filepath)
+    #os.remove('./temp/' + filepath)
+    #os.remove('/ai/temp/' + filepath)
     return (otherResults, 200)
 
 

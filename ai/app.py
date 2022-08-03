@@ -1,3 +1,4 @@
+from importlib.resources import path
 from flask import Flask, request, jsonify
 from celery.utils.log import get_task_logger
 from celery import Celery
@@ -5,6 +6,7 @@ from dotenv import load_dotenv
 import sys
 import time
 import os
+from pathlib import Path
 
 load_dotenv()
 
@@ -72,26 +74,35 @@ def call_method():
     '''사용자가 그린 그림을 저장한다'''
     #form data로 받는다.
     value = request.form.to_dict(flat=False)
+    print('value',value)
     ranword = value['ranword']
+    print('받아온 ranword',ranword)
 
     # 파일명으로 저장
     if not os.path.exists('temp'):
         os.mkdir('temp')
 
-    f = request.files['filename']
-    filename= 'test'
-    f.save('temp/' + filename + '.png') # 저장은 됨다. 
+    file = request.files['filename']
+    #filename= file.filename
+    filename = Path(file.filename).stem
+    #filename= 'test'
+    #path=os.path.join(os.getcwd(),"/temp/", filename)
+    #print('os.path.join(os.getcwd(), filename)',path)
+    #file.save(path)
+
+    #file.save('temp/' + filename)
+    file.save('temp/' + filename + '.png') # 저장은 됨다. 
     #다시 파일 삭제 
     # os.remove('temp/' + str(drawid) + '.png')
 
     # value = request.get_json()
     # img = value['img']
     # ranword = value['ranword']
-    print('f.name',f.name)
-    print('filename',filename)
+    
+    print('app.py-> filename',filename)
     # 이미지에 따라서 수정 필요
     task = celery_app.send_task('ai_predict', kwargs={
-        'filename': filename, 'ranword': ranword})
+        'filename': filename, 'ranword': ranword[0]})
 
     task_id = task.id
     isTaskid = {"task_id": task_id}
@@ -171,26 +182,6 @@ def task_result():
 # def task_result(task_id):
 #     ret = celery_app.AsyncResult(task_id).result
 #     return str(ret)
-
-
-def saveImg(self):
-    '''사용자가 그린 그림을 저장한다'''
-    value = request.form.to_dict(flat=False)
-    ranword = value['ranword']
-    if not os.path.exists('temp'):
-        os.mkdir('temp')
-    f = request.files['filename']
-    f.save('temp/' + f.name + '.png')  # 파일명으로 저장
-
-    os.remove('temp/' + str(drawid) + '.png')
-
-    # adapter = HTTPAdapter(max_retries=retry)
-    # session.mount('http://', adapter)
-    # session.mount('https://', adapter)
-    # url = 'http://ai:5000/api/v1/start_predict'
-    # response = session.post(url, json=return_data)
-    # response_data = response.json()
-
 
 if __name__ == '__main__':
     app.run()
