@@ -16,6 +16,11 @@ services:
     environment:
       - WATCHPACK_POLLING="true"
       - WDS_SOCKET_PORT=0
+<<<<<<< feature/new/hunhui
+=======
+
+    # stdin_open: true
+>>>>>>> feat: delete test code
     tty: true
 
   backend:
