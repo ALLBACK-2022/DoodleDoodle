@@ -18,7 +18,8 @@ from sqlalchemy import and_
 
 app = Flask(__name__)
 load_dotenv()
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+app.config['CORS_HEADERS'] = 'Content-Type'
 api = Api(app)
 migrate = Migrate(app, db)
 
@@ -134,7 +135,12 @@ class user_num(Resource):
         return ((row.id), 201)         # 숫자값만 반환 -> 성공
 
 
-@ns.route("/api/randwords", methods=['GET', 'POST'])
+# def build_actual_response(response):
+#     response.headers.add("Access-Control-Allow-Origin", "*")
+#     return response
+
+
+@ns.route("/api/v1/randwords", methods=['GET', 'POST'])
 class randwords(Resource):
 
     def _translate_word(self, aranword):

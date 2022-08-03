@@ -16,7 +16,7 @@ function StartDrawButton({ image, word }) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
-      'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Content-type': 'application/json; charset=UTF-8',
     };
 
     const req = {

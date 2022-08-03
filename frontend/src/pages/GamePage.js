@@ -203,54 +203,6 @@ function GamePage() {
       });
   }
 
-  /*
-  // 이미지를 백엔드에 보내는 함수
-  async function postImage(imgFile) {
-    const formData = new FormData();
-    formData.append('game-id', gameID.current);
-    formData.append('draw-no', currentPlayer);
-    formData.append('filename', imgFile);
-    await axios
-      .post(postImageURL, formData)
-      .then(response => {
-        taskIdArray.current[currentPlayer - 1] = response.data.task_id; // 반환값에서 TaskID받아서 저장
-        drawIdArray.current[currentPlayer - 1] = response.data.draw_id; // 반환값에서 drawID받아서 저장
-        // taskIdArray.push(response.data.task_id);
-        // drawIdArray.push(response.data.draw_id);
-        console.log('drawIdArray: ', drawIdArray.current);
-        console.log('taskIdArray: ', taskIdArray.current);
-        console.log('response: ', response);
-        if (currentPlayer >= maxPlayer) {
-          const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
-          console.log('goToResultPage');
-          navigate(newURL, {
-            replace: true,
-            state: {
-              gameId: gameID.current,
-              taskId: taskIdArray.current,
-              drawId: drawIdArray.current,
-              isFromGamePage: true,
-            },
-          });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        if (currentPlayer >= maxPlayer) {
-          const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
-          navigate(newURL, {
-            replace: true,
-            state: {
-              gameId: gameID.current,
-              taskId: maxPlayer,
-              drawId: maxPlayer,
-              isFromGamePage: true,
-            },
-          });
-        }
-      });
-  } */
-
   // DrawingCanvas에서 이미지 로딩 완료후 호출
   // imageData를 받아서 파일객체 생성후 AI와 Backend에 Post
   // 마지막 플레이어면 1인 or 다인용 결과페이지로 이동(state로 id들 전달)
