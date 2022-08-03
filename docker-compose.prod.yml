@@ -1,0 +1,200 @@
+version: "3.7"
+#백그라운드 실행 시  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#실행 시            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+services:
+  frontend:
+    build: 
+      context: ./frontend 
+    ports:
+     - 3030:3000
+    container_name: frontend-con
+    volumes: 
+      - build_frontend:/frontend/build
+      - ./frontend:/frontend/
+      - ./frontend/node_modules/:/frontend/node_modules
+    restart: always
+    image: run
+    environment:
+      - WDS_SOCKET_PORT=0
+    tty: true
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+     - 5000:5000
+    environment:
+      FLASK_APP: ./app.py
+      APP_NAME: "backend"
+      STATSD_HOST: "statsd-exporter"
+      STATSD_PORT: "9125"
+    container_name: backend-con
+    restart: always
+    links:
+      - rabbitmq
+      - db
+    volumes:
+      - ./backend:/backend/
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - app-tier
+    tty: true
+
+  ai:
+    build:
+      context: ./ai
+    ports:
+    - 5001:5000
+    environment:
+      FLASK_APP: ./app.py
+      APP_NAME: "ai"
+      STATSD_HOST: "statsd-exporter"
+      STATSD_PORT: "9125"
+    container_name: ai-con
+    expose:
+      - 5001
+    restart: always
+    volumes:
+      - ./ai:/ai/
+    depends_on:
+      - rabbitmq
+      - db
+      - backend
+    links:
+      - rabbitmq
+      - db
+    networks:
+      - app-tier
+    tty: true
+
+  db:
+    image: mysql
+    platform: linux/amd64
+    container_name: mysql-con
+    ports:
+      - 3307:3306
+    volumes:
+      - data_mysql:/mysql
+    env_file:
+      - .env
+    networks:
+      - app-tier
+    tty: true
+
+  nginx:
+    image: nginx:1.21.5-alpine
+    build: ./nginx
+    ports:
+      - 8080:8080
+      - 8081:8081
+    volumes:
+      - build_frontend:/var/www/frontend
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    container_name: nginx-con
+    depends_on:
+      - frontend
+      - backend
+      - ai
+    networks:
+      - app-tier
+    tty: true
+
+  rabbitmq:
+    image : rabbitmq:3-management
+    container_name: rabbitmq-con
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+    ports:
+      - 5672:5672 
+      - 15672:15672
+    volumes:
+      - data_rabbitmq:/rabbitmq
+    networks:
+      - app-tier
+    tty: true
+
+  worker:
+    build:
+      context: './ai'
+      dockerfile: Dockerfile.celery
+    container_name: worker-con
+    user: root
+    command: celery -A ai.tasks.celery_app worker --loglevel=info
+    restart: always
+    depends_on:
+      - rabbitmq
+      - ai
+      - db
+    networks:
+      - app-tier
+    tty: true
+    
+  flower:
+    image: mher/flower
+    container_name: flower-con
+    depends_on:
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+      - FLOWER_PORT=5555
+    ports:
+      - 5555:5555
+    networks:
+      - app-tier
+    tty: true
+
+  statsd-exporter:
+    container_name: exporter-con
+    image: prom/statsd-exporter:v0.22.4
+    ports:
+      - "9125:9125"
+      - "9102:9102"
+    volumes:
+      - ./etc/statsd-exporter/statsd.conf:/statsd/statsd.conf
+    command:
+      - --statsd.mapping-config=/statsd/statsd.conf
+    networks:
+      - app-tier
+
+  prometheus:
+    container_name: prometheus-con
+    image: prom/prometheus:v2.33.5
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./etc/prometheus:/workspace
+    command:
+      - '--config.file=/workspace/prometheus.yml'
+    networks:
+      - app-tier
+
+  grafana:
+    container_name: grafana-con
+    image: grafana/grafana:8.4.3
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./etc/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - prometheus
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
+
+volumes:
+  build_frontend: null
+  data_mysql: null
+  data_rabbitmq: null
+
