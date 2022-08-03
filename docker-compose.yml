@@ -16,6 +16,7 @@ services:
     environment:
       - WATCHPACK_POLLING="true"
       - WDS_SOCKET_PORT=0
+<<<<<<< HEAD
 <<<<<<< feature/new/hunhui
 <<<<<<< feature/new/hunhui
 <<<<<<< feature/new/hunhui
@@ -23,11 +24,19 @@ services:
 =======
 >>>>>>> feat: delete test code
 =======
+=======
+<<<<<<< HEAD
+>>>>>>> halin
 <<<<<<< develop
 <<<<<<< develop
 =======
 =======
 >>>>>>> feat: delete test code
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> halin
+>>>>>>> halin
 
     # stdin_open: true
 >>>>>>> feat: delete test code
