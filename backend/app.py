@@ -9,7 +9,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests, datetime
+import os
+import models
+import random
+import logging
+import requests
+import datetime
 
 from models import db
 from flask_migrate import Migrate
@@ -54,6 +59,7 @@ result_parser = ns.parser()
 db = SQLAlchemy(app)
 s3 = s3_connection()
 random.seed(random.randint(0, 300))
+
 
 def insert_word():
     f1 = open("classes.txt", "r", encoding="utf-8")
@@ -105,7 +111,7 @@ def _organize_result(results, doodle):
 
 
 @ns.route("/", methods=['GET'])
-# 
+#
 class main_page(Resource):
 
     def get(self):
@@ -173,19 +179,18 @@ class randwords(Resource):
         selectgame.random_word = value['name']
         db.session.commit()
         transword = self._translate_word(value['name'])
-        rep =  {"engName": transword}
+        rep = {"engName": transword}
         if rep is None:
             return ('no word found', 400)
         return (rep, 201)
 
 
 @ns.route("/api/v1/draws", methods=['POST'])
-
 class save(Resource):
 
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
-        #미리 draw table에 row 추가 
+        # 미리 draw table에 row 추가
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'],
                           doodle="", game_id=value['game-id'])
@@ -196,7 +201,7 @@ class save(Resource):
         drawid = ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
-        #s3 버킷에 파일 업로드
+        # s3 버킷에 파일 업로드
         f = request.files['filename']
         f.save('temp/' + str(drawid) + '.png')
         retPut = s3_put_object(
@@ -220,7 +225,7 @@ class save(Resource):
 
 
 # @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
-# 
+#
 # class draw(Resource):
 
 #     def get(self, drawid):
@@ -235,9 +240,9 @@ class save(Resource):
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
-
 class newsingleresult(Resource):
     '''사용자가 그렸던 그림을 불러온다. + 1인용 결과페이지 + 개인 결과 페이지(new)'''
+
     def get(self, drawid):
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == drawid).all()
@@ -250,40 +255,49 @@ class newsingleresult(Resource):
 
 
 @ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
-
 class game(Resource):
     def get(self, gameid):
         '''ai가 분석한 결과를 가져온다(다인)'''
         game = db.session.query(models.Game).get(gameid)
         randword = game.random_word
-        row = db.session.query(models.Dictionary).filter(models.Dictionary.name == randword).first()
+        usernum = game.player_num
+        row = db.session.query(models.Dictionary).filter(
+            models.Dictionary.name == randword).first()
         dictnum = row.id
-        #results = db.session.query(models.Result).filter(models.Result.game_id == gameid).filter(models.Result.dictionary_id == dictnum).all()
-        results = db.session.query(models.Result).filter(and_(models.Result.game_id == gameid, models.Result.dictionary_id == dictnum)).all() 
-        #[<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>,<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>]
+        results = db.session.query(models.Result).filter(and_(
+            models.Result.game_id == gameid, models.Result.dictionary_id == dictnum)).all()
         if results is None:
             return('Can not access data', 400)
-        # ret = {} #리턴할 최종 json
-        #a = { "randword": randword } 
+        resultlen = len(results)
+        arr = []
+        for i in range(0, resultlen-1):
+            for j in range(i+1, resultlen):
+                if results[i].dictionary_id == results[j].dictionary_id and results[i].draw_id == results[j].draw_id:
+                    arr.append(i)
+        result_arr = []
+        for i in range(resultlen):
+            if i not in arr:
+                result_arr.append(results[i])
         x = {}
         res_list = []
         print(results)
-        for result in results:
-            x = {"draw-id":result.draw_id , "draw_no":result.draw.draw_no, "img_url": result.draw.doodle, "similarity":result.similarity}
-            res_list.append(x)      #그린 그림에 대한 정보만 담겨있는 딕셔너리
+        for result in result_arr:
+            x = {"draw-id": result.draw_id, "draw_no": result.draw.draw_no,
+                 "img_url": result.draw.doodle, "similarity": result.similarity}
+            res_list.append(x)  # 그린 그림에 대한 정보만 담겨있는 딕셔너리
             #print(result)
-        
-        res_list = sorted(res_list, key=lambda d: d['similarity'], reverse=True) # 유사도로 내림차순 정렬
-        #b = {"users":res_list}           #key값을 user로 가지고 value를 res_list로 가짐 
+        res_list = sorted(
+            res_list, key=lambda d: d['similarity'], reverse=True)  # 유사도로 내림차순 정렬
         ret = {}
         ret['randword'] = randword
-        ret['users'] = res_list
+        ret['users'] = res_list  # key값을 user로 가지고 value를 res_list로 가짐
         return(ret, 200)
 
-@ns.route("/api/v1/game-result", methods=['POST'])
 
+@ns.route("/api/v1/game-result", methods=['POST'])
 class game_result(Resource):
     '''프런트가 ai한테 받은 결과값을 백엔드로 보내준다(new)'''
+
     def post(self):
         request.headers.get('Access-Control-Allow-Origin')
         request.headers.get('Access-Control-Allow-Methods')
@@ -301,15 +315,15 @@ class game_result(Resource):
             models.Draw.id == draw_id).first().game_id
         dictionary_id = db.session.query(models.Dictionary).filter(
             models.Dictionary.eng_name == list(randword.keys())[0]).first().id
-        row = models.Result(similarity=randword[list(randword.keys())[0]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
+        row = models.Result(similarity=randword[list(randword.keys())[
+                            0]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
         db.session.add(row)
         for result in top_five:
             print(result)
-            name = db.session.query(models.Game).filter(
-                models.Game.id == game_id).first().random_word
             dictionary_id = db.session.query(models.Dictionary).filter(
-                models.Dictionary.name == name).first().id
-            row = models.Result(similarity=list(result.values())[0], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
+                models.Dictionary.eng_name == list(result.keys())[0]).first().id
+            row = models.Result(similarity=list(result.values())[
+                                0], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id)
             db.session.add(row)
         db.session.commit()
         return ("save success", 200)
@@ -338,11 +352,10 @@ class game_result(Resource):
 #         return ("save success", 200)
 
 
-        
 # @ns.route("/api/v1/draws/results/single", methods=['POST'])
-# 
+#
 # class singleresult(Resource):
-#     def post(self):      
+#     def post(self):
 #         '''AI가 분석한 결과를 가져온다(다인)'''
 #         value = request.get_json()
 #         print(value)
@@ -370,7 +383,7 @@ class game_result(Resource):
 
 
 # @ns.route("/api/v1/draws/results/multi", methods=['POST'])
-# 
+#
 # class multiresults(Resource):
 #     def post(self):
 #         print('here post')
@@ -418,7 +431,6 @@ class game_result(Resource):
 #         res['res'] = res_list
 #         # 반환
 #         return (res, 200)
-
 
 if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')

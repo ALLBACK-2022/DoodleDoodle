@@ -48,21 +48,28 @@ function ResultMany() {
   }
 
   async function getData() {
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    };
+
     console.log('getData() here');
-    await axios.get(getInfoURL + gameId.current.toString()).then(response => {
+    await axios.get(getInfoURL + gameId.current.toString(), heders).then(response => {
       console.log(response);
       setRandword(response.data.randword);
       setPlayersInfo(response.data.users);
       console.log(playersInfo);
-      console.log(response.data.users);
+      console.log(randword);
       // eslint-disable-next-line no-unused-vars
-      const temp2 = response.data.users.map(player => {
-        console.log('draw-no', player['draw-no']);
-        console.log('draw-id', player['draw-id']);
-        console.log('img_url', player.img_url);
-        console.log('img_url', player.similarity);
-        return player;
-      });
+      // const temp2 = response.data.users.map(player => {
+      //   console.log('draw-no', player.draw_no);
+      //   console.log('draw-id', player['draw-id']);
+      //   console.log('img_url', player.img_url);
+      //   console.log('img_url', player.similarity);
+      //   return player;
+      // });
       setInfoLoading(loading => !loading);
     });
   }
@@ -106,9 +113,9 @@ function ResultMany() {
             {playersInfo.map((player, index) => (
               <MobileResultMulti
                 rank={index + 1}
-                percentage={player.randword.similarity}
+                percentage={player.similarity}
                 doodle={player.img_url}
-                player={player['draw-no']}
+                player={player.draw_no}
                 key={player['draw-id']}
                 drawid={player['draw-id']}
               />
@@ -123,9 +130,9 @@ function ResultMany() {
             {playersInfo.map((player, index) => (
               <ResultMulti
                 rank={index + 1}
-                percentage={player.randword.similarity}
+                percentage={player.similarity}
                 doodle={player.img_url}
-                player={player['draw-no']}
+                player={player.draw_no}
                 key={player['draw-id']}
                 number={playersInfo.length}
                 drawid={player['draw-id']}
@@ -144,7 +151,7 @@ function ResultMany() {
               isFromGamePage
               userNum={playersInfo.length}
               img={playersInfo[0].img_url}
-              resultString={setResultString(playersInfo[0]['draw-no'], randword, playersInfo[0].similarity)}
+              resultString={setResultString(playersInfo[0].draw_no, randword, playersInfo[0].similarity)}
             />
           </div>
         )}
