@@ -36,3 +36,4 @@ boto3
 config
 pymysql
 flask-cors
+gunicorn

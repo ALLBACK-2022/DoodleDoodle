@@ -9,8 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests, datetime
-
+import os, models, random, logging, datetime
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
@@ -75,20 +74,6 @@ with app.app_context():
         models.Dictionary.id == 1).first()
     if word is None:
         insert_word()
-
-
-def _request_taskcheck(data):
-    session = requests.Session()
-    retry = Retry(connect=3, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    url = 'http://ai:5000/api/v1/task_status'
-    response = session.post(url, json=data)
-    response_data = response.json()
-    task_status = response_data["status"]
-    print('task_status', task_status)
-    return task_status
 
 
 def _organize_result(results, doodle):
@@ -295,11 +280,14 @@ class game(Resource):
         ret['users'] = res_list
         return(ret, 200)
 
-
 @ns.route("/api/v1/game-result", methods=['POST'])
 class game_result(Resource):
     '''프런트가 ai한테 받은 결과값을 백엔드로 보내준다(new)'''
     def post(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         value = request.get_json()
         draw_id = value['draw-id']
         top_five = value['top-five']
@@ -324,6 +312,10 @@ class game_result(Resource):
 class newsingleresult(Resource):
     '''사용자가 그렸던 그림을 불러온다. + 1인용 결과페이지 + 개인 결과 페이지(new)'''
     def get(self, drawid):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == drawid).all()
         doodle = db.session.query(models.Draw).filter(
@@ -332,95 +324,6 @@ class newsingleresult(Resource):
         if res is None:
             return ("Can not access data", 400)
         return (res, 200)
-        
-@ns.route("/api/v1/draws/results/single", methods=['POST'])
-@cross_origin()
-class singleresult(Resource):
-    def post(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')        
-        '''AI가 분석한 결과를 가져온다(다인)'''
-        value = request.get_json()
-        print(value)
-        # task_id(list 형태) game_id 받기
-        task_id = value['task-id']
-        draw_id = value['draw-id']
-        game = db.session.query(models.Game).get(value['game-id'])
-        if game is None:
-            return('Can not access data', 400)
-        randword = game.random_word
-        # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
-        data = {'task-id': task_id}
-        response = _request_taskcheck(data)
-        if response == "FAIL":
-            return('AI fail', 400)
-        if response == "TIME_OUT":
-            return('AI time out', 400)
-        # task가 다 완료되었다면 result 받아오기
-        results = db.session.query(models.Result).filter(
-            models.Result.draw_id == draw_id).all()
-        # for문을 돌면서 results로 가져온 결과들을 정리
-        res = _organize_result(results, randword)
-        # 반환
-        return (res, 200)
-
-
-@ns.route("/api/v1/draws/results/multi", methods=['POST'])
-@cross_origin()
-class multiresults(Resource):
-    def post(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
-        print('here post')
-        '''AI가 분석한 결과를 가져온다(1인)'''
-        value = request.get_json()
-        print(value)
-        # task_id(list 형태) game_id 받기
-        task_id = value['task-id']
-        user_num = len(task_id)
-        game = db.session.query(models.Game).get(value['game-id'])
-        if game is None:
-            return('Can not access data', 400)
-        randword = game.random_word
-        # task_id를 AI 서버로 전달해 task가 완료되었는지 확인 요청
-        data = {'task-id': task_id}
-        response = _request_taskcheck(data)
-        if response == "FAIL":
-            return('AI fail', 400)
-        if response == "TIME_OUT":
-            return('AI time out', 400)
-        # task가 다 완료되었다면 result 받아오기
-        results = db.session.query(models.Result).filter(
-            models.Result.game_id == game.id).all()
-        if results is None:
-            return('Can not access data', 400)
-        # for문을 돌면서 results로 가져온 결과들을 정리
-        res = {}
-        res_list = []
-        # draw-id가 같은 result끼리 분류
-        result_list = [[] for _ in range(user_num)]
-        for result in results:
-            result_list[result.draw.draw_no - 1].append(result)
-        # 이제 result 조회해서 가져오기
-        print('result_list', result_list)
-        for results in result_list:
-            print('results', results)
-            user_res = _organize_result(results, randword)
-            if results:
-                user_res['draw-no'] = results[0].draw.draw_no
-            user_res['task-id'] = task_id[user_res['draw-no'] - 1]
-            res_list.append(user_res)
-
-        res_list = sorted(
-            res_list, key=lambda d: d['randword']['similarity'], reverse=True)
-        res['res'] = res_list
-        # 반환
-        return (res, 200)
-
 
 if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
