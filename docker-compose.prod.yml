@@ -1,5 +1,6 @@
 version: "3.7"
-
+#백그라운드 실행 시  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#실행 시            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 services:
   frontend:
     build: 
@@ -14,7 +15,6 @@ services:
     restart: always
     image: run
     environment:
-      - WATCHPACK_POLLING="true"
       - WDS_SOCKET_PORT=0
     tty: true
 
@@ -24,8 +24,6 @@ services:
     ports:
      - 5000:5000
     environment:
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
       FLASK_APP: ./app.py
       APP_NAME: "backend"
       STATSD_HOST: "statsd-exporter"
@@ -50,8 +48,6 @@ services:
     ports:
     - 5001:5000
     environment:
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
       FLASK_APP: ./app.py
       APP_NAME: "ai"
       STATSD_HOST: "statsd-exporter"
@@ -61,7 +57,6 @@ services:
       - 5001
     restart: always
     volumes:
-      #- ./ai:/ai
       - ./ai:/ai/
     depends_on:
       - rabbitmq
@@ -129,9 +124,6 @@ services:
     user: root
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     restart: always
-    volumes:
-      #- ./ai:/ai
-      - ./ai:/ai/
     depends_on:
       - rabbitmq
       - ai
