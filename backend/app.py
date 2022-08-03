@@ -118,27 +118,22 @@ def _organize_result(results, doodle):
 
 
 @ns.route("/", methods=['GET'])
-@cross_origin()
+# @cross_origin()
 class main_page(Resource):
 
     def get(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
+        # request.headers.get('Access-Control-Allow-Origin')
+        # request.headers.get('Access-Control-Allow-Methods')
+        # request.headers.get('Access-Control-Allow-Headers')
+        # request.headers.get('Content-type')
         app.logger.error("Doodle, Doodle!")
         return 'Doodle, Doodle!'
 
 
 @ns.route("/api/v1/games", methods=['POST'])
-@cross_origin()
 class user_num(Resource):
 
     def post(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         '''사용자의 수를 저장한다'''
         value = request.get_json()
         # print(value)
@@ -154,7 +149,6 @@ class user_num(Resource):
 
 
 @ns.route("/api/randwords", methods=['GET', 'POST'])
-@cross_origin()
 class randwords(Resource):
 
     def _translate_word(self, aranword):
@@ -166,10 +160,6 @@ class randwords(Resource):
         return englishword
 
     def get(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
             models.Dictionary.id == random.randint(1, 99))
@@ -179,10 +169,6 @@ class randwords(Resource):
 
     def post(self):
         '''최종결정한 단어를 저장한다'''
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         value = request.get_json()
         if not value:
             return('no word found', 400)
@@ -198,15 +184,10 @@ class randwords(Resource):
 
 
 @ns.route("/api/v1/draws", methods=['POST'])
-@cross_origin()
 class save(Resource):
 
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         #미리 draw table에 row 추가 
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'],
@@ -242,14 +223,9 @@ class save(Resource):
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
-@cross_origin()
 class draw(Resource):
 
     def get(self, drawid):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         '''게임id가 같은 사용자 전체의 그림을 불러온다'''
         ret = db.session.query(models.Draw).filter(
             models.Draw.id == drawid).first()
@@ -261,13 +237,8 @@ class draw(Resource):
 
 
 @ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
-@cross_origin()
 class game(Resource):
     def get(self, gameid):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         '''ai가 분석한 결과를 가져온다(다인)'''
         game = db.session.query(models.Game).get(gameid)
         randword = game.random_word
@@ -304,12 +275,15 @@ class game_result(Resource):
         top_five = value['top-five']
         if draw_id is None or top_five is None:
             return("Can not find request data", 400)
-        for result in top_five:
+        for idx, result in enumerate(top_five):
             now = datetime.datetime.now().replace(microsecond=0)
-            result['dictionary']
             game_id = db.session.query(models.Draw).filter(
                 models.Draw.id == draw_id).first().game_id
-            row = models.Result(similarity=result['similarity'], draw_id=draw_id, dictionary_id=result['dicionary']['id'], game_id=game_id,
+            name = db.session.query(models.Game).filter(
+                models.Game.id == game_id).first().random_word
+            dictionary_id = db.session.query(models.Dicionary).filter(
+                models.Dictionary.name == name).first().id
+            row = models.Result(similarity=top_five[result.keys()[idx]], draw_id=draw_id, dictionary_id=dictionary_id, game_id=game_id,
                 created_at=now, updated_at=now)
             db.session.add(row)
         db.session.commit()
@@ -353,13 +327,8 @@ class newsingleresult(Resource):
         return (res, 200)
         
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
-@cross_origin()
 class singleresult(Resource):
-    def post(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')        
+    def post(self):      
         '''AI가 분석한 결과를 가져온다(다인)'''
         value = request.get_json()
         print(value)
@@ -387,13 +356,8 @@ class singleresult(Resource):
 
 
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
-@cross_origin()
 class multiresults(Resource):
     def post(self):
-        request.headers.get('Access-Control-Allow-Origin')
-        request.headers.get('Access-Control-Allow-Methods')
-        request.headers.get('Access-Control-Allow-Headers')
-        request.headers.get('Content-type')
         print('here post')
         '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()

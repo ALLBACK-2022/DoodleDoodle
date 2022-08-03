@@ -87,7 +87,7 @@ def call_method():
     print(value['randword'])
     print(value)
     randword = value['randword']
-
+    print(randword[0])
     # 파일명으로 저장
     if not os.path.exists('temp'):
         os.mkdir('temp')
@@ -112,7 +112,7 @@ def call_method():
     print('app.py-> filename',filename)
     # 이미지에 따라서 수정 필요
     task = celery_app.send_task('ai_predict', kwargs={
-        'filename': filename, 'randword': randword})
+        'filename': filename, 'randword': randword[0]})
 
     task_id = task.id
     isTaskid = {"task_id": task_id}
@@ -195,7 +195,10 @@ def task_result():
     request.headers.get('Access-Control-Allow-Headers')
     request.headers.get('Content-type')
     response_data = request.get_json()
-    task_id = response_data["task-id"]
+    task_id = response_data["task_id"]
+    print('responseData: ', response_data)
+    print('request: ', request)
+    print('task_id: ', task_id)
     result = str(celery_app.AsyncResult(task_id).result)
     return result
 

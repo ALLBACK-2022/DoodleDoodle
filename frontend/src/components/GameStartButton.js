@@ -27,7 +27,13 @@ function GameStartButton() {
 
     console.log(count);
 
-    await axios.post(NumURL, req).then(response => {
+    const heders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+      'Content-type': 'application/json; charset=UTF-8',
+    };
+    await axios.post(NumURL, req, heders).then(response => {
       console.log(response.data);
       navigate('random', { replace: false, state: { playerNum: count, gameID: response.data } });
     });

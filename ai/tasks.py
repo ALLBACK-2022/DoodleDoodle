@@ -48,13 +48,12 @@ os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 @celery_app.task(name='ai_predict')
-def ai_predict(filename, ranword):
-    logger.info('ai_predict에 들어옴')
+def ai_predict(filename, randword):
+    # logger.info('ai_predict에 들어옴')
 
     logger.info(filename)
-    logger.info(ranword)
-    logger.info(type( ranword) ) #list
-    #logger.info( ranword.index(0))
+    logger.info(randword)
+    print(randword)
     
 
     filepath = filename + '.png'  # filename =string?
@@ -88,7 +87,7 @@ def ai_predict(filename, ranword):
     otherResults = {}
     result = {}
     for x in range(0, len(ind)):
-        if(class_names[ind[x]] == ranword):
+        if(class_names[ind[x]] == randword):
             result[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
         if x < 5:
             otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
