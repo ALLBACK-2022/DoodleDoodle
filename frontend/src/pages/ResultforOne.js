@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
-// import { useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import axios from 'axios';
 
 import ResultOneSketchBook from '../components/ResultOneSketchBook';
@@ -20,7 +20,7 @@ function ResultforOne() {
 
   const defaultData = { name: '?', value: 0.0 };
 
-  // const location = useLocation();
+  const location = useLocation();
 
   let testCount = 0;
   // 백엔드에서 API 불러오는 함수
@@ -28,7 +28,7 @@ function ResultforOne() {
     // 결과 받아오는 API 호출
     console.log('getResult Start');
     await axios
-      .get(baseURL + 1)
+      .get(baseURL + location.useState.drawId.toString())
       // 호출이 완료되면
       .then(response => {
         testCount += 1;
