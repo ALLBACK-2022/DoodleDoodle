@@ -24,6 +24,7 @@ function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum })
   }
 
   function onClick() {
+    console.log(isFromGamePage);
     // 이전 페이지가 게임페이지면 랜덤페이지로 이동(다시하기 버튼)
     if (isFromGamePage) {
       // userNum 넘겨주기
@@ -31,7 +32,7 @@ function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum })
     }
     // 뒤로가기 버튼
     else {
-      navigate(-1, { replace: false });
+      navigate('../resultmany', { replace: false });
     }
   }
 

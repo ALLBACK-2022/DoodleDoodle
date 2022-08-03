@@ -14,9 +14,7 @@ function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
   const [randword, setRandword] = useState('');
   const [infoLoading, setInfoLoading] = useState(false);
-  // const [gameId, setGameId] = useState(-1);
   const location = useLocation();
-  const mounted = useRef(false);
   const gameId = useRef(-1);
 
   const isMobile = useMediaQuery({
@@ -32,8 +30,10 @@ function ResultMany() {
     if (!storageGameId) {
       window.sessionStorage.setItem('gameId', location.state.gameId);
       gameId.current = location.state.gameId;
+      console.log('get location.state id');
     } else {
       gameId.current = Number(storageGameId);
+      console.log('get storage id');
     }
   }
 
@@ -74,17 +74,13 @@ function ResultMany() {
     });
   }
   useEffect(() => {
+    console.log('setGameid');
     setGameid();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-    } else {
-      getData();
-    }
-
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId]);
 

@@ -84,23 +84,18 @@ with app.app_context():
         insert_word()
 
 
-def _organize_result(results, doodle):
+def _organize_result(results, doodle, name):
     res, topfive = {}, []
     res['doodle'] = doodle
     for result in results:
         word = {}
         word['dictionary'] = result.dictionary.serialize()
         word['similarity'] = result.similarity
-        # if result.dictionary.name == randword:
-        #     res['randword'] = word
         topfive.append(word)
     if(len(topfive) > 5):
-        for i in range(0, 5):
-            for j in range(1, 6):
-                if i != j and topfive[i]['dictionary']['name'] == topfive[j]['dictionary']['name']:
-                    word['randword'] = topfive.pop(i)
-                    break
-            if len(topfive) == 5:
+        for i in range(6):
+            if topfive[i]['dictionary']['name'] == name:
+                res['randword'] = topfive.pop(i)
                 break
     res['topfive'] = topfive
     if results:
@@ -240,15 +235,19 @@ class save(Resource):
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+
 class newsingleresult(Resource):
     '''사용자가 그렸던 그림을 불러온다. + 1인용 결과페이지 + 개인 결과 페이지(new)'''
-
     def get(self, drawid):
         results = db.session.query(models.Result).filter(
             models.Result.draw_id == drawid).all()
         doodle = db.session.query(models.Draw).filter(
             models.Draw.id == drawid).first().doodle
-        res = _organize_result(results=results, doodle=doodle)
+        result = db.session.query(models.Result).filter(
+            models.Result.draw_id == drawid).first().dictionary_id
+        name = db.session.query(models.Dictionary).filter(
+            models.Dictionary.id == result).first().name
+        res = _organize_result(results=results, doodle=doodle, name=name)
         if res is None:
             return ("Can not access data", 400)
         return (res, 200)

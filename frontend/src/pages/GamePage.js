@@ -8,6 +8,7 @@ import ClearButton from '../components/ClearButton';
 import WordText from '../components/WordText';
 import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
+import Loading from '../components/Loading';
 
 const postImageToBackURL = 'http://localhost:5000/api/v1/draws'; // 백엔드에 이미지 보내는 API
 const postImageToAIURL = 'http://localhost:8081/api/v1/ai/pictures'; // AI에 이미지 보내는 API
@@ -21,12 +22,14 @@ function GamePage() {
   const [engRandWord, setEngRandWord] = useState(''); // 그림을 그릴 단어(영어)
   const [maxPlayer, setMaxPlayer] = useState(); // 전체 플레이어 수
   const [currentPlayer, countPlayer] = useState(1); // 현재 플레이어 번호
+  const [isLoad, setIsLoad] = useState(false);
 
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
   const navigate = useNavigate(); // 네비게이트 선언(다음페이지 이동 시 사용할 함수
 
   const canvasRef = useRef(); // DrawingCanvas컴포넌트의 함수를 불러오기위한 ref
   const gameID = useRef(); // 게임 ID
+  const successCount = useRef(0);
 
   const drawIdArray = useRef([]);
 
@@ -37,6 +40,7 @@ function GamePage() {
     setMaxPlayer(location.state.playerNum);
     gameID.current = location.state.gameID;
     drawIdArray.current.length = 0;
+    successCount.current = 0;
   }
 
   // 페이지 로드 시 1회 실행, 게임 Data 세팅 및 캔버스 기본 세팅
@@ -64,6 +68,26 @@ function GamePage() {
       .catch(error => console.log(error));
   }
 
+  function goToNextPage() {
+    console.log('try go to next page testcount:', successCount.current, maxPlayer);
+    if (successCount.current >= maxPlayer) {
+      const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
+      console.log('goToResultPage');
+      navigate(newURL, {
+        replace: true,
+        state: {
+          gameId: gameID.current,
+          drawId: drawIdArray.current,
+          isFromGamePage: true,
+        },
+      });
+    } else {
+      setTimeout(function () {
+        goToNextPage();
+      }, 500);
+    }
+  }
+
   // AI에게 받은 결과를 백엔드로 전달
   async function postResultToBack(topFiveArray, randWordData) {
     console.log('player', currentPlayer, ': ', randWordData, topFiveArray);
@@ -83,18 +107,10 @@ function GamePage() {
       .post(postResultToBackURL, request, heders)
       .then(response => {
         console.log('result', currentPlayer, ': ', response);
+        successCount.current += 1;
         // 여기서 마지막 플레이어면 결과페이지 이동
         if (currentPlayer >= maxPlayer) {
-          const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
-          console.log('goToResultPage');
-          navigate(newURL, {
-            replace: true,
-            state: {
-              gameId: gameID.current,
-              drawId: drawIdArray.current,
-              isFromGamePage: true,
-            },
-          });
+          goToNextPage();
         } else console.log('DRAW COMPLETE');
         // 근데 만약 비동기로 처리하는 postImageToBack 이 안끝났는데 이거호출하면..?
       })
@@ -218,7 +234,13 @@ function GamePage() {
 
   // NextButton을 클릭했을때 실행
   const nextButtonClick = () => {
-    canvasRef.current.convertCanvasToImage();
+    if (!isLoad) {
+      if (currentPlayer >= maxPlayer) {
+        setIsLoad(true);
+        console.log('d');
+      }
+      canvasRef.current.convertCanvasToImage();
+    } else console.log('loding...');
   };
 
   // ClearButton을 클릭했을때 실행
@@ -229,6 +251,7 @@ function GamePage() {
   return (
     <div className="w-screen h-screen bg-primary relative select-none">
       <GameBGImg pageName="GamePage" />
+      {isLoad && <Loading />}
       <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} />
       <PlayerText currentPlayer={currentPlayer} maxPlayer={maxPlayer} />
       <WordText randWord={randWord} />
