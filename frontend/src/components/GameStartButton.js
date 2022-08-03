@@ -6,7 +6,7 @@ import Plus from '../assets/icons/plus.png';
 
 // 인원수 설정 후 Main페이지에서 랜덤단어생성 페이지로 이동
 
-const NumURL = 'http://localhost:5000/api/v1/games';
+const NumURL = 'http://localhost:8080/api/v1/games';
 
 function GameStartButton() {
   const [count, setCount] = useState(1);

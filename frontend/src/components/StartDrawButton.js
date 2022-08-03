@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const baseURL = 'http://localhost:5000/api/v1/randwords';
+const baseURL = 'http://localhost:8080/api/v1/randwords';
 // const baseURL = 'http://localhost:5000/api/randwords';
 function StartDrawButton({ image, word }) {
   const location = useLocation(); // 이전 페이지에서 받아온 데이터
