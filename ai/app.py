@@ -156,6 +156,7 @@ def get_status():
 
 #     return {"status": temp_str}
 
+    os.remove('temp/' + str(drawid) + '.png')
 
 # def _is_complete(task_ids):
 #     for task_id in task_ids:
