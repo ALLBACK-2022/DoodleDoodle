@@ -10,11 +10,11 @@ import PlayerText from '../components/PlayerText';
 import GameBGImg from '../components/GameBGImg';
 import Loading from '../components/Loading';
 
-const postImageToBackURL = 'http://localhost:5000/api/v1/draws'; // 백엔드에 이미지 보내는 API
+const postImageToBackURL = 'http://localhost:8080/api/v1/draws'; // 백엔드에 이미지 보내는 API
 const postImageToAIURL = 'http://localhost:8081/api/v1/ai/pictures'; // AI에 이미지 보내는 API
 const getAITaskStatusURL = 'http://localhost:8081/api/v1/task_status'; // AI에게 Taskid로 상태확인
 const getAIResultURL = 'http://localhost:8081/api/v1/result_predict'; // AI에게 Taskid로 분석결과 받기
-const postResultToBackURL = 'http://localhost:5000/api/v1/game-result'; // 백엔드에 AI결과값 보내는 API
+const postResultToBackURL = 'http://localhost:8080/api/v1/game-result'; // 백엔드에 AI결과값 보내는 API
 
 // 게임 페이지
 function GamePage() {
