@@ -4,16 +4,16 @@ import time
 from flask import Flask, jsonify, request
 from flask_restx import Resource, Api
 from dotenv import load_dotenv
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from connection import s3_connection, s3_put_object, s3_get_image_url
 from config import BUCKET_NAME, BUCKET_REGION
-import os, models, random, logging, requests
+import os, models, random, logging
 from models import db
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
-from requests.adapters import HTTPAdapter, Retry
+from sqlalchemy import and_
 
 app = Flask(__name__)
 load_dotenv()
@@ -42,6 +42,7 @@ app.config['MYSQL_PASSWORD'] = MYSQL_PASSWORD
 app.config['MYSQL_HOST'] = MYSQL_HOST
 app.config['SQLALCHEMY_DATABASE_URI'] = sqlurl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 ns = api.namespace('/', description='DoodleDoodle API')
 parser = ns.parser()
@@ -116,17 +117,27 @@ def _organize_result(results, randword):
 
 
 @ns.route("/", methods=['GET'])
+@cross_origin()
 class main_page(Resource):
 
     def get(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         app.logger.error("Doodle, Doodle!")
         return 'Doodle, Doodle!'
 
 
 @ns.route("/api/v1/games", methods=['POST'])
+@cross_origin()
 class user_num(Resource):
 
     def post(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         '''사용자의 수를 저장한다'''
         value = request.get_json()
         # print(value)
@@ -142,9 +153,22 @@ class user_num(Resource):
 
 
 @ns.route("/api/randwords", methods=['GET', 'POST'])
+@cross_origin()
 class randwords(Resource):
 
+    def _translate_word(self, aranword):
+        '''한글단어를 영어로 변환한다'''
+        row = db.session.query(models.Dictionary).filter(
+            models.Dictionary.name == aranword).first()
+        db.session.commit()
+        englishword = row.eng_name
+        return englishword
+
     def get(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         '''랜덤으로 단어를 가져온다'''
         randword = db.session.query(models.Dictionary).filter(
             models.Dictionary.id == random.randint(1, 99))
@@ -154,6 +178,10 @@ class randwords(Resource):
 
     def post(self):
         '''최종결정한 단어를 저장한다'''
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         value = request.get_json()
         if not value:
             return('no word found', 400)
@@ -161,21 +189,24 @@ class randwords(Resource):
             models.Game.id == value['id']).first()
         selectgame.random_word = value['name']
         db.session.commit()
-        return ('random word saved', 201)
+        transword = self._translate_word(value['name'])
+        rep =  {"engName": transword}
+        if rep is None:
+            return ('no word found', 400)
+        return (rep, 201)
 
 
 @ns.route("/api/v1/draws", methods=['POST'])
+@cross_origin()
 class save(Resource):
-    def _translate_word(self, aranword):
-        '''한글단어를 영어로 변환한다'''
-        row = db.session.query(models.Dictionary).filter(
-            models.Dictionary.name == aranword).first()
-        englishword = row.eng_name
-        db.session.commit()
-        return englishword
 
     def post(self):
         '''사용자가 그린 그림을 저장한다'''
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
+        #미리 draw table에 row 추가 
         value = request.form.to_dict(flat=False)
         row = models.Draw(draw_no=value['draw-no'],
                           doodle="", game_id=value['game-id'])
@@ -186,6 +217,7 @@ class save(Resource):
         drawid = ret.id
         if not os.path.exists('temp'):
             os.mkdir('temp')
+        #s3 버킷에 파일 업로드
         f = request.files['filename']
         f.save('temp/' + str(drawid) + '.png')
         retPut = s3_put_object(
@@ -196,24 +228,12 @@ class save(Resource):
         if game is None:
             return ('Can not access data', 400)
         ranword = game.random_word
-        englishranword = self._translate_word(ranword)
         if retPut is None:
             return('Draw saved fail', 400)
         retGet = s3_get_image_url(s3, 'drawimage/' + str(drawid) + '.png')
         ret.doodle = retGet
         db.session.commit()
-        return_data = {"draw_id": drawid, "ranword": englishranword}
-        session = requests.Session()
-        retry = Retry(connect=3, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
-        url = 'http://ai:5000/api/v1/start_predict'
-        response = session.post(url, json=return_data)
-        response_data = response.json()
-        aiResult = response_data["task_id"]
-        retdata = {"draw_id": drawid, "task_id": aiResult}
-
+        retdata = {"draw_id": drawid}
         try:
             return retdata, 200
         except:
@@ -221,9 +241,14 @@ class save(Resource):
 
 
 @ns.route("/api/v1/results/draw/<int:drawid>", methods=['GET'])
+@cross_origin()
 class draw(Resource):
 
     def get(self, drawid):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         '''게임id가 같은 사용자 전체의 그림을 불러온다'''
         ret = db.session.query(models.Draw).filter(
             models.Draw.id == drawid).first()
@@ -235,34 +260,50 @@ class draw(Resource):
 
 
 @ns.route("/api/v1/results/game/<int:gameid>", methods=['GET'])
+@cross_origin()
 class game(Resource):
     def get(self, gameid):
-        '''사용자가 그렸던 그림을 불러온다'''
-        ret = db.session.query(models.Game).filter(
-            models.Game.id == gameid).first()
-        retusernum = int(ret.player_num)
-        if ret is None:
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
+        '''ai가 분석한 결과를 가져온다(다인)'''
+        game = db.session.query(models.Game).get(gameid)
+        randword = game.random_word
+        row = db.session.query(models.Dictionary).filter(models.Dictionary.name == randword).first()
+        dictnum = row.id
+        #results = db.session.query(models.Result).filter(models.Result.game_id == gameid).filter(models.Result.dictionary_id == dictnum).all()
+        results = db.session.query(models.Result).filter(and_(models.Result.game_id == gameid, models.Result.dictionary_id == dictnum)).all() 
+        #[<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>,<results('id', 'similarity','created_at','updated_at','draw_id','dictionary_id','game_id')>]
+        if results is None:
             return('Can not access data', 400)
-        db.session.commit()
-        print(retusernum)
-        ret1 = []
-        ret2 = []
-        for i in range(1, retusernum+1):
-            row = db.session.query(models.Draw).filter(
-                models.Draw.game_id == gameid).filter(models.Draw.draw_no == i).first()
-            print(row)
-            returl = row.doodle
-            db.session.commit()
-            ret1.append(i)
-            ret2.append(returl)
-        retdict = {name: value for name, value in zip(ret1, ret2)}
-        # print(retdict)
-        return (retdict, 200)
+        # ret = {} #리턴할 최종 json
+        #a = { "randword": randword } 
+        x = {}
+        res_list = []
+        print(results)
+        for result in results:
+            x = {"draw-id":result.draw_id , "draw_no":result.draw.draw_no, "img_url": result.draw.doodle, "similarity":result.similarity}
+            res_list.append(x)      #그린 그림에 대한 정보만 담겨있는 딕셔너리
+            #print(result)
+        
+        res_list = sorted(res_list, key=lambda d: d['similarity'], reverse=True) # 유사도로 내림차순 정렬
+        #b = {"users":res_list}           #key값을 user로 가지고 value를 res_list로 가짐 
+        ret = {}
+        ret['randword'] = randword
+        ret['users'] = res_list
+        return(ret, 200)
+
 
 
 @ns.route("/api/v1/draws/results/single", methods=['POST'])
+@cross_origin()
 class singleresult(Resource):
     def post(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')        
         '''AI가 분석한 결과를 가져온다(다인)'''
         value = request.get_json()
         print(value)
@@ -290,8 +331,13 @@ class singleresult(Resource):
 
 
 @ns.route("/api/v1/draws/results/multi", methods=['POST'])
+@cross_origin()
 class multiresults(Resource):
     def post(self):
+        request.headers.get('Access-Control-Allow-Origin')
+        request.headers.get('Access-Control-Allow-Methods')
+        request.headers.get('Access-Control-Allow-Headers')
+        request.headers.get('Content-type')
         print('here post')
         '''AI가 분석한 결과를 가져온다(1인)'''
         value = request.get_json()
