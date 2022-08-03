@@ -39,20 +39,18 @@ function ResultforOne() {
         // 유사도 상위 5개 데이터 저장
         const top = response.data.topfive;
         // 반복문 돌려서 randomWord
-        let randomWord;
+        const randomWord = response.data.randword;
         const userDoodle = response.data.doodle;
         console.log(top, userDoodle);
         // topfiveArray에 5개 데이터의 이름과 유사도 값을 넣고
         // imageArray에 5개 데이터의 이미지를 사전에서 불러와 넣는다
-        for (let i = 0; i < 6; i += 1) {
+        for (let i = 0; i < 5; i += 1) {
           console.log(top[i].dictionary.name, ': ', top[i].similarity);
-          if (i < 5) {
-            topfiveArray.push({
-              name: top[i].dictionary.name,
-              value: top[i].similarity,
-            });
-            imageArray.push(top[i].dictionary.img_url);
-          } else randomWord = top[i];
+          topfiveArray.push({
+            name: top[i].dictionary.name,
+            value: top[i].similarity,
+          });
+          imageArray.push(top[i].dictionary.img_url);
         }
         console.log('<randomWord>', randomWord.dictionary.name, ': ', randomWord.similarity);
         // 유사도 상위5개 차트의 이미지와 이름, 유사도값 업데이트

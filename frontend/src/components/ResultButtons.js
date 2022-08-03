@@ -32,7 +32,7 @@ function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum })
     }
     // 뒤로가기 버튼
     else {
-      navigate(-1, { replace: false });
+      navigate('../resultmany', { replace: false });
     }
   }
 
