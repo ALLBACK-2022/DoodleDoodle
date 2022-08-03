@@ -69,8 +69,8 @@ function GamePage() {
   }
 
   function goToNextPage() {
-    console.log('try go to next page testcount:', successCount);
-    if (successCount >= maxPlayer) {
+    console.log('try go to next page testcount:', successCount.current, maxPlayer);
+    if (successCount.current >= maxPlayer) {
       const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
       console.log('goToResultPage');
       navigate(newURL, {
@@ -234,7 +234,10 @@ function GamePage() {
 
   // NextButton을 클릭했을때 실행
   const nextButtonClick = () => {
-    if (currentPlayer >= maxPlayer) setIsLoad(true);
+    if (currentPlayer >= maxPlayer) {
+      setIsLoad(true);
+      console.log('d');
+    }
     canvasRef.current.convertCanvasToImage();
   };
 
@@ -245,8 +248,8 @@ function GamePage() {
 
   return (
     <div className="w-screen h-screen bg-primary relative select-none">
-      {isLoad && <Loading />}
       <GameBGImg pageName="GamePage" />
+      {isLoad && <Loading />}
       <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} />
       <PlayerText currentPlayer={currentPlayer} maxPlayer={maxPlayer} />
       <WordText randWord={randWord} />
