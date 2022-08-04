@@ -11,7 +11,6 @@ RUN apt-get update \
 
 RUN pip install --upgrade pip
 RUN apt-get install ffmpeg libsm6 libxext6 -y
-RUN FLASK_ENV=development
 
 COPY requirements_app.txt /ai/
 RUN pip install -r requirements_app.txt

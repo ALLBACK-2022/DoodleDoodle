@@ -4,7 +4,7 @@ FROM node:16.13.1
 # Install
 WORKDIR /frontend
 COPY . /frontend
-RUN npm install
+RUN npm install react-loader-spinner
 RUN npm install react-scripts
 RUN npm install axios
 # RUN npm install html2canvas

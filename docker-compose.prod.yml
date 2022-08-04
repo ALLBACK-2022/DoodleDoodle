@@ -16,6 +16,8 @@ services:
     image: run
     environment:
       - WDS_SOCKET_PORT=0
+      - REACT_APP_BACKEND_URL=http://backend:8080
+      - REACT_APP_AI_URL=http://backend:8081
     tty: true
 
   backend:
@@ -29,6 +31,7 @@ services:
       STATSD_HOST: "statsd-exporter"
       STATSD_PORT: "9125"
     container_name: backend-con
+    env_file: ./backend/.env
     restart: always
     links:
       - rabbitmq
