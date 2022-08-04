@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 
-// const baseURL = 'http://localhost:5000/randwords';
-const baseURL = 'http://localhost:8080/api/v1/randwords';
+const backBaseUrl = process.env.REACT_APP_BACKEND_URL;
+const baseURL = `${backBaseUrl}/api/v1/randwords`;
 function RandomWordButton({ image, setWord }) {
   async function onClick() {
     const response = await axios.get(baseURL);

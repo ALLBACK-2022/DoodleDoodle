@@ -17,7 +17,7 @@ services:
     environment:
       - WDS_SOCKET_PORT=0
       - REACT_APP_BACKEND_URL=http://backend:8080
-      - REACT_APP_AI_URL=http://backend:8081
+      - REACT_APP_AI_URL=http://ai:8081
     tty: true
 
   backend:

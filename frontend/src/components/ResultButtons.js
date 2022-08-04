@@ -6,7 +6,8 @@ import home from '../assets/icons/mobile-home.png';
 import back from '../assets/icons/mobile-back.png';
 import restart from '../assets/icons/mobile-again.png';
 
-const NumURL = 'http://localhost:8080/api/v1/games';
+const backBaseUrl = process.env.REACT_APP_BACKEND_URL;
+const NumURL = `${backBaseUrl}/api/v1/games`;
 function ResultButtons({ isforOne, resultString, img, isFromGamePage, userNum }) {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({

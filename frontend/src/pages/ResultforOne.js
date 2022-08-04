@@ -10,7 +10,8 @@ import TopFiveResult from '../components/TopFiveResult';
 import testImage from '../assets/icons/mobiledoodle_8.png'; // 기본 이미지
 import ResultButtons from '../components/ResultButtons';
 
-const baseURL = 'http://localhost:8080/api/v1/results/draw/';
+const backBaseUrl = process.env.REACT_APP_BACKEND_URL;
+const baseURL = `${backBaseUrl}/api/v1/results/draw/`;
 
 function ResultforOne() {
   const [chart, setChart] = useState([{ name: '?', value: 0.0 }]); // 유사도 상위 5개 이름과 유사도
