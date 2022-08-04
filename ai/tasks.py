@@ -90,7 +90,7 @@ def ai_predict(filename, randword):
             otherResults[class_names[ind[x]]] = round(pred[ind[x]]*100, 2)
 
     otherResults['result'] = result
-    #os.remove('/ai/temp/' + filepath)
+    os.remove('/ai/temp/' + filepath)
     #os.remove('./temp/' + filepath)
     #os.remove('/ai/temp/' + filepath)
     return (otherResults, 200)
