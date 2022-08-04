@@ -54,12 +54,14 @@ def ai_predict(filename, randword):
     filepath = filename + '.png'  # filename =string?
     logger.info(filepath)
 
-    with open("./ai-model/classes.txt", "r", encoding="utf8") as ins:
+    #with open("./ai-model/classes.txt", "r", encoding="utf8") as ins:
+    with open("./ai-model/class_names.txt", "r", encoding="utf8") as ins:
         class_names = []
         for line in ins:
             class_names.append(line.rstrip('\n'))
     # Load the model
-    model = keras.models.load_model('./ai-model/1820.h5')
+    # model = keras.models.load_model('./ai-model/1820.h5')
+    model = keras.models.load_model('./ai-model/keras.h5')
     # model.summary()
     #print('image 불러오기 전:>>>>>',os.getcwd())
     
