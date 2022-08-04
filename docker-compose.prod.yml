@@ -124,7 +124,7 @@ services:
       context: './ai'
       dockerfile: Dockerfile.celery
     container_name: worker-con
-    user: root
+    user: nobody
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     restart: always
     depends_on:

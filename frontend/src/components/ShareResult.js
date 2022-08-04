@@ -15,10 +15,10 @@ function ShareResult({ resultString, isforOne, img, isMobile }) {
 
   function shareButton() {
     if (window.Kakao) {
-      console.log('shareB.img: ', img);
+      // console.log('shareB.img: ', img);
       const array = resultString.split('을 ');
       const str = array[0].concat('을\n', array[1]);
-      console.log(isShare.current);
+      // console.log(isShare.current);
       const kakao = window.Kakao;
       if (!isShare.current) {
         kakao.init(process.env.REACT_APP_KAKAO_TOKEN);

@@ -23,18 +23,18 @@ function ResultforOne() {
 
   const location = useLocation();
 
-  let testCount = 0;
+  // let testCount = 0;
   // 백엔드에서 API 불러오는 함수
   async function getResult() {
     // 결과 받아오는 API 호출
-    console.log('getResult Start');
+    // console.log('getResult Start');
     const drawId = location.state.isFromGamePage ? location.state.drawId[0] : location.state.drawId;
     await axios
       .get(baseURL.concat(drawId))
       // 호출이 완료되면
       .then(response => {
-        testCount += 1;
-        console.log(testCount, ': ', response);
+        // testCount += 1;
+        // console.log(testCount, ': ', response);
         const topfiveArray = [];
         const imageArray = [];
         // 유사도 상위 5개 데이터 저장
@@ -42,18 +42,18 @@ function ResultforOne() {
         // 반복문 돌려서 randomWord
         const randomWord = response.data.randword;
         const userDoodle = response.data.doodle;
-        console.log(top, userDoodle);
+        // console.log(top, userDoodle);
         // topfiveArray에 5개 데이터의 이름과 유사도 값을 넣고
         // imageArray에 5개 데이터의 이미지를 사전에서 불러와 넣는다
         for (let i = 0; i < 5; i += 1) {
-          console.log(top[i].dictionary.name, ': ', top[i].similarity);
+          // console.log(top[i].dictionary.name, ': ', top[i].similarity);
           topfiveArray.push({
             name: top[i].dictionary.name,
             value: top[i].similarity,
           });
           imageArray.push(top[i].dictionary.img_url);
         }
-        console.log('<randomWord>', randomWord.dictionary.name, ': ', randomWord.similarity);
+        // console.log('<randomWord>', randomWord.dictionary.name, ': ', randomWord.similarity);
         // 유사도 상위5개 차트의 이미지와 이름, 유사도값 업데이트
         setImageUrl(imageArray);
         setChart(topfiveArray);
@@ -67,7 +67,7 @@ function ResultforOne() {
         });
       })
       .catch(error => {
-        console.log('test', testCount, ' error: ', error);
+        // console.log('test', testCount, ' error: ', error);
         if (error) {
           setChart([defaultData, defaultData, defaultData, defaultData, defaultData]);
           setImageUrl([testImage, testImage, testImage, testImage, testImage]);
@@ -94,7 +94,7 @@ function ResultforOne() {
   });
 
   useEffect(() => {
-    console.log('useEffect() here');
+    // console.log('useEffect() here');
     getResult();
   }, []);
 

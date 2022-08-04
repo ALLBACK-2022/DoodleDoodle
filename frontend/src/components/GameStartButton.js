@@ -10,7 +10,7 @@ const backBaseUrl = process.env.REACT_APP_BACKEND_URL;
 const NumURL = `${backBaseUrl}/api/v1/games`;
 
 function GameStartButton() {
-  console.log(backBaseUrl);
+  // console.log(backBaseUrl);
   const [count, setCount] = useState(1);
 
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ function GameStartButton() {
       'user-num': count,
     };
 
-    console.log(count);
+    // console.log(count);
 
     const heders = {
       'Access-Control-Allow-Origin': '*',
@@ -36,7 +36,7 @@ function GameStartButton() {
       'Content-type': 'application/json; charset=UTF-8',
     };
     await axios.post(NumURL, req, heders).then(response => {
-      console.log(response.data);
+      // console.log(response.data);
       navigate('random', { replace: false, state: { playerNum: count, gameID: response.data } });
     });
   }

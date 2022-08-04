@@ -6,7 +6,7 @@ function ResultPieChart({ chartValue }) {
     { name: '', value: chartValue },
     { name: '', value: 100 - chartValue },
   ];
-  console.log(chartValue);
+  // console.log(chartValue);
   return (
     <ResponsiveContainer>
       <PieChart width="100%" height="100%">

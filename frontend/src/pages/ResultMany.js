@@ -8,7 +8,8 @@ import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
-const getInfoURL = 'http://localhost:8080/api/v1/results/game/';
+const backBaseUrl = process.env.REACT_APP_BACKEND_URL;
+const getInfoURL = `${backBaseUrl}/api/v1/results/game/`;
 
 function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
@@ -30,10 +31,10 @@ function ResultMany() {
     if (!storageGameId) {
       window.sessionStorage.setItem('gameId', location.state.gameId);
       gameId.current = location.state.gameId;
-      console.log('get location.state id');
+      // console.log('get location.state id');
     } else {
       gameId.current = Number(storageGameId);
-      console.log('get storage id');
+      // console.log('get storage id');
     }
   }
 
@@ -55,26 +56,26 @@ function ResultMany() {
       'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
     };
 
-    console.log('getData() here');
+    // console.log('getData() here');
     await axios.get(getInfoURL + gameId.current.toString(), heders).then(response => {
-      console.log(response);
+      // console.log(response);
       setRandword(response.data.randword);
       setPlayersInfo(response.data.users);
-      console.log(playersInfo);
-      console.log(randword);
+      // console.log(playersInfo);
+      // console.log(randword);
       // eslint-disable-next-line no-unused-vars
       // const temp2 = response.data.users.map(player => {
-      //   console.log('draw-no', player.draw_no);
-      //   console.log('draw-id', player['draw-id']);
-      //   console.log('img_url', player.img_url);
-      //   console.log('img_url', player.similarity);
+      //   // console.log('draw-no', player.draw_no);
+      //   // console.log('draw-id', player['draw-id']);
+      //   // console.log('img_url', player.img_url);
+      //   // console.log('img_url', player.similarity);
       //   return player;
       // });
       setInfoLoading(loading => !loading);
     });
   }
   useEffect(() => {
-    console.log('setGameid');
+    // console.log('setGameid');
     setGameid();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -85,7 +86,7 @@ function ResultMany() {
   }, [gameId]);
 
   useEffect(() => {
-    console.log('infoLoading', infoLoading);
+    // console.log('infoLoading', infoLoading);
   }, [infoLoading]);
 
   return (

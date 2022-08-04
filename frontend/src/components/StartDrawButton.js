@@ -26,7 +26,7 @@ function StartDrawButton({ image, word }) {
     };
 
     await axios.post(baseURL, req, heders).then(response => {
-      console.log(response);
+      // console.log(response);
       navigate('../gamepage', {
         replace: true,
         state: {

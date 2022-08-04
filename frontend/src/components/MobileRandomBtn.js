@@ -20,7 +20,7 @@ function MobileRandomBtn({ setWord, start, word }) {
     };
 
     await axios.post(baseURL, req).then(response => {
-      console.log(response);
+      // console.log(response);
       navigate('../gamepage', {
         replace: true,
         state: {
@@ -36,13 +36,13 @@ function MobileRandomBtn({ setWord, start, word }) {
   async function getRandWord() {
     const response = await axios.get(baseURL);
     setWord(response.data);
-    console.log(response.data);
+    // console.log(response.data);
   }
   useEffect(() => {
     if (!start) {
       getRandWord();
     }
-    console.log('useEffect() here');
+    // console.log('useEffect() here');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

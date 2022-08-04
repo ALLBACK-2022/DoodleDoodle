@@ -31,3 +31,4 @@ config
 pymysql
 flask-cors
 gunicorn
+numpy

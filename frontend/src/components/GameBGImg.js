@@ -21,7 +21,7 @@ function GameBGImg({ pageName }) {
         </div>
       );
     default:
-      console.log('Can not read id');
+    // console.log('Can not read id');
   }
 }
 

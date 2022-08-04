@@ -65,16 +65,16 @@ function GamePage() {
       .post(postImageToBackURL, formData, heders)
       .then(response => {
         drawIdArray.current[currentPlayer - 1] = response.data.draw_id; // 반환값에서 drawID받아서 저장
-        console.log('player', currentPlayer, '-drawId: ', drawIdArray.current[currentPlayer - 1]);
+        // console.log('player', currentPlayer, '-drawId: ', drawIdArray.current[currentPlayer - 1]);
       })
       .catch(error => console.log(error));
   }
 
   function goToNextPage() {
-    console.log('try go to next page testcount:', successCount.current, maxPlayer);
+    // console.log('try go to next page testcount:', successCount.current, maxPlayer);
     if (successCount.current >= maxPlayer) {
       const newURL = maxPlayer === 1 ? '../resultone' : '../resultmany';
-      console.log('goToResultPage');
+      // console.log('goToResultPage');
       navigate(newURL, {
         replace: true,
         state: {
@@ -92,8 +92,8 @@ function GamePage() {
 
   // AI에게 받은 결과를 백엔드로 전달
   async function postResultToBack(topFiveArray, randWordData) {
-    console.log('player', currentPlayer, ': ', randWordData, topFiveArray);
-    console.log(drawIdArray.current[currentPlayer - 1]);
+    // console.log('player', currentPlayer, ': ', randWordData, topFiveArray);
+    // console.log(drawIdArray.current[currentPlayer - 1]);
     const heders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
@@ -107,8 +107,8 @@ function GamePage() {
     };
     await axios
       .post(postResultToBackURL, request, heders)
-      .then(response => {
-        console.log('result', currentPlayer, ': ', response);
+      .then((/* response */) => {
+        // console.log('result', currentPlayer, ': ', response);
         successCount.current += 1;
         // 여기서 마지막 플레이어면 결과페이지 이동
         if (currentPlayer >= maxPlayer) {
@@ -130,7 +130,7 @@ function GamePage() {
   const requestInterval = 500; // 0.25s
 
   async function getAIResult(taskId) {
-    console.log('AI Task Complete: '.concat((statusCheckCount * requestInterval) / 1000, 's'));
+    // console.log('AI Task Complete: '.concat((statusCheckCount * requestInterval) / 1000, 's'));
     const heders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
@@ -140,15 +140,15 @@ function GamePage() {
     await axios
       .post(getAIResultURL, { task_id: taskId }, heders)
       .then(response => {
-        console.log('player', currentPlayer, ': ', response);
+        // console.log('player', currentPlayer, ': ', response);
         const resData = response.data;
-        console.log(resData);
+        // console.log(resData);
         const topFiveArray = [];
         const randWordData = {};
         // eslint-disable-next-line no-restricted-syntax
         for (const key in resData) {
           if (key !== 'result') {
-            console.log(key, ': ', resData[key]);
+            // console.log(key, ': ', resData[key]);
             const data = {};
             data[key] = resData[key];
             topFiveArray.push(data);
@@ -156,8 +156,8 @@ function GamePage() {
             randWordData[key] = resData[key];
           }
         }
-        console.log('topfive: ', topFiveArray);
-        console.log('topfive: ', randWordData);
+        // console.log('topfive: ', topFiveArray);
+        // console.log('topfive: ', randWordData);
         // 이미지에 분석 결과 보내기(response가공하던 뭐던해서)
         postResultToBack(topFiveArray, randWordData);
       })
@@ -177,7 +177,7 @@ function GamePage() {
       .post(getAITaskStatusURL, { task_id: taskId }, heders)
       .then(response => {
         statusCheckCount += 1;
-        console.log('checkAIStatus-', statusCheckCount, ': ', response);
+        // console.log('checkAIStatus-', statusCheckCount, ': ', response);
         // 상태가 SUCCESS 면 AI에 결과값 요청하기
         if (response.data.status === 'SUCCESS') getAIResult(taskId);
         // 상태가 SUCCESS가 아니고 아직 요청 제한횟수 이하면 0.25초 뒤 다시 호출
@@ -201,8 +201,8 @@ function GamePage() {
     const formData = new FormData();
     formData.append('filename', imgFile);
     formData.append('randword', engRandWord);
-    console.log(engRandWord);
-    console.log(formData);
+    // console.log(engRandWord);
+    // console.log(formData);
     // const heders = {
     //   'Access-Control-Allow-Origin': '*',
     //   'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
@@ -213,11 +213,11 @@ function GamePage() {
       .post(postImageToAIURL, formData /* , heders */)
       .then(response => {
         // response에서 taskId 받아서 AI에 폴링하기
-        console.log('postImageToAI: ', response);
+        // console.log('postImageToAI: ', response);
         checkAIStatus(response.data.task_id);
       })
       .catch(error => {
-        console.log(engRandWord, imgFile);
+        // console.log(engRandWord, imgFile);
         console.log('postImageToAIError:', error);
       });
   }
@@ -239,7 +239,7 @@ function GamePage() {
     if (!isLoad) {
       if (currentPlayer >= maxPlayer) {
         setIsLoad(true);
-        console.log('d');
+        // console.log('d');
       }
       canvasRef.current.convertCanvasToImage();
     } else console.log('loding...');
