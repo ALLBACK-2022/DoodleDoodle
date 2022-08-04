@@ -92,7 +92,8 @@ function ResultMany() {
     <div id="resultmanypage" className={`relative flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <GameBGImg pageName="ResultMany" />
       <div
-        className="deskTop:py-[2rem] mobile:pt-[7vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
+        className="deskTop:py-[2rem] mobile:pt-[7vh] w-full h-[100vh] absolute overflow-y-auto 
+        scrollSection overflow-x-hidden inline-box text-center
       "
       >
         <h1
@@ -139,7 +140,7 @@ function ResultMany() {
         {infoLoading && (
           <div
             className="mobile:absolute mobile:text-center mobile:bottom-[9vh]
-            mobile:items-center mobile:w-[92vw] deskTop:w-[40vw] deskTop:max-w-[65vh]
+            mobile:items-center mobile:w-[100%] deskTop:w-[40vw] deskTop:max-w-[65vh]
             deskTop:fixed deskTop:bottom-[6vh] deskTop:right-[8vw]"
           >
             <ResultButtons
