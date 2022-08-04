@@ -1,6 +1,5 @@
-version: "3.7"
-#백그라운드 실행 시  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-#실행 시            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+version: "3"
+
 services:
   frontend:
     build: 
@@ -74,7 +73,6 @@ services:
 
   db:
     image: mysql
-    platform: linux/amd64
     container_name: mysql-con
     ports:
       - 3307:3306
