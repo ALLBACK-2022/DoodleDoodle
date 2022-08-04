@@ -60,7 +60,7 @@ def ai_predict(filename, randword):
         for line in ins:
             class_names.append(line.rstrip('\n'))
     # Load the model
-    # model = keras.models.load_model('./ai-model/1820.h5')
+    #model = keras.models.load_model('./ai-model/1820.h5')
     model = keras.models.load_model('./ai-model/keras.h5')
     # model.summary()
     #print('image 불러오기 전:>>>>>',os.getcwd())
