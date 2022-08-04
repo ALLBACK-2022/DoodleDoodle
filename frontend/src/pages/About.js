@@ -75,6 +75,9 @@ function About() {
           <Profile name="Jiwon Han" profile={woman1} url="https://github.com/jiwon83" />
         </div>
       </div>
+      <a href="https://www.flaticon.com/kr/packs/toys" className="font-cookierun" title="아이콘 출처">
+        장난감 아이콘 제작자: Freepik - Flaticon
+      </a>
     </div>
   );
 }
