@@ -37,7 +37,7 @@ function ShareResult({ resultString, isforOne, img, isMobile }) {
   if (isMobile) {
     return (
       <button onClick={shareButton} className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]">
-        <img className="h-[6vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={share} alt="" />
+        <img className="h-[8vh] w-[6vh] max-h-[10vw] max-w-[10vw]" src={share} alt="" />
         {/* 모바일 공유하기 버튼 */}
       </button>
     );

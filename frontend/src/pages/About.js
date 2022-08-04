@@ -20,22 +20,24 @@ function About() {
   return (
     <div
       className="flex flex-col w-screen h-screen bg-white text-center border-primary 
-    border-[1rem]  overflow-y-auto scrollSection p-[1rem] items-center"
+    border-[1rem]  overflow-y-auto overflow-x-hidden scrollSection p-[1rem] items-center"
     >
-      <Link to="/">
-        <button>
-          <img
-            className=" absolute w-[3rem] h-[3rem] deskTop:mt-[2rem] mobile:mt-[1rem] deskTop:ml-[40%] mobile:ml-[35%]"
-            src={yellowback}
-            alt=""
-          />
+      <Link to="/" className="inline-box">
+        <button
+          className="absolute right-[4vh] text-center mobile:w-[5vh] mobile:h-[5vh] deskTop:w-[5vh] deskTop:h-[5vh]
+          "
+        >
+          <img src={yellowback} alt="" />
         </button>
       </Link>
-
-      <div className="flex flex-row">
-        <h1 className=" font-cookierun text-center mobile:text-4xl deskTop:text-5xl my-[1rem]">Information</h1>
+      <div className="flex flex-row items-center place-content-center w-full inline-box">
+        <h1
+          className=" font-cookierun text-center mobile:text-4xl 
+        deskTop:text-5xl my-[1rem]"
+        >
+          Information
+        </h1>
       </div>
-
       <div className="w-[25rem] h-1/3 flex items-center">
         <div>
           <div className="font-cookierun inline-block text-xl">Reference link</div>
