@@ -8,7 +8,7 @@ import ResultButtons from '../components/ResultButtons';
 import ResultMulti from '../components/ResultMulti';
 import '../scrollbar.css';
 
-const getInfoURL = 'http://localhost:5000/api/v1/results/game/';
+const getInfoURL = 'http://localhost:8080/api/v1/results/game/';
 
 function ResultMany() {
   const [playersInfo, setPlayersInfo] = useState([]);
@@ -92,19 +92,19 @@ function ResultMany() {
     <div id="resultmanypage" className={`relative flex w-screen h-screen ${isMobile ? 'bg-primary' : 'bg-primary-1'}`}>
       <GameBGImg pageName="ResultMany" />
       <div
-        className="px-[3rem] deskTop:py-[2rem] mobile:pt-[8vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
+        className="deskTop:py-[2rem] mobile:pt-[7vh] w-full h-[100vh] absolute overflow-y-auto scrollSection
       "
       >
         <h1
           className="text-black font-cookierun text-left
-          deskTop:text-5xl mobile:text-3xl my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
+          deskTop:text-5xl mobile:text-[6.5vw] my-[4rem] deskTop:ml-[4rem] mobile:text-center mobile:my-[2rem]"
         >
           누가 더 똑같이 그렸을까요?
         </h1>
         {isMobile && infoLoading && (
           <div
-            className="scrollSection h-[25rem] 
-            py-[2rem] px-[0.8rem] overflow-y-auto text-center m-auto mb-[1.5rem]"
+            className="scrollSection deskTop:h-[25rem] mobile:h-[50vh] 
+            deskTop:py-[2rem] px-[0.8rem] overflow-y-auto text-center m-auto mb-[1.5rem]"
           >
             {playersInfo.map((player, index) => (
               <MobileResultMulti
