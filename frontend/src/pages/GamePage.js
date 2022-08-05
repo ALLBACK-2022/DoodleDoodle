@@ -228,7 +228,7 @@ function GamePage() {
   const imgDataPost = data => {
     // 파일객체 생성 및 백엔드에 저장
     const metadata = { type: 'image/png' };
-    const file = new File([data], ''.concat(gameID, '_', currentPlayer, '.png'), metadata);
+    const file = new File([data], ''.concat(gameID.current, '_', currentPlayer, '.png'), metadata);
     postImageToBack(file);
     postImageToAI(file);
     if (currentPlayer < maxPlayer) countPlayer(current => current + 1); // 마지막 플레이어가 아니면 다음 플레이어로
