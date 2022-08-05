@@ -1,3 +1,62 @@
+
+# Frontend
+
+---
+
+React JS - 컴포넌트 기반의 라이브러리로 프로젝트에 도움이 되는 다양한 도구, 라이브러리, 프레임워크와 혼용가능하다. 
+
+**Tailwind CSS -** HTML과 CSS 파일을 별도로 관리할 필요가 없어 쉽고 빠르게 개발 가능
+
+
+
+**React JS**
+
+- 컴포넌트 기반의 라이브러리
+    
+    각 기능들을 하나의 컴포넌트로 묶어서 관리
+    
+    → 코드의 재사용성과 유지보수성 증가
+    
+- 프로젝트에 도움이 되는 다양한 도구, 라이브러리, 프레임워크와 혼용가능
+    
+    eslint, tailwind, prettier 등
+    
+- Virtula DOM
+    
+    상태의 변화에따라 선택적으로 UI를 랜더링
+    
+    → 최소한의 DOM처리로 컴포넌트 업데이트
+    
+    → 랜더링을 할 상황이 잦은 프로젝트 특성상 적합
+    
+
+**Javascript**
+
+- HTML, 및 웹 개발에 가장 많이 사용되는 언어
+- 웹 사이트의 클라이언트 쪽 동적 페이지를 만드는데 적합
+
+**Tailwind CSS**
+
+- Utility-First 컨셉
+    
+    HTML과 CSS 파일을 별도로 관리할 필요가 없어 쉽고 빠르게 개발 가능
+    
+- 로우 레벨의 스타일 제공
+    
+    각 CSS 요소 수준의 유틸리티 클래스를 제공하기 때문에 세밀하게 원하는 디자인 구현 가능
+    
+
+**Axios**
+
+- 쉬운 사용
+    
+    HTTP 통신의 요구사항을 담은 컴팩트한 패키지
+    
+- HTTP 요청 취소 및 요청과 응답을 JSON 형태로 자동 변경
+- Promise 기반으로 쉬운 XHRHttpRequest 요청
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
