@@ -4,20 +4,19 @@ services:
   frontend:
     build: 
       context: ./frontend 
-    ports:
-     - 3030:3000
+      args:
+        - API_URL:"*"
     container_name: frontend-con
     volumes: 
       - build_frontend:/frontend/build
       - ./frontend:/frontend/
       - ./frontend/node_modules/:/frontend/node_modules
-    restart: always
     image: run
     environment:
       - WDS_SOCKET_PORT=0
       - CI=true
-      - REACT_APP_BACKEND_URL=http://
-      - REACT_APP_AI_URL=http://
+      - REACT_APP_BACKEND_URL=http://localhost:5000
+      - REACT_APP_AI_URL=http://localhost:5001
     stdin_open: true
     tty: true
 
@@ -50,13 +49,13 @@ services:
     build:
       context: ./ai
     ports:
-    - 5001:5000
+    - 5001:5001
     environment:
       FLASK_APP: ./app.py
       APP_NAME: "ai"
       STATSD_HOST: "statsd-exporter"
       STATSD_PORT: "9125"
-      env_file: ./ai/.env
+    env_file: ./ai/.env
     container_name: ai-con
     expose:
       - 5001
@@ -88,11 +87,9 @@ services:
     tty: true
 
   nginx:
-    image: nginx:1.21.5-alpine
     build: ./nginx
     ports:
-      - 8080:8080
-      - 8081:8081
+      - 80:80
     volumes:
       - build_frontend:/var/www/frontend
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf

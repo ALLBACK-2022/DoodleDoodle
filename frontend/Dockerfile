@@ -8,6 +8,9 @@ COPY . /frontend
 RUN npm install react-scripts
 RUN npm install axios
 RUN npm install react-loader-spinner
+RUN npm install package.json
+ARG API_URL
+ENV REACT_APP_HOST_IP_ADDRESS $API_URL
 # RUN npm install html2canvas
 #CMD ['node', 'server.js']
 COPY . ./
@@ -17,9 +20,7 @@ COPY . ./
 # Start 
 #RUN yarn --ignore-platform
 
-#CMD ["yarn", "run", "build"]
-#CMD ["npm", "run", "build"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "build"]
 
 
 # docker build -t frontend-img .
