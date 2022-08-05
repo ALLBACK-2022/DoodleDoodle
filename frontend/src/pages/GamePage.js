@@ -123,11 +123,9 @@ function GamePage() {
 
   // TaskId로 AI상태 체크하기
   // 상태가 SUCCESS 면 AI에 결과값 요청하기
-  let statusCheckCount = 0;
-  let statusErrorCount = 0;
   const errorLimit = 5;
-  const requestLimit = 10;
-  const requestInterval = 500; // 0.25s
+  const requestLimit = 50;
+  const requestInterval = 250; // 0.25s
 
   async function getAIResult(taskId) {
     // console.log('AI Task Complete: '.concat((statusCheckCount * requestInterval) / 1000, 's'));
@@ -166,13 +164,14 @@ function GamePage() {
       });
   }
 
-  async function checkAIStatus(taskId) {
+  async function checkAIStatus(taskId, count) {
     const heders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
       'Content-type': 'application/json; charset=UTF-8',
     };
+    let statusCheckCount = count;
     await axios
       .post(getAITaskStatusURL, { task_id: taskId }, heders)
       .then(response => {
@@ -181,17 +180,17 @@ function GamePage() {
         // 상태가 SUCCESS 면 AI에 결과값 요청하기
         if (response.data.status === 'SUCCESS') getAIResult(taskId);
         // 상태가 SUCCESS가 아니고 아직 요청 제한횟수 이하면 0.25초 뒤 다시 호출
-        else if (statusCheckCount <= requestLimit)
+        else if (statusCheckCount <= requestLimit) {
           setTimeout(function () {
-            checkAIStatus(taskId);
+            checkAIStatus(taskId, statusCheckCount);
           }, requestInterval);
-        else console.log('*요청카운트가 요청 제한횟수 이상입니다*');
+        } else console.log('*요청카운트가 요청 제한횟수 이상입니다*');
       })
       .catch(error => {
-        statusErrorCount += 1;
-        console.log('checkAIStatusError-', statusErrorCount, ': ', error);
+        statusCheckCount += 1;
+        console.log('checkAIStatusError-', statusCheckCount, ': ', error);
         // 에러카운트가 에러 제한횟수 이상이되면 호출 중지
-        if (statusErrorCount < errorLimit) setTimeout(checkAIStatus(taskId), requestInterval);
+        if (statusCheckCount < errorLimit) setTimeout(checkAIStatus(taskId, statusCheckCount), requestInterval);
         else console.log('*에러카운트가 에러 제한횟수 이상입니다*');
       });
   }
@@ -214,7 +213,7 @@ function GamePage() {
       .then(response => {
         // response에서 taskId 받아서 AI에 폴링하기
         // console.log('postImageToAI: ', response);
-        checkAIStatus(response.data.task_id);
+        checkAIStatus(response.data.task_id, 0);
       })
       .catch(error => {
         // console.log(engRandWord, imgFile);
