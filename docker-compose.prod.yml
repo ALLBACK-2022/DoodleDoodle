@@ -15,8 +15,10 @@ services:
     image: run
     environment:
       - WDS_SOCKET_PORT=0
-      - REACT_APP_BACKEND_URL=http://backend:8080
-      - REACT_APP_AI_URL=http://ai:8081
+      - CI=true
+      - REACT_APP_BACKEND_URL=http://localhost:8080
+      - REACT_APP_AI_URL=http://localhost:8081
+    stdin_open: true
     tty: true
 
   backend:
@@ -125,6 +127,8 @@ services:
     user: nobody
     command: celery -A ai.tasks.celery_app worker --loglevel=info
     restart: always
+    volumes:
+      - ./ai:/ai/
     depends_on:
       - rabbitmq
       - ai

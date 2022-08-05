@@ -1,5 +1,6 @@
 # Pull the image (and version) 
 FROM node:16.13.1
+USER root
 
 # Install
 WORKDIR /frontend
@@ -14,7 +15,9 @@ COPY . ./
 # RUN chmod 777 node_modules
 
 # Start 
-CMD ["npm", "start"]
+RUN yarn --ignore-platform
+
+CMD ["yarn", "run", "start"]
 
 
 # docker build -t frontend-img .
