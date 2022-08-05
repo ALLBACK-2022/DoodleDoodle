@@ -16,8 +16,8 @@ services:
     environment:
       - WDS_SOCKET_PORT=0
       - CI=true
-      - REACT_APP_BACKEND_URL=http://localhost:8080
-      - REACT_APP_AI_URL=http://localhost:8081
+      - REACT_APP_BACKEND_URL=http://
+      - REACT_APP_AI_URL=http://
     stdin_open: true
     tty: true
 
@@ -56,6 +56,7 @@ services:
       APP_NAME: "ai"
       STATSD_HOST: "statsd-exporter"
       STATSD_PORT: "9125"
+      env_file: ./ai/.env
     container_name: ai-con
     expose:
       - 5001

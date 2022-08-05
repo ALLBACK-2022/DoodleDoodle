@@ -48,6 +48,7 @@ function GamePage() {
   // 페이지 로드 시 1회 실행, 게임 Data 세팅 및 캔버스 기본 세팅
   useEffect(() => {
     setGameData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function postImageToBack(imgFile) {
@@ -84,7 +85,7 @@ function GamePage() {
         },
       });
     } else {
-      setTimeout(function () {
+      setTimeout(function d() {
         goToNextPage();
       }, 500);
     }
@@ -181,7 +182,7 @@ function GamePage() {
         if (response.data.status === 'SUCCESS') getAIResult(taskId);
         // 상태가 SUCCESS가 아니고 아직 요청 제한횟수 이하면 0.25초 뒤 다시 호출
         else if (statusCheckCount <= requestLimit) {
-          setTimeout(function () {
+          setTimeout(function d() {
             checkAIStatus(taskId, statusCheckCount);
           }, requestInterval);
         } else console.log('*요청카운트가 요청 제한횟수 이상입니다*');

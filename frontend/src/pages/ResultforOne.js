@@ -96,6 +96,7 @@ function ResultforOne() {
   useEffect(() => {
     // console.log('useEffect() here');
     getResult();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 여기서 POST API 불러오기(각 데이터 넣어주기)

@@ -51,6 +51,7 @@ function DrawingCanvas({ imgDataPost }, ref) {
     setCanvas();
     // 화면 크기 조정될때마다 크기에 맞춰 캔버스 재설정
     window.addEventListener('resize', setCanvas);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 그리는 동안 호출(마우스 누르고 움직이는 동안)

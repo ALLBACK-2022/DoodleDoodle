@@ -15,9 +15,11 @@ COPY . ./
 # RUN chmod 777 node_modules
 
 # Start 
-RUN yarn --ignore-platform
+#RUN yarn --ignore-platform
 
-CMD ["yarn", "run", "start"]
+#CMD ["yarn", "run", "build"]
+#CMD ["npm", "run", "build"]
+CMD ["npm", "start"]
 
 
 # docker build -t frontend-img .

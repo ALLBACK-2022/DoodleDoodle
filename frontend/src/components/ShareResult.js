@@ -11,6 +11,7 @@ function ShareResult({ resultString, isforOne, img, isMobile }) {
     script.async = true;
     document.body.appendChild(script);
     return () => document.body.removeChild(script);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function shareButton() {
