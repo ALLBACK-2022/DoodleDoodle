@@ -3,7 +3,7 @@
 
 [www.drawingdoodle.com](http://www.drawingdoodle.com/)
 
-[doodle medium](https://medium.com/p/d1f2e7c50c4b/edit)
+[doodle medium](https://medium.com/@dayon0325/doodle-doodle-drawing-that-ai-guesses-d1f2e7c50c4b)
 
 
 본 서비스는 사용자가 그린 그림을 AI 모델을 통해 무엇을 그렸는지 유추하고, 그 결과를 퍼센트로 변환하여 사용자가 그린 그림이 제시어와 얼마나 유사한지 알려주는 서비스 입니다. 
