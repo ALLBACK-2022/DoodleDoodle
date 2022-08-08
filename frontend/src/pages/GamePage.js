@@ -32,6 +32,7 @@ function GamePage() {
   const canvasRef = useRef(); // DrawingCanvas컴포넌트의 함수를 불러오기위한 ref
   const gameID = useRef(); // 게임 ID
   const successCount = useRef(0);
+  const canDrawing = useRef(true);
 
   const drawIdArray = useRef([]);
 
@@ -238,6 +239,7 @@ function GamePage() {
   const nextButtonClick = () => {
     if (!isLoad) {
       if (currentPlayer >= maxPlayer) {
+        canvasRef.current.setCanDrawing();
         setIsLoad(true);
         // console.log('d');
       }
@@ -254,7 +256,7 @@ function GamePage() {
     <div className="w-screen h-screen bg-primary relative select-none">
       <GameBGImg pageName="GamePage" />
       {isLoad && <Loading />}
-      <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} />
+      <DrawingCanvas ref={canvasRef} imgDataPost={imgDataPost} canDrawing={canDrawing} />
       <PlayerText currentPlayer={currentPlayer} maxPlayer={maxPlayer} />
       <WordText randWord={randWord} />
       <ClearButton clearButtonClick={clearButtonClick} />
